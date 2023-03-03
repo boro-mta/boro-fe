@@ -4,19 +4,13 @@ import {
   CardContent,
   CardMedia,
   Typography,
+  Card,
 } from "@mui/material";
-import Card from "@mui/material/Card";
 import React from "react";
+import { IItem } from "../../types";
 import "./Item.css";
 
-type Props = {
-  itemId: string;
-  title: string;
-  description?: string;
-  img?: string;
-};
-
-const Item = ({ itemId, title, description, img }: Props) => {
+const Item = ({ itemId, title, description, img }: IItem) => {
   return (
     <Box
       style={{

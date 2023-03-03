@@ -1,13 +1,14 @@
 import { Box, Container, Typography } from "@mui/material";
 import React from "react";
-import { IMG_1, IMG_2 } from "../../mocks/images";
+import { IItem } from "../../types";
 import Item from "../Item/Item";
 
 type Props = {
   containerTitle: string;
+  items: IItem[];
 };
 
-const ItemsContainer = ({ containerTitle }: Props) => {
+const ItemsContainer = ({ containerTitle, items }: Props) => {
   return (
     <Container>
       <Box>
@@ -23,26 +24,9 @@ const ItemsContainer = ({ containerTitle }: Props) => {
           flexWrap: "wrap",
         }}
       >
-        <Item
-          itemId="123"
-          title="alon"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-          Est dicta quam quae vero veniam nesciunt aliquid natus voluptate reprehenderit! Corporis!"
-          img={IMG_1}
-        />
-        <Item
-          itemId="123"
-          title="alon"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-          Est dicta quam quae vero veniam nesciunt aliquid natus voluptate reprehenderit! Corporis!"
-          img={IMG_2}
-        />
-        <Item
-          itemId="123"
-          title="alon"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-          Est dicta quam quae vero veniam nesciunt aliquid natus voluptate reprehenderit! Corporis!"
-        />
+        {items.map((item, i) => (
+          <Item key={i} {...item} />
+        ))}
       </Container>
     </Container>
   );

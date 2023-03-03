@@ -1,12 +1,13 @@
 import { Box } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
 import ItemsContainer from "./components/ItemsContainer/ItemsContainer";
+
+import { items } from "./mocks/items";
 
 function App() {
   return (
     <Box>
-      <ItemsContainer containerTitle="Tools for your home 🏠" />
+      <ItemsContainer containerTitle="Tools for your home 🏠" items={items} />
     </Box>
   );
 }
