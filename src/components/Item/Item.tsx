@@ -29,7 +29,12 @@ const Item = ({ itemId, title, description, img, onClick }: IProps) => {
         }}
       >
         <CardActionArea onClick={() => onClick(itemId)}>
-          <CardMedia component="img" height="140" src={img} />
+          <CardMedia
+            component="img"
+            height="140"
+            src={img}
+            sx={{ objectFit: "contain" }}
+          />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               {title}
