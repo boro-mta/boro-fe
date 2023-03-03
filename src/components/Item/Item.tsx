@@ -14,12 +14,13 @@ const Item = ({ itemId, title, description, img }: IItem) => {
   return (
     <Box
       style={{
-        width: "30%",
+        minWidth: "300px",
       }}
     >
       <Card
         style={{
-          borderRadius: "16px",
+          margin: "10px",
+          borderRadius: "8px",
           border: "1px solid gray",
         }}
       >

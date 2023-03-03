@@ -21,7 +21,7 @@ const ItemsContainer = ({ containerTitle, items }: Props) => {
           paddingLeft: 0,
           display: "flex",
           flexDirection: "row",
-          flexWrap: "wrap",
+          overflowX: "auto",
         }}
       >
         {items.map((item, i) => (
