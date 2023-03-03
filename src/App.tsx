@@ -1,11 +1,12 @@
 import { Box } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
+import ItemsContainer from "./components/ItemsContainer/ItemsContainer";
 
 function App() {
   return (
     <Box>
-      <Link to={`item/1`}>Go to Item 1</Link>
+      <ItemsContainer containerTitle="Tools for your home 🏠" />
     </Box>
   );
 }
