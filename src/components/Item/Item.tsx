@@ -10,7 +10,11 @@ import React from "react";
 import { IItem } from "../../types";
 import "./Item.css";
 
-const Item = ({ itemId, title, description, img }: IItem) => {
+interface IProps extends IItem {
+  onClick: (itemId: string) => void;
+}
+
+const Item = ({ itemId, title, description, img, onClick }: IProps) => {
   return (
     <Box
       style={{
@@ -24,7 +28,7 @@ const Item = ({ itemId, title, description, img }: IItem) => {
           border: "1px solid gray",
         }}
       >
-        <CardActionArea onClick={() => console.log(itemId)}>
+        <CardActionArea onClick={() => onClick(itemId)}>
           <CardMedia component="img" height="140" src={img} />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">

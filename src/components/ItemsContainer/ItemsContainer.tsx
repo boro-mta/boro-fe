@@ -2,6 +2,7 @@ import { Box, Container, Typography } from "@mui/material";
 import React from "react";
 import { IItem } from "../../types";
 import Item from "../Item/Item";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   containerTitle: string;
@@ -9,6 +10,8 @@ type Props = {
 };
 
 const ItemsContainer = ({ containerTitle, items }: Props) => {
+  const navigate = useNavigate();
+
   return (
     <Container>
       <Box>
@@ -25,7 +28,11 @@ const ItemsContainer = ({ containerTitle, items }: Props) => {
         }}
       >
         {items.map((item, i) => (
-          <Item key={i} {...item} />
+          <Item
+            key={i}
+            {...item}
+            onClick={() => navigate(`item/${item.itemId}`)}
+          />
         ))}
       </Container>
     </Container>
