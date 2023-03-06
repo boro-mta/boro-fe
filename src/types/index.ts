@@ -4,3 +4,7 @@ export interface IItem {
   description?: string;
   img?: string;
 }
+
+export interface IFullItemDetails extends IItem {
+  images?: string[]
+}
