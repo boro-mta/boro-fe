@@ -1,7 +1,7 @@
 import { IFullItemDetails } from "../types";
 import { IMG_1, IMG_2, IMG_3 } from "./images";
 
-export const fullItemsDetails: IFullItemDetails[] = [
+export const allItemsDetails: IFullItemDetails[] = [
   {
     itemId: "123",
     title: "Working driller for any construction at home",
