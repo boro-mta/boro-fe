@@ -1,5 +1,7 @@
+import { Container } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemsDetails } from "../mocks/fullItemsDetails";
 import { IFullItemDetails } from "../types";
 
@@ -21,10 +23,11 @@ const itemPage = (props: Props) => {
   }, []);
 
   return (
-    <>
+    <Container>
       <div>itemPage {itemId}</div>
       {itemDetails && <div>{itemDetails.title}</div>}
-    </>
+      <ImagesCarousel />
+    </Container>
   );
 };
 
