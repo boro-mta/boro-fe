@@ -1,7 +1,9 @@
 import React from "react";
 import Slider from "react-slick";
 
-type Props = {};
+type Props = {
+  images: string[];
+};
 
 const settings = {
   dots: true,
@@ -11,29 +13,15 @@ const settings = {
   slidesToScroll: 1,
 };
 
-const ImagesCarousel = (props: Props) => {
+const ImagesCarousel = ({ images }: Props) => {
   return (
     <div>
-      <h2> Single Item</h2>
       <Slider {...settings}>
-        <div>
-          <h3>1</h3>
-        </div>
-        <div>
-          <h3>2</h3>
-        </div>
-        <div>
-          <h3>3</h3>
-        </div>
-        <div>
-          <h3>4</h3>
-        </div>
-        <div>
-          <h3>5</h3>
-        </div>
-        <div>
-          <h3>6</h3>
-        </div>
+        {images.map((img, i) => (
+          <div key={i}>
+            <img src={img} />
+          </div>
+        ))}
       </Slider>
     </div>
   );

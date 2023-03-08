@@ -5,7 +5,7 @@ export interface IItem {
 }
 
 export interface IFullItemDetails extends Omit<IItem, "img"> {
-  images?: string[];
+  images: string[];
   description?: string;
   extraIncludedItems: string[];
   borrowerAddress?: string;

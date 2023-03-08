@@ -12,13 +12,17 @@ type IFullItemDetailsParams = {
 type Props = {};
 
 const itemPage = (props: Props) => {
-  const [itemDetails, setItemDetails] = useState<IFullItemDetails>();
+  const [itemDetails, setItemDetails] = useState<IFullItemDetails>(
+    allItemsDetails[0]
+  );
 
   let { itemId } = useParams<IFullItemDetailsParams>();
 
   useEffect(() => {
     // TODO Fetch from API here according to the itemId, for now we mock the data
-    const fullDetails = allItemsDetails.find((item) => item.itemId === itemId);
+    const fullDetails =
+      allItemsDetails.find((item) => item.itemId === itemId) ||
+      allItemsDetails[0];
     setItemDetails(fullDetails);
   }, []);
 
@@ -26,7 +30,7 @@ const itemPage = (props: Props) => {
     <Container>
       <div>itemPage {itemId}</div>
       {itemDetails && <div>{itemDetails.title}</div>}
-      <ImagesCarousel />
+      {itemDetails.images && <ImagesCarousel images={itemDetails.images} />}
     </Container>
   );
 };

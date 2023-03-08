@@ -7,7 +7,7 @@ export const allItemsDetails: IFullItemDetails[] = [
     title: "Working driller for any construction at home",
     description:
       "Yellow driller with minor scratches on the side, perfect for drilling holes while constructing. Needs to be charged up before used.",
-    images: [IMG_1],
+    images: [IMG_1, IMG_1],
     extraIncludedItems: [],
     borrowerAddress: "Tel Aviv Area",
     borrowerPhoneNumber: "052-466-9214",
