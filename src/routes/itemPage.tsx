@@ -6,6 +6,7 @@ import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemsDetails } from "../mocks/fullItemsDetails";
 import { IFullItemDetails } from "../types";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import ErrorIcon from "@mui/icons-material/Error";
 import IconWithText from "../components/IconWithText/IconWithText";
 
 type IFullItemDetailsParams = {
@@ -59,8 +60,14 @@ const itemPage = (props: Props) => {
           {itemDetails.extraIncludedItems.map((item, i) => (
             <IconWithText
               key={i}
-              icon={<CheckCircleRoundedIcon color="success" />}
-              text={item}
+              icon={
+                item.isIncluded ? (
+                  <CheckCircleRoundedIcon color="success" />
+                ) : (
+                  <ErrorIcon color="error" />
+                )
+              }
+              text={item.title}
             />
           ))}
         </Box>

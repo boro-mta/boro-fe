@@ -4,10 +4,15 @@ export interface IItem {
   img?: string;
 }
 
+interface IExtraIncludedItemProperties {
+  title: string;
+  isIncluded: boolean;
+}
+
 export interface IFullItemDetails extends Omit<IItem, "img"> {
   images: string[];
   description?: string;
-  extraIncludedItems: string[];
+  extraIncludedItems: IExtraIncludedItemProperties[];
   borrowerAddress?: string;
   borrowerPhoneNumber?: string;
 }
