@@ -1,5 +1,8 @@
+import Box from "@mui/material/Box";
 import React from "react";
 import Slider from "react-slick";
+
+import "./ImagesCarousel.css";
 
 type Props = {
   images: string[];
@@ -15,15 +18,15 @@ const settings = {
 
 const ImagesCarousel = ({ images }: Props) => {
   return (
-    <div>
+    <Box>
       <Slider {...settings}>
         {images.map((img, i) => (
           <div key={i}>
-            <img src={img} />
+            <img className="img-carousel" src={img} />
           </div>
         ))}
       </Slider>
-    </div>
+    </Box>
   );
 };
 

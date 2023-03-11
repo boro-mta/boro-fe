@@ -1,4 +1,5 @@
-import { Container } from "@mui/material";
+import { CardMedia, Container, Typography } from "@mui/material";
+import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
@@ -28,9 +29,17 @@ const itemPage = (props: Props) => {
 
   return (
     <Container>
-      <div>itemPage {itemId}</div>
-      {itemDetails && <div>{itemDetails.title}</div>}
-      {itemDetails.images && <ImagesCarousel images={itemDetails.images} />}
+      <Card>
+        {itemDetails.images && (
+          <CardMedia component="div" style={{ height: "230px" }}>
+            <ImagesCarousel images={itemDetails.images} />
+          </CardMedia>
+        )}
+      </Card>
+      <Typography variant="subtitle1">{itemDetails.title}</Typography>
+      <Typography variant="subtitle2" style={{ color: "gray" }}>
+        {itemDetails.borrowerAddress}
+      </Typography>
     </Container>
   );
 };
