@@ -1,10 +1,12 @@
-import { CardMedia, Container, Typography } from "@mui/material";
+import { Box, CardMedia, Container, Divider, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemsDetails } from "../mocks/fullItemsDetails";
 import { IFullItemDetails } from "../types";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import IconWithText from "../components/IconWithText/IconWithText";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -29,17 +31,40 @@ const itemPage = (props: Props) => {
 
   return (
     <Container>
-      <Card>
+      <Card sx={{ marginBottom: "10px" }}>
         {itemDetails.images && (
           <CardMedia component="div" style={{ height: "230px" }}>
             <ImagesCarousel images={itemDetails.images} />
           </CardMedia>
         )}
       </Card>
-      <Typography variant="subtitle1">{itemDetails.title}</Typography>
-      <Typography variant="subtitle2" style={{ color: "gray" }}>
+      <Typography variant="h5">{itemDetails.title}</Typography>
+      <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
         {itemDetails.borrowerAddress}
       </Typography>
+      <Divider />
+      <Typography variant="body1" sx={{ marginTop: "10px" }} gutterBottom>
+        {itemDetails.description}
+      </Typography>
+
+      {itemDetails.extraIncludedItems && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            flexWrap: "wrap",
+          }}
+        >
+          {itemDetails.extraIncludedItems.map((item, i) => (
+            <IconWithText
+              key={i}
+              icon={<CheckCircleRoundedIcon color="success" />}
+              text={item}
+            />
+          ))}
+        </Box>
+      )}
     </Container>
   );
 };

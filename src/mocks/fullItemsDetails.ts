@@ -8,7 +8,11 @@ export const allItemsDetails: IFullItemDetails[] = [
     description:
       "Yellow driller with minor scratches on the side, perfect for drilling holes while constructing. Needs to be charged up before used.",
     images: [IMG_1, IMG_1],
-    extraIncludedItems: [],
+    extraIncludedItems: [
+      "Batteries Included",
+      "Extended Warranty",
+      "bbbbbbbbbb",
+    ],
     borrowerAddress: "Tel Aviv Area",
     borrowerPhoneNumber: "052-466-9214",
   },
