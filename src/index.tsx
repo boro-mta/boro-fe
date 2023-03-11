@@ -7,6 +7,7 @@ import App from "./App";
 import ItemPage from "./routes/itemPage";
 import "./index.css";
 import ErrorPage from "./routes/errorPage";
+import "react-datepicker/dist/react-datepicker.css";
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
