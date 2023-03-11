@@ -12,6 +12,7 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import FacebookLoginPage from "./routes/facebookLoginPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: "item/:itemId",
     element: <ItemPage />,
+  },
+  {
+    path: "/login",
+    element: <FacebookLoginPage />,
   },
   {
     path: "*",
