@@ -4,7 +4,7 @@ export interface IItem {
   img?: string;
 }
 
-interface IExtraIncludedItemProperties {
+export interface IExtraIncludedItemProperties {
   title: string;
   isIncluded: boolean;
 }

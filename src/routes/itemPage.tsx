@@ -1,13 +1,11 @@
-import { Box, CardMedia, Container, Divider, Typography } from "@mui/material";
+import { CardMedia, Container, Divider, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemsDetails } from "../mocks/fullItemsDetails";
 import { IFullItemDetails } from "../types";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import ErrorIcon from "@mui/icons-material/Error";
-import IconWithText from "../components/IconWithText/IconWithText";
+import ExtraIncludedItemsContainer from "../components/ExtraIncludedItemsContainer/ExtraIncludedItemsContainer";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -49,28 +47,9 @@ const itemPage = (props: Props) => {
       </Typography>
 
       {itemDetails.extraIncludedItems && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-around",
-            flexWrap: "wrap",
-          }}
-        >
-          {itemDetails.extraIncludedItems.map((item, i) => (
-            <IconWithText
-              key={i}
-              icon={
-                item.isIncluded ? (
-                  <CheckCircleRoundedIcon color="success" />
-                ) : (
-                  <ErrorIcon color="error" />
-                )
-              }
-              text={item.title}
-            />
-          ))}
-        </Box>
+        <ExtraIncludedItemsContainer
+          extraIncludedItems={itemDetails.extraIncludedItems}
+        />
       )}
     </Container>
   );
