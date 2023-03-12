@@ -1,4 +1,4 @@
-import { CardMedia, Container, Divider, Typography } from "@mui/material";
+import { Box, CardMedia, Container, Divider, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -6,6 +6,8 @@ import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemsDetails } from "../mocks/fullItemsDetails";
 import { IFullItemDetails } from "../types";
 import ExtraIncludedItemsContainer from "../components/ExtraIncludedItemsContainer/ExtraIncludedItemsContainer";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -51,6 +53,23 @@ const itemPage = (props: Props) => {
           extraIncludedItems={itemDetails.extraIncludedItems}
         />
       )}
+      <Divider />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          marginTop: "10px",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box sx={{ display: "flex" }}>
+          <CalendarMonthIcon />
+          <Typography sx={{ marginLeft: "5px" }} variant="body1">
+            Find available dates
+          </Typography>
+        </Box>
+        <ArrowForwardIosIcon />
+      </Box>
     </Container>
   );
 };
