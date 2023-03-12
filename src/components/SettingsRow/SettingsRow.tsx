@@ -17,6 +17,10 @@ const SettingsRow = ({ leftIcon, rowText, onClick }: Props) => {
                 flexDirection: "row",
                 marginTop: "10px",
                 justifyContent: "space-between",
+                "&:hover": {
+                    cursor: "pointer",
+                    backgroundColor: "#EDF6F9"
+                }
             }}
             onClick={onClick}
         >
