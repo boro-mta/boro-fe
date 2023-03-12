@@ -7,7 +7,7 @@ import { allItemsDetails } from "../mocks/fullItemsDetails";
 import { IFullItemDetails } from "../types";
 import ExtraIncludedItemsContainer from "../components/ExtraIncludedItemsContainer/ExtraIncludedItemsContainer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import SettingsRow from "../components/SettingsRow/SettingsRow";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -54,22 +54,11 @@ const itemPage = (props: Props) => {
         />
       )}
       <Divider />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          marginTop: "10px",
-          justifyContent: "space-between",
-        }}
-      >
-        <Box sx={{ display: "flex" }}>
-          <CalendarMonthIcon />
-          <Typography sx={{ marginLeft: "5px" }} variant="body1">
-            Find available dates
-          </Typography>
-        </Box>
-        <ArrowForwardIosIcon />
-      </Box>
+      <SettingsRow
+        leftIcon={<CalendarMonthIcon />}
+        rowText={"Find available dates"}
+        onClick={() => console.log("here")}
+      />
     </Container>
   );
 };
