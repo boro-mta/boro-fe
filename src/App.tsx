@@ -13,6 +13,7 @@ function App() {
   const exampleDate3: Date = new Date('March 29, 2023 02:00:00');
 
   const datesToExcludeArr: Date[] = [exampleDate1, exampleDate2, exampleDate3];
+  let message: string = '';
 
   const handleChange = (dates: any) => {
     const [start, end] = dates;
@@ -36,34 +37,39 @@ function App() {
     while (loop <= endDate) {
       console.log(loop);
       if (checkExcludeDatesArrayContainsDate(loop)) {
+        message = "The date " + loop + " is not available, please choose different dates.";
         console.log("The date ", loop, " is not available, please choose different dates.");
+        break;
       }
 
       let newDate = loop.setDate(loop.getDate() + 1);
       loop = new Date(newDate);
     }
+
+    console.log(message);
   };
 
   const checkExcludeDatesArrayContainsDate = (dateToCheck: Date): boolean => {
-    datesToExcludeArr.forEach(function (dateToExclude) {
+
+    for (let i = 0; i < datesToExcludeArr.length; i++) {
       console.log("dateToCheck: ", dateToCheck);
-      console.log("dateToExclude: ", dateToExclude);
+      console.log("dateToExclude: ", datesToExcludeArr[i]);
       console.log("dateToCheck.getDay: ", dateToCheck.getDay());
-      console.log("dateToExclude.getDay: ", dateToExclude.getDay());
+      console.log("dateToExclude.getDay: ", datesToExcludeArr[i].getDay());
 
       console.log("dateToCheck.getMonth: ", dateToCheck.getMonth());
-      console.log("dateToExclude.getMonth: ", dateToExclude.getMonth());
+      console.log("dateToExclude.getMonth: ", datesToExcludeArr[i].getMonth());
 
       console.log("dateToCheck.getFullYear: ", dateToCheck.getFullYear());
-      console.log("dateToExclude.getFullYear: ", dateToExclude.getFullYear());
+      console.log("dateToExclude.getFullYear: ", datesToExcludeArr[i].getFullYear());
 
-      if (dateToCheck.getDay === dateToExclude.getDay &&
-        dateToCheck.getMonth === dateToExclude.getMonth &&
-        dateToCheck.getFullYear === dateToExclude.getFullYear)
-        console.log("everything is equal!!!");
-      return true;
-    })
+      if (dateToCheck.getDay() === datesToExcludeArr[i].getDay() &&
+        dateToCheck.getMonth() === datesToExcludeArr[i].getMonth() &&
+        dateToCheck.getFullYear() === datesToExcludeArr[i].getFullYear()) {
+        return true;
+      }
 
+    }
     return false;
   };
 
@@ -75,6 +81,7 @@ function App() {
       <DateRangePicker startDate={startDate} endDate={endDate} onSubmit={handleSubmit} onChange={handleChange} datesToExclude={datesToExcludeArr} />
       <p>{startDate.toDateString()}</p>
       <p>{endDate && endDate.toDateString()}</p>
+      <p>{message}</p>
     </div>
   );
 }
