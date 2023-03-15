@@ -1,17 +1,20 @@
 import { Button } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import DatePicker from 'react-datepicker'
-import { start } from "repl";
 
 type Props = {
     startDate: Date;
     endDate: Date;
     onSubmit: (startDate: Date, endDate: Date) => (void);
-    onClearDates: () => void;
     onChange: (dates: any) => void;
+    datesToExclude: Date[];
 };
 
-const DateRangePicker = ({ startDate, endDate, onSubmit, onClearDates, onChange }: Props) => {
+// convey wrong dates
+// disabled dates
+// error messages
+const DateRangePicker = ({ startDate, endDate, onSubmit, onChange, datesToExclude }: Props) => {
+
     return (
         <div>
             <DatePicker
@@ -22,9 +25,9 @@ const DateRangePicker = ({ startDate, endDate, onSubmit, onClearDates, onChange 
                 selectsRange={true}
                 inline={true}
                 isClearable={true}
+                excludeDates={datesToExclude}
             />
             <Button onClick={() => onSubmit(startDate, endDate)}> Submit </Button>
-            <Button onClick={onClearDates}> Clear </Button>
         </div>
     )
 }
