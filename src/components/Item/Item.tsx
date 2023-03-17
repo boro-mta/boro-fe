@@ -14,7 +14,7 @@ interface IProps extends IItem {
   onClick: (itemId: string) => void;
 }
 
-const Item = ({ itemId, title, description, img, onClick }: IProps) => {
+const Item = ({ itemId, title, img, onClick }: IProps) => {
   return (
     <Box
       style={{
@@ -29,12 +29,16 @@ const Item = ({ itemId, title, description, img, onClick }: IProps) => {
         }}
       >
         <CardActionArea onClick={() => onClick(itemId)}>
-          <CardMedia component="img" height="140" src={img} />
+          <CardMedia
+            component="img"
+            height="140"
+            src={img}
+            sx={{ objectFit: "contain" }}
+          />
           <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
+            <Typography gutterBottom variant="body1" component="div">
               {title}
             </Typography>
-            <Typography variant="body2">{description}</Typography>
           </CardContent>
         </CardActionArea>
       </Card>
