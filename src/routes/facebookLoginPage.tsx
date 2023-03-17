@@ -20,7 +20,7 @@ const FacebookLoginPage = () => {
     const userName = useAppSelector(selectUserName)
     const handleLoginSuccess = (response: ReactFacebookLoginInfo) => {
         setIsLoggedIn(true)
-        //setUserData({ name: response.name, email: response.email, picture: response.picture })
+        setUserData({ name: response.name, email: response.email, picture: response.picture })
     }
     return (
         <div className="facebook-login-page">
