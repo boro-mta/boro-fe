@@ -11,7 +11,6 @@ export const userSlice = createSlice({
   },
   reducers: {
     updateUser: (state, action) => {
-      debugger;
       state.name = action.payload.name;
       state.email = action.payload.email;
       state.id = action.payload.id;
