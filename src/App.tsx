@@ -22,17 +22,12 @@ function App() {
   };
 
   const handleSubmit = (startDate: Date, endDate: Date) => {
-    console.log(startDate);
-    console.log(endDate);
-    console.log('submit pressed');
     checkDatesAreAvailable(startDate, endDate);
-
   };
 
   const checkDatesAreAvailable = (startDate: Date, endDate: Date) => {
     let loop: Date = new Date(startDate);
     while (loop <= endDate) {
-      console.log(loop);
       if (checkExcludeDatesArrayContainsDate(loop)) {
         setMessage("The date " + loop + " is not available, please choose different dates.");
         break;
@@ -44,8 +39,6 @@ function App() {
       let newDate = loop.setDate(loop.getDate() + 1);
       loop = new Date(newDate);
     }
-
-    console.log(message);
   };
 
   const checkExcludeDatesArrayContainsDate = (dateToCheck: Date): boolean => {
