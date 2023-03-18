@@ -1,7 +1,10 @@
 import { Box } from "@mui/material";
 import React, { useState } from "react";
 import DateRangePicker from "./components/DateRangePicker/DateRangePicker";
+import { useAppSelector } from "./app/hooks";
 import ItemsContainer from "./components/ItemsContainer/ItemsContainer";
+import { selectUserName } from "./features/UserSlice";
+
 import { items } from "./mocks/items";
 
 function App() {
@@ -9,12 +12,12 @@ function App() {
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [message, setMessage] = useState<string>();
 
-  const exampleDate1: Date = new Date('April 19, 2023 02:00:00');
-  const exampleDate2: Date = new Date('March 12, 2023 02:00:00');
-  const exampleDate3: Date = new Date('March 29, 2023 02:00:00');
+  const exampleDate1: Date = new Date("April 19, 2023 02:00:00");
+  const exampleDate2: Date = new Date("March 12, 2023 02:00:00");
+  const exampleDate3: Date = new Date("March 29, 2023 02:00:00");
 
   const datesToExcludeArr: Date[] = [exampleDate1, exampleDate2, exampleDate3];
- 
+
   const handleChange = (dates: any) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -24,9 +27,8 @@ function App() {
   const handleSubmit = (startDate: Date, endDate: Date) => {
     console.log(startDate);
     console.log(endDate);
-    console.log('submit pressed');
+    console.log("submit pressed");
     checkDatesAreAvailable(startDate, endDate);
-
   };
 
   const checkDatesAreAvailable = (startDate: Date, endDate: Date) => {
@@ -34,10 +36,13 @@ function App() {
     while (loop <= endDate) {
       console.log(loop);
       if (checkExcludeDatesArrayContainsDate(loop)) {
-        setMessage("The date " + loop + " is not available, please choose different dates.");
+        setMessage(
+          "The date " +
+            loop +
+            " is not available, please choose different dates."
+        );
         break;
-      }
-      else {
+      } else {
         setMessage("The dates are available:)");
       }
 
@@ -49,11 +54,12 @@ function App() {
   };
 
   const checkExcludeDatesArrayContainsDate = (dateToCheck: Date): boolean => {
-
     for (let i = 0; i < datesToExcludeArr.length; i++) {
-      if (dateToCheck.getDate() === datesToExcludeArr[i].getDate() &&
+      if (
+        dateToCheck.getDate() === datesToExcludeArr[i].getDate() &&
         dateToCheck.getMonth() === datesToExcludeArr[i].getMonth() &&
-        dateToCheck.getFullYear() === datesToExcludeArr[i].getFullYear()) {
+        dateToCheck.getFullYear() === datesToExcludeArr[i].getFullYear()
+      ) {
         return true;
       }
     }
@@ -61,12 +67,21 @@ function App() {
     return false;
   };
 
+  const userName = useAppSelector(selectUserName);
+
   return (
     <div>
       <Box>
         <ItemsContainer containerTitle="Tools for your home 🏠" items={items} />
+        <div>{userName}</div>
       </Box>
-      <DateRangePicker startDate={startDate} endDate={endDate} onSubmit={handleSubmit} onChange={handleChange} datesToExclude={datesToExcludeArr} />
+      <DateRangePicker
+        startDate={startDate}
+        endDate={endDate}
+        onSubmit={handleSubmit}
+        onChange={handleChange}
+        datesToExclude={datesToExcludeArr}
+      />
       <p>{startDate.toDateString()}</p>
       <p>{endDate && endDate.toDateString()}</p>
       <p>{message}</p>

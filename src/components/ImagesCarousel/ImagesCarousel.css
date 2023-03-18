@@ -1,0 +1,12 @@
+.img-carousel {
+    height: 200px;
+    width: 200px;
+    margin: auto;
+}
+
+.slick-slide > div {
+    display: grid;
+    place-items: center;
+    width: 80%;
+    margin: auto;
+}
