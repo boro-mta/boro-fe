@@ -10,9 +10,6 @@ type Props = {
     datesToExclude: Date[];
 };
 
-// convey wrong dates
-// disabled dates
-// error messages
 const DateRangePicker = ({ startDate, endDate, onSubmit, onChange, datesToExclude }: Props) => {
 
     return (

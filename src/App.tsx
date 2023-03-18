@@ -7,14 +7,14 @@ import { items } from "./mocks/items";
 function App() {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
+  const [message, setMessage] = useState<string>();
 
   const exampleDate1: Date = new Date('April 19, 2023 02:00:00');
   const exampleDate2: Date = new Date('March 12, 2023 02:00:00');
   const exampleDate3: Date = new Date('March 29, 2023 02:00:00');
 
   const datesToExcludeArr: Date[] = [exampleDate1, exampleDate2, exampleDate3];
-  let message: string = '';
-
+ 
   const handleChange = (dates: any) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -30,16 +30,15 @@ function App() {
   };
 
   const checkDatesAreAvailable = (startDate: Date, endDate: Date) => {
-    // startDate.setUTCHours(0, 0, 0, 0);
-    // endDate.setUTCHours(0, 0, 0, 0);
     let loop: Date = new Date(startDate);
-
     while (loop <= endDate) {
       console.log(loop);
       if (checkExcludeDatesArrayContainsDate(loop)) {
-        message = "The date " + loop + " is not available, please choose different dates.";
-        console.log("The date ", loop, " is not available, please choose different dates.");
+        setMessage("The date " + loop + " is not available, please choose different dates.");
         break;
+      }
+      else {
+        setMessage("The dates are available:)");
       }
 
       let newDate = loop.setDate(loop.getDate() + 1);
@@ -52,24 +51,13 @@ function App() {
   const checkExcludeDatesArrayContainsDate = (dateToCheck: Date): boolean => {
 
     for (let i = 0; i < datesToExcludeArr.length; i++) {
-      console.log("dateToCheck: ", dateToCheck);
-      console.log("dateToExclude: ", datesToExcludeArr[i]);
-      console.log("dateToCheck.getDay: ", dateToCheck.getDay());
-      console.log("dateToExclude.getDay: ", datesToExcludeArr[i].getDay());
-
-      console.log("dateToCheck.getMonth: ", dateToCheck.getMonth());
-      console.log("dateToExclude.getMonth: ", datesToExcludeArr[i].getMonth());
-
-      console.log("dateToCheck.getFullYear: ", dateToCheck.getFullYear());
-      console.log("dateToExclude.getFullYear: ", datesToExcludeArr[i].getFullYear());
-
-      if (dateToCheck.getDay() === datesToExcludeArr[i].getDay() &&
+      if (dateToCheck.getDate() === datesToExcludeArr[i].getDate() &&
         dateToCheck.getMonth() === datesToExcludeArr[i].getMonth() &&
         dateToCheck.getFullYear() === datesToExcludeArr[i].getFullYear()) {
         return true;
       }
-
     }
+
     return false;
   };
 
