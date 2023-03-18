@@ -23,6 +23,7 @@ const DateRangePicker = ({ startDate, endDate, onSubmit, onChange, datesToExclud
                 inline={true}
                 isClearable={true}
                 excludeDates={datesToExclude}
+                minDate={new Date()}
             />
             <Button onClick={() => onSubmit(startDate, endDate)}> Submit </Button>
         </div>
