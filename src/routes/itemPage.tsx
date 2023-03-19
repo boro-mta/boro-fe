@@ -1,7 +1,14 @@
-import { Box, CardMedia, Container, Divider, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardMedia,
+  Container,
+  Divider,
+  Typography,
+} from "@mui/material";
 import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemsDetails } from "../mocks/fullItemsDetails";
 import { IFullItemDetails } from "../types";
@@ -18,10 +25,11 @@ type IFullItemDetailsParams = {
 type Props = {};
 
 const itemPage = (props: Props) => {
+  const navigate = useNavigate();
+
   const [itemDetails, setItemDetails] = useState<IFullItemDetails>(
     allItemsDetails[0]
   );
-
   let { itemId } = useParams<IFullItemDetailsParams>();
 
   useEffect(() => {
@@ -69,8 +77,16 @@ const itemPage = (props: Props) => {
       <SettingsRow
         leftIcon={<CalendarMonthIcon />}
         rowText={"Find available dates"}
-        onClick={() => console.log("here")}
+        onClick={() => navigate("/calendar")}
       />
+
+      <Button
+        variant="contained"
+        sx={{ marginTop: "15px" }}
+        onClick={() => navigate("/")}
+      >
+        Go to home
+      </Button>
     </Container>
   );
 };
