@@ -1,6 +1,6 @@
 import apiConfig from "../config/apiConfig";
 
-const request = async (route: string, params: any, method = "GET") => {
+const request = async (route: string, params?: any, method = "GET") => {
   const options: any = {
     method,
     headers: {
@@ -10,7 +10,8 @@ const request = async (route: string, params: any, method = "GET") => {
 
   if (params) {
     if (method === "GET") {
-      route += "?" + objectToQueryString(params);
+      // In the future when we will have get with query params:
+      // route += "?" + objectToQueryString(params);
     } else {
       options.body = JSON.stringify(params);
     }
@@ -35,7 +36,7 @@ const objectToQueryString = (obj: any) => {
     .join("&");
 };
 
-const get = (route: string, params: any) => {
+const get = (route: string, params?: any) => {
   return request(route, params);
 };
 

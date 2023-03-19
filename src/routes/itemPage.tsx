@@ -8,6 +8,8 @@ import { IFullItemDetails } from "../types";
 import ExtraIncludedItemsContainer from "../components/ExtraIncludedItemsContainer/ExtraIncludedItemsContainer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SettingsRow from "../components/SettingsRow/SettingsRow";
+import HttpClient from "../api/HttpClient";
+import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -23,11 +25,21 @@ const itemPage = (props: Props) => {
   let { itemId } = useParams<IFullItemDetailsParams>();
 
   useEffect(() => {
-    // TODO Fetch from API here according to the itemId, for now we mock the data
-    const fullDetails =
-      allItemsDetails.find((item) => item.itemId === itemId) ||
-      allItemsDetails[0];
-    setItemDetails(fullDetails);
+    const getFullDetails = async () => {
+      let fullDetails;
+      // TODO Fetch from API here according to the itemId, for now we mock the data
+      if (itemId !== undefined && itemId.length > 5) {
+        fullDetails = await HttpClient.get(`items/${itemId}`);
+        fullDetails.images = formatImagesOnRecieve(fullDetails.images);
+      } else {
+        fullDetails =
+          allItemsDetails.find((item) => item.itemId === itemId) ||
+          allItemsDetails[0];
+      }
+      setItemDetails(fullDetails);
+    };
+
+    getFullDetails();
   }, []);
 
   return (

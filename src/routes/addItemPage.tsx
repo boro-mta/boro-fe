@@ -13,6 +13,7 @@ import {
   Alert,
 } from "@mui/material";
 import HttpClient from "../api/HttpClient";
+import { useNavigate } from "react-router";
 
 type Props = {};
 
@@ -36,6 +37,8 @@ const addItemPage = (props: Props) => {
   const [images, setImages] = useState<string[]>();
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -96,6 +99,7 @@ const addItemPage = (props: Props) => {
       const data = await HttpClient.create("items/add", reqBody);
       console.log(data);
       setIsAddSuccess(true);
+      navigate(`/item/${data}`);
     } catch (e) {
       setIsAddSuccess(false);
       console.log(e);
