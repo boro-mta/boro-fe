@@ -31,6 +31,39 @@ const validationSchema = yup.object({
     .required("Required"),
 });
 
+const sendRequest = async (obj: any) => {
+  const imagesForBody = obj.images.map((img: any) => {
+    const imgProps = img.split(",");
+    return {
+      base64ImageMetaData: imgProps[0],
+      base64ImageData: imgProps[1],
+      isCover: false,
+    };
+  });
+
+  const reqBody = {
+    title: obj.title,
+    description: obj.description,
+    images: imagesForBody,
+    ownerId: "someownerId",
+    includedExtras: {},
+  };
+
+  try {
+    const resp = await fetch("http://localhost:5157/items/add", {
+      method: "POST",
+      body: JSON.stringify(reqBody),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await resp.json();
+    console.log(data);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const addItemPage = (props: Props) => {
   const [images, setImages] = useState<string[]>();
   const [open, setOpen] = useState<boolean>(false);
@@ -45,10 +78,10 @@ const addItemPage = (props: Props) => {
       values: FormValues,
       { setSubmitting }: FormikHelpers<FormValues>
     ) => {
-      setTimeout(() => {
+      sendRequest({ ...values, images }).then(() => {
         setOpen(true);
         setSubmitting(false);
-      }, 2000);
+      });
     },
   });
 
@@ -63,7 +96,6 @@ const addItemPage = (props: Props) => {
 
   const convertToBase64 = async (evt: React.ChangeEvent<HTMLInputElement>) => {
     let filesPromises: Promise<string>[] = [];
-    debugger;
     if (evt.target.files && evt.target.files.length) {
       Array.from(evt.target.files).forEach((file) =>
         filesPromises.push(toBase64(file))
@@ -109,7 +141,6 @@ const addItemPage = (props: Props) => {
             type="file"
             onChange={convertToBase64}
             multiple
-            required
             accept="image/*"
             disabled={formik.isSubmitting}
           />
