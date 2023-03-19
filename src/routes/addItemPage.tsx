@@ -12,6 +12,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import HttpClient from "../api/HttpClient";
 
 type Props = {};
 
@@ -31,42 +32,10 @@ const validationSchema = yup.object({
     .required("Required"),
 });
 
-const sendRequest = async (obj: any) => {
-  const imagesForBody = obj.images.map((img: any) => {
-    const imgProps = img.split(",");
-    return {
-      base64ImageMetaData: imgProps[0],
-      base64ImageData: imgProps[1],
-      isCover: false,
-    };
-  });
-
-  const reqBody = {
-    title: obj.title,
-    description: obj.description,
-    images: imagesForBody,
-    ownerId: "someownerId",
-    includedExtras: {},
-  };
-
-  try {
-    const resp = await fetch("http://localhost:5157/items/add", {
-      method: "POST",
-      body: JSON.stringify(reqBody),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await resp.json();
-    console.log(data);
-  } catch (e) {
-    console.log(e);
-  }
-};
-
 const addItemPage = (props: Props) => {
   const [images, setImages] = useState<string[]>();
   const [open, setOpen] = useState<boolean>(false);
+  const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
 
   const formik = useFormik({
     initialValues: {
@@ -102,6 +71,34 @@ const addItemPage = (props: Props) => {
       );
       const filesInBase64 = await Promise.all(filesPromises);
       setImages(filesInBase64);
+    }
+  };
+
+  const sendRequest = async (obj: any) => {
+    const imagesForBody = obj.images.map((img: any) => {
+      const imgProps = img.split(",");
+      return {
+        base64ImageMetaData: imgProps[0],
+        base64ImageData: imgProps[1],
+        isCover: false,
+      };
+    });
+
+    const reqBody = {
+      title: obj.title,
+      description: obj.description,
+      images: imagesForBody,
+      ownerId: "someownerId",
+      includedExtras: {},
+    };
+
+    try {
+      const data = await HttpClient.create("items/add", reqBody);
+      console.log(data);
+      setIsAddSuccess(true);
+    } catch (e) {
+      setIsAddSuccess(false);
+      console.log(e);
     }
   };
 
@@ -163,10 +160,12 @@ const addItemPage = (props: Props) => {
       >
         <Alert
           onClose={() => setOpen(false)}
-          severity="success"
+          severity={isAddSuccess ? "success" : "error"}
           sx={{ width: "100%" }}
         >
-          The item was added successfully!
+          {isAddSuccess
+            ? "The item was added successfully!"
+            : "There was an issue adding the item. please try again."}
         </Alert>
       </Snackbar>
     </Container>
