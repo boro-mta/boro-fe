@@ -14,6 +14,15 @@ import {
 } from "@mui/material";
 import HttpClient from "../api/HttpClient";
 import { useNavigate } from "react-router";
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Chip from '@mui/material/Chip';
+import Autocomplete from '@mui/material/Autocomplete';
+import Stack from '@mui/material/Stack';
+import { current } from "@reduxjs/toolkit";
 
 type Props = {};
 
@@ -37,6 +46,31 @@ const addItemPage = (props: Props) => {
   const [images, setImages] = useState<string[]>();
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
+  const [newCategory, setNewCategory] = useState<any>('');
+  const options = [
+    {
+      value: 0,
+      text: 'Renovation',
+    },
+    {
+      value: 1,
+      text: 'Gardening',
+    },
+    {
+      value: 2,
+      text: 'Kitchen',
+    },
+    {
+      value: 3,
+      text: 'Gaming',
+    },
+    {
+      value: 4,
+      text: 'Electronics',
+    },
+  ]
+
+  const [categoryArr, setCategoryArr] = React.useState<any>(options);
 
   const navigate = useNavigate();
 
@@ -106,6 +140,30 @@ const addItemPage = (props: Props) => {
     }
   };
 
+  const handleNewCategory = (event: any): void => {
+    setNewCategory(event.target.value);
+  };
+
+  const handleAddButton = (event: any): void => {
+    const lastValueNumber: number = options[(options.length) - 1].value;
+    const newCategoryByUser: any = { value: lastValueNumber + 1, text: newCategory, selected: true }; //todo: fix any type to the right type
+    console.log(categoryArr);
+    console.log(options);
+  };
+
+  const updateCategoriesState = () => {
+    const lastValueNumber: number = options[(options.length) - 1].value;
+    const newCategoryByUser: object = { value: lastValueNumber + 1, text: newCategory, selected: true }; //todo: fix any type to the right type
+
+    addCategoryToArr(newCategoryByUser);
+  }
+
+  const addCategoryToArr = (category: any) => {
+    setCategoryArr((current: any) => [...current, category]);
+    console.log(categoryArr);
+    console.log(options);
+  }
+
   return (
     <Container>
       <Typography variant="h3">Add New Item</Typography>
@@ -138,6 +196,33 @@ const addItemPage = (props: Props) => {
             }
             helperText={formik.touched.description && formik.errors.description}
           />
+
+          <Stack spacing={3} sx={{ width: 500 }}>
+            <Autocomplete
+              multiple
+              id="tags-outlined"
+              options={categoryArr}
+              getOptionLabel={(option: any) => option.text}
+              filterSelectedOptions
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Categories"
+                  placeholder="Choose categories for your item"
+                />
+              )}
+            />
+
+            <TextField
+              id="new-category"
+              label="Add Other Category"
+              variant="outlined"
+              value={newCategory}
+              onChange={handleNewCategory}
+            />
+            <Button variant="contained" onClick={updateCategoriesState}>Add Category</Button>
+          </Stack>
+
           <input
             type="file"
             onChange={convertToBase64}
