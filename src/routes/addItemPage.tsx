@@ -17,6 +17,15 @@ import { useNavigate } from "react-router";
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import { options } from "../mocks/items";
+import { Theme, useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Chip from '@mui/material/Chip';
+import { text } from "stream/consumers";
 
 type Props = {};
 
@@ -24,6 +33,40 @@ interface FormValues {
   title: string;
   description: string;
 }
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const names = [
+  'Oliver Hansen',
+  'Van Henry',
+  'April Tucker',
+  'Ralph Hubbard',
+  'Omar Alexander',
+  'Carlos Abbott',
+  'Miriam Wagner',
+  'Bradley Wilkerson',
+  'Virginia Andrews',
+  'Kelly Snyder',
+];
+
+function getStyles(name: string, selectedCategories: readonly string[], theme: Theme) {
+  return {
+    fontWeight:
+      selectedCategories.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
+
 
 const validationSchema = yup.object({
   title: yup
@@ -37,12 +80,17 @@ const validationSchema = yup.object({
 });
 
 const addItemPage = (props: Props) => {
+  const theme = useTheme();
+  const [personName, setPersonName] = React.useState<string[]>([]);
+
+
   const [images, setImages] = useState<string[]>();
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
   const [newCategory, setNewCategory] = useState<any>('');
 
-  const [categoryArr, setCategoryArr] = React.useState<any>(options);
+  const [categoryArr, setCategoryArr] = React.useState<any[]>(options);
+  const [selectedCategories, setSelectedCategories] = React.useState<any>([]);
 
   const navigate = useNavigate();
 
@@ -110,6 +158,16 @@ const addItemPage = (props: Props) => {
       setIsAddSuccess(false);
       console.log(e);
     }
+  };
+
+  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedCategories(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
   };
 
   const handleNewCategory = (event: any): void => {
@@ -186,6 +244,52 @@ const addItemPage = (props: Props) => {
             helperText={formik.touched.description && formik.errors.description}
           />
 
+
+
+          {/* categories - chip */}
+          <div>
+            <FormControl sx={{ m: 0, width: 300 }}>
+              <InputLabel id="demo-multiple-chip-label">Categories</InputLabel>
+              <Select
+                labelId="demo-multiple-chip-label"
+                id="demo-multiple-chip"
+                multiple
+                // value={
+                //   categoryArr.map((val) => {
+                //     { return val.text }
+                //   })
+                // } 
+                value={selectedCategories}
+                onChange={handleChange}
+                input={<OutlinedInput
+                  id="select-multiple-chip"
+                  label="Categories"
+                />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+                MenuProps={MenuProps}
+              >
+                {options.map((name) =>
+
+                  <MenuItem
+                    key={name.text}
+                    value={name.text}
+                    style={getStyles(name.text, selectedCategories, theme)}
+                  >
+                    {name.text}
+                  </MenuItem>
+
+                )}
+              </Select>
+            </FormControl>
+          </div>
+
+          {/* categories - Autocomplete */}
           <Stack spacing={3} sx={{ width: 500 }}>
             <Autocomplete
               multiple
