@@ -23,3 +23,12 @@ export interface IFullItemDetails extends Omit<IItem, "img"> {
   borrowerAddress?: string;
   borrowerPhoneNumber?: string;
 }
+
+export interface IFullItemDetailsNew {
+  condition: string;
+  category: string[];
+  title: string;
+  description?: string;
+  coverPhoto: File;
+  additionalPhotos?: File[];
+}
