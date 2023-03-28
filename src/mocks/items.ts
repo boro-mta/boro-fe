@@ -18,3 +18,26 @@ export const items: IItem[] = [
     img: IMG_3,
   },
 ];
+
+export const options = [
+  {
+    value: 0,
+    text: 'Renovation',
+  },
+  {
+    value: 1,
+    text: 'Gardening',
+  },
+  {
+    value: 2,
+    text: 'Kitchen',
+  },
+  {
+    value: 3,
+    text: 'Gaming',
+  },
+  {
+    value: 4,
+    text: 'Electronics',
+  },
+];

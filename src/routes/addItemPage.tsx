@@ -14,15 +14,9 @@ import {
 } from "@mui/material";
 import HttpClient from "../api/HttpClient";
 import { useNavigate } from "react-router";
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Chip from '@mui/material/Chip';
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
-import { current } from "@reduxjs/toolkit";
+import { options } from "../mocks/items";
 
 type Props = {};
 
@@ -47,28 +41,6 @@ const addItemPage = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
   const [newCategory, setNewCategory] = useState<any>('');
-  const options = [
-    {
-      value: 0,
-      text: 'Renovation',
-    },
-    {
-      value: 1,
-      text: 'Gardening',
-    },
-    {
-      value: 2,
-      text: 'Kitchen',
-    },
-    {
-      value: 3,
-      text: 'Gaming',
-    },
-    {
-      value: 4,
-      text: 'Electronics',
-    },
-  ]
 
   const [categoryArr, setCategoryArr] = React.useState<any>(options);
 
@@ -152,16 +124,33 @@ const addItemPage = (props: Props) => {
   };
 
   const updateCategoriesState = () => {
-    const lastValueNumber: number = options[(options.length) - 1].value;
-    const newCategoryByUser: object = { value: lastValueNumber + 1, text: newCategory, selected: true }; //todo: fix any type to the right type
+    if (checkIfCategoryExist(newCategory)) {
+      console.log("This category already exist");
+    }
+    else {
+      const lastValueNumber: number = options[(options.length) - 1].value;
+      const newCategoryByUser: object = { value: lastValueNumber + 1, text: newCategory, selected: true };
+      addCategoryToArr(newCategoryByUser);
+      setNewCategory("");
+    }
+  }
 
-    addCategoryToArr(newCategoryByUser);
+  const checkIfCategoryExist = (category: string): boolean => {
+    for (let i = 0; i < categoryArr.length; i++) {
+      const categoryFromUserLowerCase: string = category.toLowerCase();
+      const categoryFromArr: String = categoryArr[i].text;
+      const categoryFromArrLowerCase: String = categoryFromArr.toLowerCase();
+
+      if (categoryFromArrLowerCase === categoryFromUserLowerCase) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   const addCategoryToArr = (category: any) => {
     setCategoryArr((current: any) => [...current, category]);
-    console.log(categoryArr);
-    console.log(options);
   }
 
   return (
@@ -220,7 +209,11 @@ const addItemPage = (props: Props) => {
               value={newCategory}
               onChange={handleNewCategory}
             />
-            <Button variant="contained" onClick={updateCategoriesState}>Add Category</Button>
+            <Button
+              variant="contained"
+              onClick={updateCategoriesState}>
+              Add Category
+            </Button>
           </Stack>
 
           <input
