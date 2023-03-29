@@ -90,7 +90,7 @@ const addItemPage = (props: Props) => {
   const [newCategory, setNewCategory] = useState<any>('');
 
   const [categoryArr, setCategoryArr] = React.useState<any[]>(options);
-  const [selectedCategories, setSelectedCategories] = React.useState<any>([]);
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
 
   const navigate = useNavigate();
 
@@ -160,7 +160,7 @@ const addItemPage = (props: Props) => {
     }
   };
 
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+  const handleChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
     const {
       target: { value },
     } = event;
@@ -174,13 +174,6 @@ const addItemPage = (props: Props) => {
     setNewCategory(event.target.value);
   };
 
-  const handleAddButton = (event: any): void => {
-    const lastValueNumber: number = options[(options.length) - 1].value;
-    const newCategoryByUser: any = { value: lastValueNumber + 1, text: newCategory, selected: true }; //todo: fix any type to the right type
-    console.log(categoryArr);
-    console.log(options);
-  };
-
   const updateCategoriesState = () => {
     if (checkIfCategoryExist(newCategory)) {
       console.log("This category already exist");
@@ -189,6 +182,7 @@ const addItemPage = (props: Props) => {
       const lastValueNumber: number = options[(options.length) - 1].value;
       const newCategoryByUser: object = { value: lastValueNumber + 1, text: newCategory, selected: true };
       addCategoryToArr(newCategoryByUser);
+      //todo: make the added category as selected
       setNewCategory("");
     }
   }
@@ -254,11 +248,6 @@ const addItemPage = (props: Props) => {
                 labelId="demo-multiple-chip-label"
                 id="demo-multiple-chip"
                 multiple
-                // value={
-                //   categoryArr.map((val) => {
-                //     { return val.text }
-                //   })
-                // } 
                 value={selectedCategories}
                 onChange={handleChange}
                 input={<OutlinedInput
@@ -274,7 +263,7 @@ const addItemPage = (props: Props) => {
                 )}
                 MenuProps={MenuProps}
               >
-                {options.map((name) =>
+                {categoryArr.map((name) =>
 
                   <MenuItem
                     key={name.text}
