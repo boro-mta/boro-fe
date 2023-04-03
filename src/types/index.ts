@@ -25,6 +25,7 @@ export interface IFullItemDetails extends Omit<IItem, "img"> {
 }
 
 export interface IFullItemDetailsNew {
+  itemId: string;
   condition: string;
   category: string[];
   title: string;
