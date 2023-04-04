@@ -18,7 +18,6 @@ import "@fontsource/roboto/700.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import AddItemPage from "./routes/addItemPage";
-import CalendarPage from "./routes/calendarPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -39,10 +38,6 @@ const router = createBrowserRouter([
   {
     path: "addItem",
     element: <AddItemPage />,
-  },
-  {
-    path: "calendar",
-    element: <CalendarPage />,
   },
   {
     path: "*",

@@ -21,6 +21,8 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SettingsRow from "../components/SettingsRow/SettingsRow";
 import HttpClient from "../api/HttpClient";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
+import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
+import { checkExcludeDatesArrayContainsDate } from "../utils/calendarUtils";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -47,9 +49,42 @@ const itemPage = (props: Props) => {
     itemId: '',
     title: '',
     additionalPhotos: [''],
-    description: ''
+    description: '',
+    excludedDates: []
   });
+
   let { itemId } = useParams<IFullItemDetailsParams>();
+
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [selectedDatesError, setSelectedDatesError] = useState<string>("");
+
+  const handleChangeDates = (dates: any) => {
+    const [selectedStartDate, selectedEndDate] = dates;
+    setStartDate(selectedStartDate);
+    setEndDate(selectedEndDate);
+    setSelectedDatesError("");
+    let loop: Date = new Date(selectedStartDate);
+    if (selectedStartDate && selectedEndDate) {
+      while (loop <= selectedEndDate) {
+        if (checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)) {
+          setSelectedDatesError(
+            "The date " +
+            loop +
+            " is not available, please choose different dates."
+          );
+          break;
+        } else {
+          setStartDate(selectedStartDate);
+          setEndDate(selectedEndDate)
+          setSelectedDatesError("");
+        }
+
+        let newDate = loop.setDate(loop.getDate() + 1);
+        loop = new Date(newDate);
+      }
+    }
+  };
 
   useEffect(() => {
     const getFullDetails = async () => {
@@ -89,13 +124,14 @@ const itemPage = (props: Props) => {
       <Row conditionStatus={itemDetails.condition} />
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
-      <Button
-        variant="contained"
-        sx={{ position: "sticky", bottom: "10px", right: "2%", width: "96%" }}
-        onClick={() => navigate("/")}
-      >
-        Find available dates
-      </Button>
+      <Typography variant="h6">Find available dates</Typography>
+      <DateRangePicker
+        startDate={startDate}
+        endDate={endDate}
+        onChange={handleChangeDates}
+        datesToExclude={itemDetails.excludedDates}
+      />
+      {selectedDatesError && <Typography variant="body1">{selectedDatesError}</Typography>}
     </Container>
   );
 };

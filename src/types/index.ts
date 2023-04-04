@@ -32,4 +32,5 @@ export interface IFullItemDetailsNew {
   description?: string;
   coverPhoto: string;
   additionalPhotos?: string[];
+  excludedDates: Date[];
 }
