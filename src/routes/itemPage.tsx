@@ -59,6 +59,7 @@ const itemPage = (props: Props) => {
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [selectedDatesError, setSelectedDatesError] = useState<string>("");
   const [isValidDates, setIsValidDates] = useState<boolean>(false);
+
   const handleChangeDates = (dates: Date[]) => {
     const [selectedStartDate, selectedEndDate] = dates;
     setStartDate(selectedStartDate);
@@ -127,17 +128,19 @@ const itemPage = (props: Props) => {
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
       <Typography variant="h6">Find available dates</Typography>
-      <DateRangePicker
-        startDate={startDate}
-        endDate={endDate}
-        onChange={handleChangeDates}
-        datesToExclude={itemDetails.excludedDates}
-      />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <DateRangePicker
+          startDate={startDate}
+          endDate={endDate}
+          onChange={handleChangeDates}
+          datesToExclude={itemDetails.excludedDates}
+        />
+      </div>
       {selectedDatesError && <Typography variant="body1">{selectedDatesError}</Typography>}
 
       {isValidDates && <Button
         variant="contained"
-        sx={{ position: "sticky", bottom: "10px", right: "2%", width: "96%" }}
+        sx={{ marginTop: "10px", position: "sticky", bottom: "10px", right: "2%", width: "96%" }}
         onClick={() => navigate("/")}
       >Reserve now</Button>
       }
