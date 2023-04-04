@@ -4,6 +4,7 @@ import {
   CardMedia,
   Container,
   Divider,
+  Modal,
   TableBody,
   TableCell,
   TableContainer,
@@ -22,8 +23,12 @@ import SettingsRow from "../components/SettingsRow/SettingsRow";
 import HttpClient from "../api/HttpClient";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
-import { checkExcludeDatesArrayContainsDate, getFormattedDate } from "../utils/calendarUtils";
-
+import {
+  checkExcludeDatesArrayContainsDate,
+  getFormattedDate,
+} from "../utils/calendarUtils";
+import ErrorIcon from "@mui/icons-material/Error";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
 type IFullItemDetailsParams = {
   itemId: string;
 };
@@ -33,7 +38,7 @@ type Props = {};
 interface IRowData {
   key: string;
   value: string;
-};
+}
 
 interface ITableData {
   tableData: IRowData[];
@@ -42,17 +47,24 @@ interface ITableData {
 const Row = ({ tableData }: ITableData) => {
   return (
     <div>
-      {tableData.map((row, i) =>
+      {tableData.map((row, i) => (
         <div key={i}>
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <Typography variant="body1" sx={{ flexBasis: "50%", color: "darkgray" }}>{row.key}</Typography>
-            <Typography variant="body1" sx={{ flexBasis: "50%" }}>{row.value}</Typography>
+            <Typography
+              variant="body1"
+              sx={{ flexBasis: "50%", color: "darkgray" }}
+            >
+              {row.key}
+            </Typography>
+            <Typography variant="body1" sx={{ flexBasis: "50%" }}>
+              {row.value}
+            </Typography>
           </div>
           {i < tableData.length - 1 && <Divider sx={{ margin: "5px" }} />}
         </div>
-      )}
+      ))}
     </div>
-  )
+  );
 };
 
 const itemPage = (props: Props) => {
@@ -60,13 +72,13 @@ const itemPage = (props: Props) => {
 
   const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
     category: [],
-    condition: '',
-    coverPhoto: '',
-    itemId: '',
-    title: '',
-    additionalPhotos: [''],
-    description: '',
-    excludedDates: []
+    condition: "",
+    coverPhoto: "",
+    itemId: "",
+    title: "",
+    additionalPhotos: [""],
+    description: "",
+    excludedDates: [],
   });
 
   let { itemId } = useParams<IFullItemDetailsParams>();
@@ -74,7 +86,8 @@ const itemPage = (props: Props) => {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [selectedDatesError, setSelectedDatesError] = useState<string>("");
-  const [isValidDates, setIsValidDates] = useState<boolean>(false);
+  const [isValidDates, setIsValidDates] = useState<boolean>();
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleChangeDates = (dates: Date[]) => {
     const [selectedStartDate, selectedEndDate] = dates;
@@ -84,17 +97,19 @@ const itemPage = (props: Props) => {
     let loop: Date = new Date(selectedStartDate);
     if (selectedStartDate && selectedEndDate) {
       while (loop <= selectedEndDate) {
-        if (checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)) {
+        if (
+          checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)
+        ) {
           setSelectedDatesError(
             "The date " +
-            getFormattedDate(loop) +
-            " is not available, please choose different dates."
+              getFormattedDate(loop) +
+              " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
         } else {
           setStartDate(selectedStartDate);
-          setEndDate(selectedEndDate)
+          setEndDate(selectedEndDate);
           setSelectedDatesError("");
           setIsValidDates(true);
         }
@@ -104,6 +119,8 @@ const itemPage = (props: Props) => {
       }
     }
   };
+
+  const handleOpenModal = () => setOpen(true);
 
   useEffect(() => {
     const getFullDetails = async () => {
@@ -128,22 +145,33 @@ const itemPage = (props: Props) => {
       <Card sx={{ marginBottom: "10px" }}>
         {itemDetails.coverPhoto && (
           <CardMedia component="div" style={{ height: "230px" }}>
-            <ImagesCarousel images={itemDetails.additionalPhotos ? [itemDetails.coverPhoto, ...itemDetails.additionalPhotos] : [itemDetails.coverPhoto]} />
+            <ImagesCarousel
+              images={
+                itemDetails.additionalPhotos
+                  ? [itemDetails.coverPhoto, ...itemDetails.additionalPhotos]
+                  : [itemDetails.coverPhoto]
+              }
+            />
           </CardMedia>
         )}
       </Card>
       <Typography variant="h5">{itemDetails.title}</Typography>
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
       <Typography variant="h6">About the product</Typography>
-      <Typography variant="body1">
-        {itemDetails.description}
-      </Typography>
+      <Typography variant="body1">{itemDetails.description}</Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-      <Row tableData={[{ key: "Condition", value: itemDetails.condition }, { key: "Category", value: itemDetails.category.join(", ") }]} />
+      <Row
+        tableData={[
+          { key: "Condition", value: itemDetails.condition },
+          { key: "Category", value: itemDetails.category.join(", ") },
+        ]}
+      />
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
-      <Typography variant="h6" sx={{ marginBottom: "10px" }}>Find available dates</Typography>
+      <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+        Find available dates
+      </Typography>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <DateRangePicker
           startDate={startDate}
@@ -152,14 +180,58 @@ const itemPage = (props: Props) => {
           datesToExclude={itemDetails.excludedDates}
         />
       </div>
-      {selectedDatesError && <Typography variant="body1">{selectedDatesError}</Typography>}
 
-      {isValidDates && <Button
-        variant="contained"
-        sx={{ marginTop: "10px", position: "sticky", bottom: "10px", right: "2%", width: "96%" }}
-        onClick={() => navigate("/")}
-      >Book now</Button>
-      }
+      {isValidDates === true && (
+        <Button
+          variant="contained"
+          color="success"
+          endIcon={<TaskAltIcon />}
+          sx={{
+            marginTop: "10px",
+            position: "sticky",
+            bottom: "10px",
+            right: "2%",
+            width: "96%",
+          }}
+          onClick={() => navigate("/")}
+        >
+          Book now
+        </Button>
+      )}
+      {isValidDates === false && (
+        <Button
+          variant="contained"
+          color="error"
+          endIcon={<ErrorIcon />}
+          sx={{
+            marginTop: "10px",
+            position: "sticky",
+            bottom: "10px",
+            right: "2%",
+            width: "96%",
+          }}
+          onClick={handleOpenModal}
+        >
+          Invalid dates
+        </Button>
+      )}
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80%",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography variant="body1">{selectedDatesError}</Typography>
+        </Box>
+      </Modal>
     </Container>
   );
 };
