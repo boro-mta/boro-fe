@@ -4,14 +4,18 @@ import {
   CardMedia,
   Container,
   Divider,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
   Typography,
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
-import { allItemsDetails } from "../mocks/fullItemsDetails";
-import { IFullItemDetails } from "../types";
+import { allItemDetailsNew } from "../mocks/fullItemsDetails";
+import { IFullItemDetails, IFullItemDetailsNew } from "../types";
 import ExtraIncludedItemsContainer from "../components/ExtraIncludedItemsContainer/ExtraIncludedItemsContainer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SettingsRow from "../components/SettingsRow/SettingsRow";
@@ -24,12 +28,27 @@ type IFullItemDetailsParams = {
 
 type Props = {};
 
+const Row = ({ conditionStatus }: any) => {
+  return (
+    <div style={{ display: "flex", flexDirection: "row" }}>
+      <Typography variant="body1" sx={{ flexBasis: "50%", color: "darkgray" }}>Condition</Typography>
+      <Typography variant="body1" sx={{ flexBasis: "50%" }}>{conditionStatus}</Typography>
+    </div>
+  )
+};
+
 const itemPage = (props: Props) => {
   const navigate = useNavigate();
 
-  const [itemDetails, setItemDetails] = useState<IFullItemDetails>(
-    allItemsDetails[0]
-  );
+  const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
+    category: [],
+    condition: '',
+    coverPhoto: '',
+    itemId: '',
+    title: '',
+    additionalPhotos: [''],
+    description: ''
+  });
   let { itemId } = useParams<IFullItemDetailsParams>();
 
   useEffect(() => {
@@ -41,8 +60,8 @@ const itemPage = (props: Props) => {
         fullDetails.images = formatImagesOnRecieve(fullDetails.images);
       } else {
         fullDetails =
-          allItemsDetails.find((item) => item.itemId === itemId) ||
-          allItemsDetails[0];
+          allItemDetailsNew.find((item) => item.itemId === itemId) ||
+          allItemDetailsNew[0];
       }
       setItemDetails(fullDetails);
     };
@@ -53,39 +72,29 @@ const itemPage = (props: Props) => {
   return (
     <Container>
       <Card sx={{ marginBottom: "10px" }}>
-        {itemDetails.images && (
+        {itemDetails.coverPhoto && (
           <CardMedia component="div" style={{ height: "230px" }}>
-            <ImagesCarousel images={itemDetails.images} />
+            <ImagesCarousel images={itemDetails.additionalPhotos ? [itemDetails.coverPhoto, ...itemDetails.additionalPhotos] : [itemDetails.coverPhoto]} />
           </CardMedia>
         )}
       </Card>
       <Typography variant="h5">{itemDetails.title}</Typography>
-      <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
-        {itemDetails.borrowerAddress}
-      </Typography>
-      <Divider />
-      <Typography variant="body1" sx={{ marginTop: "10px" }} gutterBottom>
+      <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
+      <Typography variant="h6">About the product</Typography>
+      <Typography variant="body1">
         {itemDetails.description}
       </Typography>
 
-      {itemDetails.extraIncludedItems && (
-        <ExtraIncludedItemsContainer
-          extraIncludedItems={itemDetails.extraIncludedItems}
-        />
-      )}
-      <Divider />
-      <SettingsRow
-        leftIcon={<CalendarMonthIcon />}
-        rowText={"Find available dates"}
-        onClick={() => navigate("/calendar")}
-      />
+      <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
+      <Row conditionStatus={itemDetails.condition} />
+      <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
       <Button
         variant="contained"
-        sx={{ marginTop: "15px" }}
+        sx={{ position: "sticky", bottom: "10px", right: "2%", width: "96%" }}
         onClick={() => navigate("/")}
       >
-        Go to home
+        Find available dates
       </Button>
     </Container>
   );

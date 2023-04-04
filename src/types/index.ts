@@ -30,6 +30,6 @@ export interface IFullItemDetailsNew {
   category: string[];
   title: string;
   description?: string;
-  coverPhoto: File;
-  additionalPhotos?: File[];
+  coverPhoto: string;
+  additionalPhotos?: string[];
 }
