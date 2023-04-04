@@ -30,11 +30,27 @@ type IFullItemDetailsParams = {
 
 type Props = {};
 
-const Row = ({ conditionStatus }: any) => {
+interface IRowData {
+  key: string;
+  value: string;
+};
+
+interface ITableData {
+  tableData: IRowData[];
+}
+
+const Row = ({ tableData }: ITableData) => {
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <Typography variant="body1" sx={{ flexBasis: "50%", color: "darkgray" }}>Condition</Typography>
-      <Typography variant="body1" sx={{ flexBasis: "50%" }}>{conditionStatus}</Typography>
+    <div>
+      {tableData.map((row, i) =>
+        <div key={i}>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <Typography variant="body1" sx={{ flexBasis: "50%", color: "darkgray" }}>{row.key}</Typography>
+            <Typography variant="body1" sx={{ flexBasis: "50%" }}>{row.value}</Typography>
+          </div>
+          {i < tableData.length - 1 && <Divider sx={{ margin: "5px" }} />}
+        </div>
+      )}
     </div>
   )
 };
@@ -123,11 +139,11 @@ const itemPage = (props: Props) => {
         {itemDetails.description}
       </Typography>
 
-      <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-      <Row conditionStatus={itemDetails.condition} />
+      <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+      <Row tableData={[{ key: "Condition", value: itemDetails.condition }, { key: "Category", value: itemDetails.category.join(", ") }]} />
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
-      <Typography variant="h6">Find available dates</Typography>
+      <Typography variant="h6" sx={{ marginBottom: "10px" }}>Find available dates</Typography>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <DateRangePicker
           startDate={startDate}
@@ -142,7 +158,7 @@ const itemPage = (props: Props) => {
         variant="contained"
         sx={{ marginTop: "10px", position: "sticky", bottom: "10px", right: "2%", width: "96%" }}
         onClick={() => navigate("/")}
-      >Reserve now</Button>
+      >Book now</Button>
       }
     </Container>
   );
