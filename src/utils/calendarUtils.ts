@@ -11,3 +11,12 @@ export const checkExcludeDatesArrayContainsDate = (dateToCheck: Date, excludedDa
 
     return false;
 };
+
+export const getFormattedDate = (date: Date) => {
+    const day = date.getDate().toString().padStart(2, '0'); // add leading zero if day < 10
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // add leading zero if month < 10
+    const year = date.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`;
+
+    return formattedDate;
+}

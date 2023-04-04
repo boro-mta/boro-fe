@@ -22,7 +22,7 @@ import SettingsRow from "../components/SettingsRow/SettingsRow";
 import HttpClient from "../api/HttpClient";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
-import { checkExcludeDatesArrayContainsDate } from "../utils/calendarUtils";
+import { checkExcludeDatesArrayContainsDate, getFormattedDate } from "../utils/calendarUtils";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -58,8 +58,8 @@ const itemPage = (props: Props) => {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [selectedDatesError, setSelectedDatesError] = useState<string>("");
-
-  const handleChangeDates = (dates: any) => {
+  const [isValidDates, setIsValidDates] = useState<boolean>(false);
+  const handleChangeDates = (dates: Date[]) => {
     const [selectedStartDate, selectedEndDate] = dates;
     setStartDate(selectedStartDate);
     setEndDate(selectedEndDate);
@@ -70,14 +70,16 @@ const itemPage = (props: Props) => {
         if (checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)) {
           setSelectedDatesError(
             "The date " +
-            loop +
+            getFormattedDate(loop) +
             " is not available, please choose different dates."
           );
+          setIsValidDates(false);
           break;
         } else {
           setStartDate(selectedStartDate);
           setEndDate(selectedEndDate)
           setSelectedDatesError("");
+          setIsValidDates(true);
         }
 
         let newDate = loop.setDate(loop.getDate() + 1);
@@ -132,6 +134,13 @@ const itemPage = (props: Props) => {
         datesToExclude={itemDetails.excludedDates}
       />
       {selectedDatesError && <Typography variant="body1">{selectedDatesError}</Typography>}
+
+      {isValidDates && <Button
+        variant="contained"
+        sx={{ position: "sticky", bottom: "10px", right: "2%", width: "96%" }}
+        onClick={() => navigate("/")}
+      >Reserve now</Button>
+      }
     </Container>
   );
 };
