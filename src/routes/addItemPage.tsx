@@ -150,7 +150,6 @@ const addItemPage = (props: Props) => {
         return {
           base64ImageMetaData: imgProps[0],
           base64ImageData: imgProps[1],
-          isCover: false,
         };
       });
     }

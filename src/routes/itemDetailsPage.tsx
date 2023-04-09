@@ -66,10 +66,9 @@ const itemDetailsPage = (props: Props) => {
   const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
     category: [],
     condition: "",
-    coverPhoto: "",
     itemId: "",
     title: "",
-    additionalPhotos: [""],
+    images: [""],
     description: "",
     excludedDates: [],
   });
@@ -136,15 +135,9 @@ const itemDetailsPage = (props: Props) => {
   return (
     <Container>
       <Card sx={{ marginBottom: "10px" }}>
-        {itemDetails.coverPhoto && (
+        {itemDetails.images && (
           <CardMedia component="div" style={{ height: "230px" }}>
-            <ImagesCarousel
-              images={
-                itemDetails.additionalPhotos
-                  ? [itemDetails.coverPhoto, ...itemDetails.additionalPhotos]
-                  : [itemDetails.coverPhoto]
-              }
-            />
+            <ImagesCarousel images={itemDetails.images} />
           </CardMedia>
         )}
       </Card>
