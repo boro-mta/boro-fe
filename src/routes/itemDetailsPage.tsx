@@ -60,7 +60,7 @@ const Row = ({ tableData }: ITableData) => {
   );
 };
 
-const itemPage = (props: Props) => {
+const itemDetailsPage = (props: Props) => {
   const navigate = useNavigate();
 
   const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
@@ -229,4 +229,4 @@ const itemPage = (props: Props) => {
   );
 };
 
-export default itemPage;
+export default itemDetailsPage;

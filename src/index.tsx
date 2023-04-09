@@ -4,7 +4,7 @@ import { Provider as StoreProvider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { store } from "./app/store";
 import App from "./App";
-import ItemPage from "./routes/itemPage";
+import ItemDetailsPage from "./routes/itemDetailsPage";
 import "./index.css";
 import ErrorPage from "./routes/errorPage";
 import FacebookLoginPage from "./routes/facebookLoginPage";
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
   },
   {
     path: "item/:itemId",
-    element: <ItemPage />,
+    element: <ItemDetailsPage />,
   },
   {
     path: "login",
