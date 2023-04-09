@@ -1,48 +1,16 @@
-import { IFullItemDetails } from "../types";
+import { IFullItemDetailsNew } from "../types";
 import { IMG_1, IMG_2, IMG_3 } from "./images";
 
-export const allItemsDetails: IFullItemDetails[] = [
+export const allItemDetailsNew: IFullItemDetailsNew[] = [
   {
     itemId: "123",
     title: "Working driller for any construction at home",
+    category: ["Home Tools", "Gardening", "Construction"],
     description:
-      "Yellow driller with minor scratches on the side, perfect for drilling holes while constructing. Needs to be charged up before used.",
-    images: [IMG_1, IMG_1],
-    extraIncludedItems: [
-      { title: "Batteries Included", isIncluded: true },
-      { title: "Extended Warranty", isIncluded: false },
-      { title: "bbbbbbbbbb", isIncluded: true },
-    ],
-    borrowerAddress: "Tel Aviv Area",
-    borrowerPhoneNumber: "052-466-9214",
-  },
-  {
-    itemId: "456",
-    title: "Brown ladder",
-    description:
-      "Ladder which is height of 20cm, stretched and that is self-supporting or that may be leaned against a vertical surface such as a wall.",
-    images: [IMG_2],
-    extraIncludedItems: [
-      {
-        title: "3 Extra levels for replacement if a level breaks",
-        isIncluded: true,
-      },
-    ],
-    borrowerAddress: "Rishon LeZion Area",
-    borrowerPhoneNumber: "054-736-0620",
-  },
-  {
-    itemId: "789",
-    title: "metal hammer with double edges",
-    description:
-      "A hammer is a tool, most often a hand tool, consisting of a weighted head fixed to a long handle that is swung to deliver an impact to a small area of an object. This can be, for example, to drive nails into wood, to shape metal (as with a forge), or to crush rock. Hammers are used for a wide range of driving, shaping, breaking and non-destructive striking applications.",
-    images: [IMG_3],
-    extraIncludedItems: [
-      { title: "Charger Included", isIncluded: true },
-      { title: "Batteries Included", isIncluded: false },
-      { title: "Safety Glasses", isIncluded: false },
-    ],
-    borrowerAddress: "Tel Aviv Area",
-    borrowerPhoneNumber: "052-123-4567",
+      "Yellow driller with minor scratches on the side, perfect for drilling holes while constructing. Needs to be charged up before used.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere mollis tortor, vitae eleifend risus pretium sit amet. Cras aliquet nulla quis efficitur ultrices. Duis ac posuere est, vel commodo sapien. Maecenas vel arcu condimentum, pharetra mi vitae, mollis tortor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames.",
+    condition: "Brand New",
+    coverPhoto: IMG_1,
+    additionalPhotos: [IMG_2],
+    excludedDates: [new Date(new Date().setDate(new Date().getDate() + 3))],
   },
 ];
