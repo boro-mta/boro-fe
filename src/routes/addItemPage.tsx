@@ -96,6 +96,9 @@ const addItemPage = (props: Props) => {
     []
   );
 
+  const [freeTextChar, setFreeTextChar] = React.useState<string>("");
+  const [freeTextCount, setFreeTextCount] = React.useState<number>(0);
+
   const [formValuesAddItem, setFormValusAddItem] = React.useState<FormValues>({
     title: "",
     description: "",
@@ -249,6 +252,19 @@ const addItemPage = (props: Props) => {
     }
   };
 
+  const recalculateCharsFreeText = (event: any) => {
+    console.log("free text counter event value:", event);
+    const charCount = event.target.value.length;
+    debugger
+    if (charCount === 250) {
+      setFreeTextChar(freeTextChar);
+    }
+    else {
+      setFreeTextChar(event.target.value);
+    }
+    setFreeTextCount(event.target.value.length);
+  };
+
   // vertical stepper:
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -273,169 +289,175 @@ const addItemPage = (props: Props) => {
   return (
     <Container>
       <Typography variant="h3">Add New Item</Typography>
-      <Box sx={{ maxWidth: 400 }}>
+      <Box
+        sx={{ maxWidth: 400 }}>
         <Stepper activeStep={activeStep} orientation="vertical">
           {/* step 1 components - add item details: name, description, categories */}
           <Step key={"Fill Item Information"}>
             <StepLabel>{"Fill Item Information"}</StepLabel>
             <StepContent>
-              <Typography>
-                <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
-                  <form onSubmit={formik.handleSubmit}>
-                    <TextField
-                      fullWidth
-                      required
-                      id="title"
-                      name="title"
-                      label="Title"
-                      margin="normal"
-                      value={formik.values.title}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.title && Boolean(formik.errors.title)
-                      }
-                      helperText={formik.touched.title && formik.errors.title}
-                    />
-                    <TextField
-                      fullWidth
-                      required
-                      id="description"
-                      name="description"
-                      label="Description"
-                      multiline
-                      margin="normal"
-                      value={formik.values.description}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.description &&
-                        Boolean(formik.errors.description)
-                      }
-                      helperText={
-                        formik.touched.description && formik.errors.description
-                      }
-                    />
-
-                    {/* categories - chip */}
-                    <div>
-                      <FormControl sx={{ m: 0, width: 300 }}>
-                        <InputLabel id="demo-multiple-chip-label">
-                          Categories
-                        </InputLabel>
-                        <Select
-                          labelId="demo-multiple-chip-label"
-                          id="demo-multiple-chip"
-                          multiple
-                          value={selectedCategories}
-                          onChange={handleChipCategoriesChange}
-                          input={
-                            <OutlinedInput
-                              id="select-multiple-chip"
-                              label="Categories"
-                            />
-                          }
-                          renderValue={(selected) => (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 0.5,
-                              }}
-                            >
-                              {selected.map((value) => (
-                                <Chip key={value} label={value} />
-                              ))}
-                            </Box>
-                          )}
-                          MenuProps={MenuProps}
-                        >
-                          {categoryArr.map((name) => (
-                            <MenuItem
-                              key={name.text}
-                              value={name.text}
-                              style={getStyles(
-                                name.text,
-                                selectedCategories,
-                                theme
-                              )}
-                            >
-                              {name.text}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </div>
-
-                    {/* categories - Autocomplete */}
-                    <Stack spacing={3} sx={{ width: 500 }}>
-                      <Autocomplete
-                        multiple
-                        id="tags-outlined"
-                        options={categoryArr}
-                        getOptionLabel={(option: any) => option.text}
-                        filterSelectedOptions
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label="Categories"
-                            placeholder="Choose categories for your item"
-                          />
-                        )}
-                      />
-
+              <Box sx={{
+                height: "100%",
+              }}>
+                <Typography>
+                  <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
+                    <form onSubmit={formik.handleSubmit}>
                       <TextField
-                        id="new-category"
-                        label="Add Other Category"
-                        variant="outlined"
-                        value={newCategory}
-                        onChange={handleNewCategory}
+                        fullWidth
+                        required
+                        id="title"
+                        name="title"
+                        label="Title"
+                        margin="normal"
+                        value={formik.values.title}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.title && Boolean(formik.errors.title)
+                        }
+                        helperText={formik.touched.title && formik.errors.title}
                       />
-                      <Button
-                        sx={{ mt: 1, mr: 1 }}
-                        variant="contained"
-                        onClick={updateCategoriesState}
-                      >
-                        Add Category
-                      </Button>
-                    </Stack>
+                      <TextField
+                        fullWidth
+                        required
+                        id="description"
+                        name="description"
+                        label="Description"
+                        multiline
+                        margin="normal"
+                        value={formik.values.description}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.description &&
+                          Boolean(formik.errors.description)
+                        }
+                        helperText={
+                          formik.touched.description && formik.errors.description
+                        }
+                      />
 
-                    <LoadingButton
-                      sx={{ mt: 1, mr: 1 }}
-                      type="submit"
-                      endIcon={<SendIcon />}
-                      loading={formik.isSubmitting}
-                      loadingPosition="center"
-                      variant="contained"
-                    >
-                      <span>Continue</span>
-                    </LoadingButton>
-                  </form>
-                </fieldset>
-                <Snackbar
-                  open={open}
-                  autoHideDuration={6000}
-                  onClose={() => setOpen(false)}
-                >
-                  <Alert
+                      {/* categories - chip */}
+                      <div>
+                        <FormControl sx={{ m: 0, width: 300 }}>
+                          <InputLabel id="demo-multiple-chip-label">
+                            Categories
+                          </InputLabel>
+                          <Select
+                            labelId="demo-multiple-chip-label"
+                            id="demo-multiple-chip"
+                            multiple
+                            value={selectedCategories}
+                            onChange={handleChipCategoriesChange}
+                            input={
+                              <OutlinedInput
+                                id="select-multiple-chip"
+                                label="Categories"
+                              />
+                            }
+                            renderValue={(selected) => (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  gap: 0.5,
+                                }}
+                              >
+                                {selected.map((value) => (
+                                  <Chip key={value} label={value} />
+                                ))}
+                              </Box>
+                            )}
+                            MenuProps={MenuProps}
+                          >
+                            {categoryArr.map((name) => (
+                              <MenuItem
+                                key={name.text}
+                                value={name.text}
+                                style={getStyles(
+                                  name.text,
+                                  selectedCategories,
+                                  theme
+                                )}
+                              >
+                                {name.text}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </div>
+
+                      {/* Adding new category */}
+                      {/* <Stack spacing={3} sx={{ width: 500 }}>
+                        <TextField
+                          id="new-category"
+                          label="Add Other Category"
+                          variant="outlined"
+                          value={newCategory}
+                          onChange={handleNewCategory}
+                        />
+                        <Button
+                          sx={{ mt: 1, mr: 1 }}
+                          variant="contained"
+                          onClick={updateCategoriesState}
+                        >
+                          Add Category
+                        </Button>
+                      </Stack> */}
+
+                      <div>
+                        <TextField
+                          id="free-text"
+                          label="Write Here More Details"
+                          multiline
+                          rows={5}
+                          value={freeTextChar}
+                          onChange={recalculateCharsFreeText}
+                          sx={{ width: "100%" }}
+                        />
+                        <p>{freeTextCount}/250</p>
+                      </div>
+
+                      <LoadingButton
+                        sx={{ mt: 1, mr: 1 }}
+                        type="submit"
+                        endIcon={<SendIcon />}
+                        loading={formik.isSubmitting}
+                        loadingPosition="center"
+                        variant="contained"
+                      >
+                        <span>Continue</span>
+                      </LoadingButton>
+
+                    </form>
+                  </fieldset>
+                  <Snackbar
+                    open={open}
+                    autoHideDuration={6000}
                     onClose={() => setOpen(false)}
-                    severity={isAddSuccess ? "success" : "error"}
-                    sx={{ width: "100%" }}
                   >
-                    {isAddSuccess
-                      ? "The item was added successfully!"
-                      : "There was an issue adding the item. please try again."}
-                  </Alert>
-                </Snackbar>
-              </Typography>
-              <Box sx={{ mb: 2 }}>
-                <div>
-                  <Button
-                    disabled={true}
-                    onClick={handleBack}
-                    sx={{ mt: 1, mr: 1 }}
-                  >
-                    Back
-                  </Button>
-                </div>
+                    <Alert
+                      onClose={() => setOpen(false)}
+                      severity={isAddSuccess ? "success" : "error"}
+                      sx={{ width: "100%" }}
+                    >
+                      {isAddSuccess
+                        ? "The item was added successfully!"
+                        : "There was an issue adding the item. please try again."}
+                    </Alert>
+                  </Snackbar>
+                </Typography>
+
+                <Box sx={{ mb: 2 }}>
+                  <div>
+                    <Button
+                      disabled={true}
+                      onClick={handleBack}
+                      sx={{ mt: 1, mr: 1 }}
+                    >
+                      Back
+                    </Button>
+                  </div>
+                </Box>
+
               </Box>
             </StepContent>
           </Step>
