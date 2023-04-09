@@ -25,7 +25,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
-import { text } from "stream/consumers";
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import StepContent from '@mui/material/StepContent';
+import Paper from '@mui/material/Paper';
 
 type Props = {};
 
@@ -45,19 +49,6 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-
 function getStyles(name: string, selectedCategories: readonly string[], theme: Theme) {
   return {
     fontWeight:
@@ -66,7 +57,6 @@ function getStyles(name: string, selectedCategories: readonly string[], theme: T
         : theme.typography.fontWeightMedium,
   };
 }
-
 
 const validationSchema = yup.object({
   title: yup
@@ -81,8 +71,6 @@ const validationSchema = yup.object({
 
 const addItemPage = (props: Props) => {
   const theme = useTheme();
-  const [personName, setPersonName] = React.useState<string[]>([]);
-
 
   const [images, setImages] = useState<string[]>();
   const [open, setOpen] = useState<boolean>(false);
@@ -91,6 +79,8 @@ const addItemPage = (props: Props) => {
 
   const [categoryArr, setCategoryArr] = React.useState<any[]>(options);
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
+
+  const [formValuesAddItem, setFormValusAddItem] = React.useState<FormValues>({title:"", description:""});
 
   const navigate = useNavigate();
 
@@ -104,10 +94,9 @@ const addItemPage = (props: Props) => {
       values: FormValues,
       { setSubmitting }: FormikHelpers<FormValues>
     ) => {
-      sendRequest({ ...values, images }).then(() => {
-        setOpen(true);
-        setSubmitting(false);
-      });
+      setSubmitting(false);
+      setFormValusAddItem(values);
+      handleNext();
     },
   });
 
@@ -132,14 +121,17 @@ const addItemPage = (props: Props) => {
   };
 
   const sendRequest = async (obj: any) => {
-    const imagesForBody = obj.images.map((img: any) => {
-      const imgProps = img.split(",");
-      return {
-        base64ImageMetaData: imgProps[0],
-        base64ImageData: imgProps[1],
-        isCover: false,
-      };
-    });
+    let imagesForBody;
+    if(obj.images){
+      imagesForBody = obj.images.map((img: any) => {
+        const imgProps = img.split(",");
+        return {
+          base64ImageMetaData: imgProps[0],
+          base64ImageData: imgProps[1],
+          isCover: false,
+        };
+      });
+    }
 
     const reqBody = {
       title: obj.title,
@@ -160,7 +152,7 @@ const addItemPage = (props: Props) => {
     }
   };
 
-  const handleChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
+  const handleChipCategoriesChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
     const {
       target: { value },
     } = event;
@@ -205,11 +197,44 @@ const addItemPage = (props: Props) => {
     setCategoryArr((current: any) => [...current, category]);
   }
 
+  const onAddItem = () => {
+    const values:FormValues = formValuesAddItem;
+   debugger
+    sendRequest({ ...values, images }).then(() => {
+      setOpen(true);
+      formik.setSubmitting(false);
+    });
+  }
+
+  // vertical stepper:
+  const [activeStep, setActiveStep] = React.useState(0);
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
   return (
     <Container>
       <Typography variant="h3">Add New Item</Typography>
-      <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
-        <form onSubmit={formik.handleSubmit}>
+      <Box sx={{ maxWidth: 400 }}>
+      <Stepper activeStep={activeStep} orientation="vertical">
+          {/* step 1 components - add item details: name, description, categories */}
+          <Step key={'Fill Item Information'}>
+          <StepLabel>
+              {'Fill Item Information'}
+            </StepLabel>
+            <StepContent>
+              <Typography>
+                  <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
+                  <form onSubmit={formik.handleSubmit}>
           <TextField
             fullWidth
             required
@@ -238,8 +263,6 @@ const addItemPage = (props: Props) => {
             helperText={formik.touched.description && formik.errors.description}
           />
 
-
-
           {/* categories - chip */}
           <div>
             <FormControl sx={{ m: 0, width: 300 }}>
@@ -249,7 +272,7 @@ const addItemPage = (props: Props) => {
                 id="demo-multiple-chip"
                 multiple
                 value={selectedCategories}
-                onChange={handleChange}
+                onChange={handleChipCategoriesChange}
                 input={<OutlinedInput
                   id="select-multiple-chip"
                   label="Categories"
@@ -303,28 +326,22 @@ const addItemPage = (props: Props) => {
               onChange={handleNewCategory}
             />
             <Button
+              sx={{ mt: 1, mr: 1 }}
               variant="contained"
               onClick={updateCategoriesState}>
               Add Category
             </Button>
           </Stack>
-
-          <input
-            type="file"
-            onChange={convertToBase64}
-            multiple
-            accept="image/*"
-            disabled={formik.isSubmitting}
-          />
+          
           <LoadingButton
-            sx={{ marginTop: "10px", width: "100%" }}
+           sx={{ mt: 1, mr: 1 }}
             type="submit"
             endIcon={<SendIcon />}
             loading={formik.isSubmitting}
             loadingPosition="center"
             variant="contained"
           >
-            <span>Submit</span>
+            <span>Continue</span>
           </LoadingButton>
         </form>
       </fieldset>
@@ -343,6 +360,65 @@ const addItemPage = (props: Props) => {
             : "There was an issue adding the item. please try again."}
         </Alert>
       </Snackbar>
+              </Typography>
+              <Box sx={{ mb: 2 }}>
+                <div>
+                  <Button
+                    disabled={true}
+                    onClick={handleBack}
+                    sx={{ mt: 1, mr: 1 }}
+                  >
+                    Back
+                  </Button>
+                </div>
+              </Box>
+            </StepContent>
+          </Step>
+
+            {/* step 2 */}
+        <Step key={'Add Pictures of Your Item'}>
+        <StepLabel>
+              {'Add Pictures of Your Item'}
+            </StepLabel>
+        <StepContent>
+              <Typography>
+              <input
+               type="file"
+               onChange={convertToBase64}
+               multiple
+               accept="image/*"
+              disabled={formik.isSubmitting}
+              />
+              </Typography>
+              <Box sx={{ mb: 2 }}>
+                <div>
+                  <Button
+                    variant="contained"
+                    onClick={onAddItem}
+                    sx={{ mt: 1, mr: 1 }}
+                  >
+                    {'Submit'}
+                  </Button>
+                  <Button
+                    disabled={false}
+                    onClick={handleBack}
+                    sx={{ mt: 1, mr: 1 }}
+                  >
+                    Back
+                  </Button>
+                </div>
+              </Box>
+            </StepContent>
+        </Step>
+      </Stepper>
+      {activeStep === 2 && (
+        <Paper square elevation={0} sx={{ p: 3 }}>
+          {/* todo: change message */}
+          <Typography>All steps completed - you&apos;re finished</Typography>
+        </Paper>
+      )}
+    </Box>
+
     </Container>
   );
 };
