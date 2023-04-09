@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { store } from "./app/store";
 import App from "./App";
 import ItemPage from "./routes/itemPage";
+import UserPage from "./routes/userPage"
 import "./index.css";
 import ErrorPage from "./routes/errorPage";
 import FacebookLoginPage from "./routes/facebookLoginPage";
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "addItem",
     element: <AddItemPage />,
+  },
+  {
+    path: "/users/:userId",
+    element: <UserPage />
   },
   {
     path: "*",

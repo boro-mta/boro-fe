@@ -16,3 +16,11 @@ export interface IFullItemDetails extends Omit<IItem, "img"> {
   borrowerAddress?: string;
   borrowerPhoneNumber?: string;
 }
+
+export interface IUserDetails {
+  images: string[];
+  name?: string;
+  about?: string;
+  joined?: string;
+  id?: string;
+}
