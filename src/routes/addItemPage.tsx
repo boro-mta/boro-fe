@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import { FormikHelpers, useFormik } from "formik";
 import { Container } from "@mui/system";
@@ -11,25 +11,33 @@ import {
   Typography,
   Snackbar,
   Alert,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
 } from "@mui/material";
 import HttpClient from "../api/HttpClient";
 import { useNavigate } from "react-router";
-import Autocomplete from '@mui/material/Autocomplete';
-import Stack from '@mui/material/Stack';
+import Autocomplete from "@mui/material/Autocomplete";
+import Stack from "@mui/material/Stack";
 import { options } from "../mocks/items";
-import { Theme, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Chip from '@mui/material/Chip';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import StepContent from '@mui/material/StepContent';
-import Paper from '@mui/material/Paper';
+import { Theme, useTheme } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import StepContent from "@mui/material/StepContent";
+import Paper from "@mui/material/Paper";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import ImageIcon from "@mui/icons-material/Image";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 type Props = {};
 
@@ -49,7 +57,11 @@ const MenuProps = {
   },
 };
 
-function getStyles(name: string, selectedCategories: readonly string[], theme: Theme) {
+function getStyles(
+  name: string,
+  selectedCategories: readonly string[],
+  theme: Theme
+) {
   return {
     fontWeight:
       selectedCategories.indexOf(name) === -1
@@ -72,15 +84,22 @@ const validationSchema = yup.object({
 const addItemPage = (props: Props) => {
   const theme = useTheme();
 
+  const imagesInputRef = useRef<HTMLInputElement | null>(null);
   const [images, setImages] = useState<string[]>();
+  const [imagesNames, setImagesNames] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
-  const [newCategory, setNewCategory] = useState<any>('');
+  const [newCategory, setNewCategory] = useState<any>("");
 
   const [categoryArr, setCategoryArr] = React.useState<any[]>(options);
-  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
+    []
+  );
 
-  const [formValuesAddItem, setFormValusAddItem] = React.useState<FormValues>({title:"", description:""});
+  const [formValuesAddItem, setFormValusAddItem] = React.useState<FormValues>({
+    title: "",
+    description: "",
+  });
 
   const navigate = useNavigate();
 
@@ -111,18 +130,21 @@ const addItemPage = (props: Props) => {
 
   const convertToBase64 = async (evt: React.ChangeEvent<HTMLInputElement>) => {
     let filesPromises: Promise<string>[] = [];
+    let currImagesNames: string[] = [];
     if (evt.target.files && evt.target.files.length) {
-      Array.from(evt.target.files).forEach((file) =>
-        filesPromises.push(toBase64(file))
-      );
+      Array.from(evt.target.files).forEach((file) => {
+        filesPromises.push(toBase64(file));
+        currImagesNames.push(file.name);
+      });
       const filesInBase64 = await Promise.all(filesPromises);
       setImages(filesInBase64);
+      setImagesNames(currImagesNames);
     }
   };
 
   const sendRequest = async (obj: any) => {
     let imagesForBody;
-    if(obj.images){
+    if (obj.images) {
       imagesForBody = obj.images.map((img: any) => {
         const imgProps = img.split(",");
         return {
@@ -152,13 +174,15 @@ const addItemPage = (props: Props) => {
     }
   };
 
-  const handleChipCategoriesChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
+  const handleChipCategoriesChange = (
+    event: SelectChangeEvent<typeof selectedCategories>
+  ) => {
     const {
       target: { value },
     } = event;
     setSelectedCategories(
       // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
+      typeof value === "string" ? value.split(",") : value
     );
   };
 
@@ -169,15 +193,18 @@ const addItemPage = (props: Props) => {
   const updateCategoriesState = () => {
     if (checkIfCategoryExist(newCategory)) {
       console.log("This category already exist");
-    }
-    else {
-      const lastValueNumber: number = options[(options.length) - 1].value;
-      const newCategoryByUser: object = { value: lastValueNumber + 1, text: newCategory, selected: true };
+    } else {
+      const lastValueNumber: number = options[options.length - 1].value;
+      const newCategoryByUser: object = {
+        value: lastValueNumber + 1,
+        text: newCategory,
+        selected: true,
+      };
       addCategoryToArr(newCategoryByUser);
       //todo: make the added category as selected
       setNewCategory("");
     }
-  }
+  };
 
   const checkIfCategoryExist = (category: string): boolean => {
     for (let i = 0; i < categoryArr.length; i++) {
@@ -191,20 +218,36 @@ const addItemPage = (props: Props) => {
     }
 
     return false;
-  }
+  };
 
   const addCategoryToArr = (category: any) => {
     setCategoryArr((current: any) => [...current, category]);
-  }
+  };
 
   const onAddItem = () => {
-    const values:FormValues = formValuesAddItem;
-   debugger
+    const values: FormValues = formValuesAddItem;
+    debugger;
     sendRequest({ ...values, images }).then(() => {
       setOpen(true);
       formik.setSubmitting(false);
     });
-  }
+  };
+
+  const removeImage = (fileName: string) => {
+    const index = imagesNames.indexOf(fileName);
+
+    if (index !== -1) {
+      const newImageNames = [...imagesNames];
+      newImageNames.splice(index, 1);
+      setImagesNames(newImageNames);
+
+      if (images) {
+        const newImages = [...images];
+        newImages.splice(index, 1);
+        setImages(newImages);
+      }
+    }
+  };
 
   // vertical stepper:
   const [activeStep, setActiveStep] = React.useState(0);
@@ -221,145 +264,167 @@ const addItemPage = (props: Props) => {
     setActiveStep(0);
   };
 
+  const handleUploadButtonClick = () => {
+    if (imagesInputRef && imagesInputRef.current) {
+      imagesInputRef.current.click();
+    }
+  };
+
   return (
     <Container>
       <Typography variant="h3">Add New Item</Typography>
       <Box sx={{ maxWidth: 400 }}>
-      <Stepper activeStep={activeStep} orientation="vertical">
+        <Stepper activeStep={activeStep} orientation="vertical">
           {/* step 1 components - add item details: name, description, categories */}
-          <Step key={'Fill Item Information'}>
-          <StepLabel>
-              {'Fill Item Information'}
-            </StepLabel>
+          <Step key={"Fill Item Information"}>
+            <StepLabel>{"Fill Item Information"}</StepLabel>
             <StepContent>
               <Typography>
-                  <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
+                <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
                   <form onSubmit={formik.handleSubmit}>
-          <TextField
-            fullWidth
-            required
-            id="title"
-            name="title"
-            label="Title"
-            margin="normal"
-            value={formik.values.title}
-            onChange={formik.handleChange}
-            error={formik.touched.title && Boolean(formik.errors.title)}
-            helperText={formik.touched.title && formik.errors.title}
-          />
-          <TextField
-            fullWidth
-            required
-            id="description"
-            name="description"
-            label="Description"
-            multiline
-            margin="normal"
-            value={formik.values.description}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.description && Boolean(formik.errors.description)
-            }
-            helperText={formik.touched.description && formik.errors.description}
-          />
+                    <TextField
+                      fullWidth
+                      required
+                      id="title"
+                      name="title"
+                      label="Title"
+                      margin="normal"
+                      value={formik.values.title}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.title && Boolean(formik.errors.title)
+                      }
+                      helperText={formik.touched.title && formik.errors.title}
+                    />
+                    <TextField
+                      fullWidth
+                      required
+                      id="description"
+                      name="description"
+                      label="Description"
+                      multiline
+                      margin="normal"
+                      value={formik.values.description}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.description &&
+                        Boolean(formik.errors.description)
+                      }
+                      helperText={
+                        formik.touched.description && formik.errors.description
+                      }
+                    />
 
-          {/* categories - chip */}
-          <div>
-            <FormControl sx={{ m: 0, width: 300 }}>
-              <InputLabel id="demo-multiple-chip-label">Categories</InputLabel>
-              <Select
-                labelId="demo-multiple-chip-label"
-                id="demo-multiple-chip"
-                multiple
-                value={selectedCategories}
-                onChange={handleChipCategoriesChange}
-                input={<OutlinedInput
-                  id="select-multiple-chip"
-                  label="Categories"
-                />}
-                renderValue={(selected) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip key={value} label={value} />
-                    ))}
-                  </Box>
-                )}
-                MenuProps={MenuProps}
-              >
-                {categoryArr.map((name) =>
+                    {/* categories - chip */}
+                    <div>
+                      <FormControl sx={{ m: 0, width: 300 }}>
+                        <InputLabel id="demo-multiple-chip-label">
+                          Categories
+                        </InputLabel>
+                        <Select
+                          labelId="demo-multiple-chip-label"
+                          id="demo-multiple-chip"
+                          multiple
+                          value={selectedCategories}
+                          onChange={handleChipCategoriesChange}
+                          input={
+                            <OutlinedInput
+                              id="select-multiple-chip"
+                              label="Categories"
+                            />
+                          }
+                          renderValue={(selected) => (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: 0.5,
+                              }}
+                            >
+                              {selected.map((value) => (
+                                <Chip key={value} label={value} />
+                              ))}
+                            </Box>
+                          )}
+                          MenuProps={MenuProps}
+                        >
+                          {categoryArr.map((name) => (
+                            <MenuItem
+                              key={name.text}
+                              value={name.text}
+                              style={getStyles(
+                                name.text,
+                                selectedCategories,
+                                theme
+                              )}
+                            >
+                              {name.text}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
 
-                  <MenuItem
-                    key={name.text}
-                    value={name.text}
-                    style={getStyles(name.text, selectedCategories, theme)}
+                    {/* categories - Autocomplete */}
+                    <Stack spacing={3} sx={{ width: 500 }}>
+                      <Autocomplete
+                        multiple
+                        id="tags-outlined"
+                        options={categoryArr}
+                        getOptionLabel={(option: any) => option.text}
+                        filterSelectedOptions
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Categories"
+                            placeholder="Choose categories for your item"
+                          />
+                        )}
+                      />
+
+                      <TextField
+                        id="new-category"
+                        label="Add Other Category"
+                        variant="outlined"
+                        value={newCategory}
+                        onChange={handleNewCategory}
+                      />
+                      <Button
+                        sx={{ mt: 1, mr: 1 }}
+                        variant="contained"
+                        onClick={updateCategoriesState}
+                      >
+                        Add Category
+                      </Button>
+                    </Stack>
+
+                    <LoadingButton
+                      sx={{ mt: 1, mr: 1 }}
+                      type="submit"
+                      endIcon={<SendIcon />}
+                      loading={formik.isSubmitting}
+                      loadingPosition="center"
+                      variant="contained"
+                    >
+                      <span>Continue</span>
+                    </LoadingButton>
+                  </form>
+                </fieldset>
+                <Snackbar
+                  open={open}
+                  autoHideDuration={6000}
+                  onClose={() => setOpen(false)}
+                >
+                  <Alert
+                    onClose={() => setOpen(false)}
+                    severity={isAddSuccess ? "success" : "error"}
+                    sx={{ width: "100%" }}
                   >
-                    {name.text}
-                  </MenuItem>
-
-                )}
-              </Select>
-            </FormControl>
-          </div>
-
-          {/* categories - Autocomplete */}
-          <Stack spacing={3} sx={{ width: 500 }}>
-            <Autocomplete
-              multiple
-              id="tags-outlined"
-              options={categoryArr}
-              getOptionLabel={(option: any) => option.text}
-              filterSelectedOptions
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Categories"
-                  placeholder="Choose categories for your item"
-                />
-              )}
-            />
-
-            <TextField
-              id="new-category"
-              label="Add Other Category"
-              variant="outlined"
-              value={newCategory}
-              onChange={handleNewCategory}
-            />
-            <Button
-              sx={{ mt: 1, mr: 1 }}
-              variant="contained"
-              onClick={updateCategoriesState}>
-              Add Category
-            </Button>
-          </Stack>
-          
-          <LoadingButton
-           sx={{ mt: 1, mr: 1 }}
-            type="submit"
-            endIcon={<SendIcon />}
-            loading={formik.isSubmitting}
-            loadingPosition="center"
-            variant="contained"
-          >
-            <span>Continue</span>
-          </LoadingButton>
-        </form>
-      </fieldset>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={() => setOpen(false)}
-      >
-        <Alert
-          onClose={() => setOpen(false)}
-          severity={isAddSuccess ? "success" : "error"}
-          sx={{ width: "100%" }}
-        >
-          {isAddSuccess
-            ? "The item was added successfully!"
-            : "There was an issue adding the item. please try again."}
-        </Alert>
-      </Snackbar>
+                    {isAddSuccess
+                      ? "The item was added successfully!"
+                      : "There was an issue adding the item. please try again."}
+                  </Alert>
+                </Snackbar>
               </Typography>
               <Box sx={{ mb: 2 }}>
                 <div>
@@ -375,21 +440,65 @@ const addItemPage = (props: Props) => {
             </StepContent>
           </Step>
 
-            {/* step 2 */}
-        <Step key={'Add Pictures of Your Item'}>
-        <StepLabel>
-              {'Add Pictures of Your Item'}
-            </StepLabel>
-        <StepContent>
-              <Typography>
+          {/* step 2 */}
+          <Step key={"Add Pictures of Your Item"}>
+            <StepLabel>{"Add Pictures of Your Item"}</StepLabel>
+            <StepContent>
+              <Box
+                onClick={handleUploadButtonClick}
+                sx={{
+                  height: "125px",
+                  border: "1px dashed grey",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <FileUploadOutlinedIcon fontSize="large" />
+                <Button
+                  variant="contained"
+                  sx={{ borderRadius: "20px", width: "40%" }}
+                >
+                  Browse
+                </Button>
+              </Box>
+              {imagesNames.length > 0 && (
+                <>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: "bold", marginTop: "10px" }}
+                  >
+                    Uploaded images
+                  </Typography>
+                  <List>
+                    {imagesNames.map((name, index) => (
+                      <ListItem
+                        key={index}
+                        sx={{ paddingTop: "1px", paddingBottom: "1px" }}
+                      >
+                        <ListItemIcon>
+                          <ImageIcon sx={{ marginRight: "16px" }} />
+                        </ListItemIcon>
+                        <ListItemText primary={name} />
+                        <IconButton onClick={() => removeImage(name)}>
+                          <DeleteForeverIcon />
+                        </IconButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                </>
+              )}
               <input
-               type="file"
-               onChange={convertToBase64}
-               multiple
-               accept="image/*"
-              disabled={formik.isSubmitting}
+                type="file"
+                style={{ display: "none" }}
+                ref={imagesInputRef}
+                onChange={convertToBase64}
+                multiple
+                accept="image/*"
+                disabled={formik.isSubmitting}
               />
-              </Typography>
               <Box sx={{ mb: 2 }}>
                 <div>
                   <Button
@@ -397,7 +506,7 @@ const addItemPage = (props: Props) => {
                     onClick={onAddItem}
                     sx={{ mt: 1, mr: 1 }}
                   >
-                    {'Submit'}
+                    {"Submit"}
                   </Button>
                   <Button
                     disabled={false}
@@ -409,16 +518,15 @@ const addItemPage = (props: Props) => {
                 </div>
               </Box>
             </StepContent>
-        </Step>
-      </Stepper>
-      {activeStep === 2 && (
-        <Paper square elevation={0} sx={{ p: 3 }}>
-          {/* todo: change message */}
-          <Typography>All steps completed - you&apos;re finished</Typography>
-        </Paper>
-      )}
-    </Box>
-
+          </Step>
+        </Stepper>
+        {activeStep === 2 && (
+          <Paper square elevation={0} sx={{ p: 3 }}>
+            {/* todo: change message */}
+            <Typography>All steps completed - you&apos;re finished</Typography>
+          </Paper>
+        )}
+      </Box>
     </Container>
   );
 };
