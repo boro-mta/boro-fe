@@ -1,13 +1,22 @@
-import { Box, CardMedia, Container, Divider, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardMedia,
+  Container,
+  Divider,
+  Typography,
+} from "@mui/material";
 import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemsDetails } from "../mocks/fullItemsDetails";
 import { IFullItemDetails } from "../types";
 import ExtraIncludedItemsContainer from "../components/ExtraIncludedItemsContainer/ExtraIncludedItemsContainer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SettingsRow from "../components/SettingsRow/SettingsRow";
+import HttpClient from "../api/HttpClient";
+import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -16,18 +25,29 @@ type IFullItemDetailsParams = {
 type Props = {};
 
 const itemPage = (props: Props) => {
+  const navigate = useNavigate();
+
   const [itemDetails, setItemDetails] = useState<IFullItemDetails>(
     allItemsDetails[0]
   );
-
   let { itemId } = useParams<IFullItemDetailsParams>();
 
   useEffect(() => {
-    // TODO Fetch from API here according to the itemId, for now we mock the data
-    const fullDetails =
-      allItemsDetails.find((item) => item.itemId === itemId) ||
-      allItemsDetails[0];
-    setItemDetails(fullDetails);
+    const getFullDetails = async () => {
+      let fullDetails;
+      // TODO Fetch from API here according to the itemId, for now we mock the data
+      if (itemId !== undefined && itemId.length > 5) {
+        fullDetails = await HttpClient.get(`items/${itemId}`);
+        fullDetails.images = formatImagesOnRecieve(fullDetails.images);
+      } else {
+        fullDetails =
+          allItemsDetails.find((item) => item.itemId === itemId) ||
+          allItemsDetails[0];
+      }
+      setItemDetails(fullDetails);
+    };
+
+    getFullDetails();
   }, []);
 
   return (
@@ -57,8 +77,16 @@ const itemPage = (props: Props) => {
       <SettingsRow
         leftIcon={<CalendarMonthIcon />}
         rowText={"Find available dates"}
-        onClick={() => console.log("here")}
+        onClick={() => navigate("/calendar")}
       />
+
+      <Button
+        variant="contained"
+        sx={{ marginTop: "15px" }}
+        onClick={() => navigate("/")}
+      >
+        Go to home
+      </Button>
     </Container>
   );
 };

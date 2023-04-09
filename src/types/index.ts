@@ -9,6 +9,13 @@ export interface IExtraIncludedItemProperties {
   isIncluded: boolean;
 }
 
+export interface IFullImageDetails {
+  base64ImageData: string;
+  base64ImageMetaData: string;
+  imageId: string;
+  isCover: boolean;
+}
+
 export interface IFullItemDetails extends Omit<IItem, "img"> {
   images: string[];
   description?: string;
