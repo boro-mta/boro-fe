@@ -5,10 +5,6 @@ import {
   Container,
   Divider,
   Modal,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
   Typography,
 } from "@mui/material";
 import Card from "@mui/material/Card";
@@ -16,10 +12,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemDetailsNew } from "../mocks/fullItemsDetails";
-import { IFullItemDetails, IFullItemDetailsNew } from "../types";
-import ExtraIncludedItemsContainer from "../components/ExtraIncludedItemsContainer/ExtraIncludedItemsContainer";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import SettingsRow from "../components/SettingsRow/SettingsRow";
+import { IFullItemDetailsNew } from "../types";
 import HttpClient from "../api/HttpClient";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
