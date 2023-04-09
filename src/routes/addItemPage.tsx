@@ -153,6 +153,7 @@ const addItemPage = (props: Props) => {
         return {
           base64ImageMetaData: imgProps[0],
           base64ImageData: imgProps[1],
+          isCover: false,
         };
       });
     }
@@ -334,59 +335,24 @@ const addItemPage = (props: Props) => {
                         }
                       />
 
-                      {/* categories - chip */}
-                      <div>
-                        <FormControl sx={{ m: 0, width: 300 }}>
-                          <InputLabel id="demo-multiple-chip-label">
-                            Categories
-                          </InputLabel>
-                          <Select
-                            labelId="demo-multiple-chip-label"
-                            id="demo-multiple-chip"
-                            multiple
-                            value={selectedCategories}
-                            onChange={handleChipCategoriesChange}
-                            input={
-                              <OutlinedInput
-                                id="select-multiple-chip"
-                                label="Categories"
-                              />
-                            }
-                            renderValue={(selected) => (
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  flexWrap: "wrap",
-                                  gap: 0.5,
-                                }}
-                              >
-                                {selected.map((value) => (
-                                  <Chip key={value} label={value} />
-                                ))}
-                              </Box>
-                            )}
-                            MenuProps={MenuProps}
-                          >
-                            {categoryArr.map((name) => (
-                              <MenuItem
-                                key={name.text}
-                                value={name.text}
-                                style={getStyles(
-                                  name.text,
-                                  selectedCategories,
-                                  theme
-                                )}
-                              >
-                                {name.text}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </div>
+                      {/* categories - Autocomplete */}
+                      <Stack spacing={3} sx={{ width: 500 }}>
+                        <Autocomplete
+                          multiple
+                          id="tags-outlined"
+                          options={categoryArr}
+                          getOptionLabel={(option: any) => option.text}
+                          filterSelectedOptions
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Categories"
+                              placeholder="Choose categories for your item"
+                            />
+                          )}
+                        />
 
-                      {/* Adding new category */}
-                      {/* <Stack spacing={3} sx={{ width: 500 }}>
-                        <TextField
+                        {/* <TextField
                           id="new-category"
                           label="Add Other Category"
                           variant="outlined"
@@ -399,8 +365,8 @@ const addItemPage = (props: Props) => {
                           onClick={updateCategoriesState}
                         >
                           Add Category
-                        </Button>
-                      </Stack> */}
+                        </Button> */}
+                      </Stack>
 
                       <div>
                         <TextField
