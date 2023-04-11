@@ -13,9 +13,8 @@ export interface IFullImageDetails {
 export interface IFullItemDetailsNew {
   itemId: string;
   condition: string;
-  category: string[];
+  categories: string[];
   title: string;
   description?: string;
-  images?: string[];
-  excludedDates: Date[];
+  images?: IFullImageDetails[];
 }

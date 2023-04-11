@@ -21,7 +21,7 @@ import HttpClient from "../api/HttpClient";
 import { useNavigate } from "react-router";
 import Autocomplete from "@mui/material/Autocomplete";
 import Stack from "@mui/material/Stack";
-import { options } from "../mocks/items";
+import { categoriesOptions, conditionOptions } from "../mocks/items";
 import { Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -89,9 +89,11 @@ const addItemPage = (props: Props) => {
   const [imagesNames, setImagesNames] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
+  const [condition, setCondition] = useState<string>("");
   const [newCategory, setNewCategory] = useState<any>("");
 
-  const [categoryArr, setCategoryArr] = React.useState<any[]>(options);
+  const [categoryArr, setCategoryArr] = React.useState<any[]>(categoriesOptions);
+  const [conditionArr, setConditionArr] = React.useState<any[]>(conditionOptions);
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
@@ -197,7 +199,7 @@ const addItemPage = (props: Props) => {
     if (checkIfCategoryExist(newCategory)) {
       console.log("This category already exist");
     } else {
-      const lastValueNumber: number = options[options.length - 1].value;
+      const lastValueNumber: number = categoriesOptions[categoriesOptions.length - 1].value;
       const newCategoryByUser: object = {
         value: lastValueNumber + 1,
         text: newCategory,
@@ -292,7 +294,7 @@ const addItemPage = (props: Props) => {
       <Box
         sx={{ maxWidth: 400 }}>
         <Stepper activeStep={activeStep} orientation="vertical">
-          {/* step 1 components - add item details: name, description, categories */}
+          {/* step 1 */}
           <Step key={"Fill Item Information"}>
             <StepLabel>{"Fill Item Information"}</StepLabel>
             <StepContent>
@@ -335,6 +337,23 @@ const addItemPage = (props: Props) => {
                         }
                       />
 
+                      <Autocomplete
+                        id="condition"
+                        options={conditionArr}
+                        getOptionLabel={(option: any) => option.text}
+                        onChange={(event, value) => {
+                          console.log(value.text);
+                          setCondition(value.text);
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Condition"
+                            placeholder="Choose your item condition"
+                          />
+                        )}
+                      />
+
                       {/* categories - Autocomplete */}
                       <Stack spacing={3} sx={{ width: 500 }}>
                         <Autocomplete
@@ -343,6 +362,10 @@ const addItemPage = (props: Props) => {
                           options={categoryArr}
                           getOptionLabel={(option: any) => option.text}
                           filterSelectedOptions
+                          onChange={(event, value) => {
+                            console.log(value.map(({ text }) => text))
+                            setSelectedCategories(value.map(({ text }) => text));
+                          }}
                           renderInput={(params) => (
                             <TextField
                               {...params}

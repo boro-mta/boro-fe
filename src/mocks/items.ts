@@ -19,7 +19,7 @@ export const items: IItem[] = [
   },
 ];
 
-export const options = [
+export const categoriesOptions = [
   {
     value: 0,
     text: 'Renovation',
@@ -41,3 +41,19 @@ export const options = [
     text: 'Electronics',
   },
 ];
+
+export const conditionOptions = [
+  {
+    value: 0,
+    text: 'New in Package',
+  },
+  {
+    value: 1,
+    text: 'Good as New',
+  },
+  {
+    value: 2,
+    text: 'Ok',
+  },
+];
+
