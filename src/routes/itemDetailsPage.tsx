@@ -64,11 +64,11 @@ const itemDetailsPage = (props: Props) => {
   const navigate = useNavigate();
 
   const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
-    category: [],
+    categories: [],
     condition: "",
     itemId: "",
     title: "",
-    images: [""],
+    images: [],
     description: "",
     excludedDates: [],
   });
@@ -94,8 +94,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -137,7 +137,7 @@ const itemDetailsPage = (props: Props) => {
       <Card sx={{ marginBottom: "10px" }}>
         {itemDetails.images && (
           <CardMedia component="div" style={{ height: "230px" }}>
-            <ImagesCarousel images={itemDetails.images} />
+            <ImagesCarousel images={[]} />
           </CardMedia>
         )}
       </Card>
@@ -150,7 +150,7 @@ const itemDetailsPage = (props: Props) => {
       <Row
         tableData={[
           { key: "Condition", value: itemDetails.condition },
-          { key: "Category", value: itemDetails.category.join(", ") },
+          { key: "Category", value: itemDetails.categories.join(", ") },
         ]}
       />
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />

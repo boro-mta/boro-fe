@@ -17,4 +17,5 @@ export interface IFullItemDetailsNew {
   title: string;
   description?: string;
   images?: IFullImageDetails[];
+  excludedDates: Date[];
 }
