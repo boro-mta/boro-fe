@@ -38,6 +38,8 @@ import Paper from "@mui/material/Paper";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { IFullImageDetails, IFullItemDetailsNew } from "../types";
+import { IMG_1 } from "../mocks/images";
 
 type Props = {};
 
@@ -148,16 +150,12 @@ const addItemPage = (props: Props) => {
   };
 
   const sendRequest = async (obj: any) => {
-    let imagesForBody;
+    let imagesForBody: Omit<IFullImageDetails, "imageId">[];
     if (obj.images) {
-      imagesForBody = obj.images.map((img: any) => {
-        const imgProps = img.split(",");
-        return {
-          base64ImageMetaData: imgProps[0],
-          base64ImageData: imgProps[1],
-          isCover: false,
-        };
-      });
+      imagesForBody = convertImagesTypeFromString(obj.images);
+    }
+    else {
+      imagesForBody = [];
     }
 
     const reqBody = {
@@ -177,6 +175,18 @@ const addItemPage = (props: Props) => {
       setIsAddSuccess(false);
       console.log(e);
     }
+  };
+
+  const convertImagesTypeFromString = (imagesArrInString: string[]): Omit<IFullImageDetails, "imageId">[] => {
+    let imagesForBody: Omit<IFullImageDetails, "imageId">[] = imagesArrInString.map((img: string) => {
+      const imgProps = img.split(",");
+      return {
+        base64ImageData: imgProps[1],
+        base64ImageMetaData: imgProps[0],
+      };
+    })
+
+    return imagesForBody;
   };
 
   const handleChipCategoriesChange = (
@@ -231,8 +241,14 @@ const addItemPage = (props: Props) => {
 
   const onAddItem = () => {
     const values: FormValues = formValuesAddItem;
+    const forRequest: Omit<IFullItemDetailsNew, "itemId" | "excludedDates"> = {
+      condition: condition,
+      categories: selectedCategories,
+      title: values.title,
+      description: values.description,
+    }
     debugger;
-    sendRequest({ ...values, images }).then(() => {
+    sendRequest({ ...forRequest, images }).then(() => {
       setOpen(true);
       formik.setSubmitting(false);
     });
