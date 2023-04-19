@@ -14,7 +14,7 @@ export const allItemDetailsNew: IFullItemDetailsNew[] = [
       {
         base64ImageData: imgProps[1],
         base64ImageMetaData: imgProps[0],
-        imageId: "12345"
+        //imageId: "12345"
       }
     ],
     excludedDates: [new Date(new Date().setDate(new Date().getDate() + 3))],

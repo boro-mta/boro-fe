@@ -21,7 +21,7 @@ export interface IFullItemDetailsNew {
   categories: string[];
   title: string;
   description?: string;
-  images?: IFullImageDetails[];
+  images?: IInputImage[];
   excludedDates: Date[];
 }
 
