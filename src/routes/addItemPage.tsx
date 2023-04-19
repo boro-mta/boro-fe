@@ -38,7 +38,7 @@ import Paper from "@mui/material/Paper";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { IFullImageDetails, IFullItemDetailsNew } from "../types";
+import { IFullImageDetails, IFullItemDetailsNew, IInputImage, IInputItem } from "../types";
 import { IMG_1 } from "../mocks/images";
 
 type Props = {};
@@ -150,7 +150,7 @@ const addItemPage = (props: Props) => {
   };
 
   const sendRequest = async (obj: any) => {
-    let imagesForBody: Omit<IFullImageDetails, "imageId">[];
+    let imagesForBody: IInputImage[];
     if (obj.images) {
       imagesForBody = convertImagesTypeFromString(obj.images);
     }
@@ -161,12 +161,13 @@ const addItemPage = (props: Props) => {
     const reqBody = {
       title: obj.title,
       description: obj.description,
+      condiition: obj.condition,
+      categories: obj.categories,
       images: imagesForBody,
-      ownerId: "someownerId",
-      includedExtras: {},
     };
 
     try {
+      console.log(reqBody);
       const data = await HttpClient.create("items/add", reqBody);
       console.log(data);
       setIsAddSuccess(true);
@@ -177,8 +178,8 @@ const addItemPage = (props: Props) => {
     }
   };
 
-  const convertImagesTypeFromString = (imagesArrInString: string[]): Omit<IFullImageDetails, "imageId">[] => {
-    let imagesForBody: Omit<IFullImageDetails, "imageId">[] = imagesArrInString.map((img: string) => {
+  const convertImagesTypeFromString = (imagesArrInString: string[]): IInputImage[] => {
+    let imagesForBody: IInputImage[] = imagesArrInString.map((img: string) => {
       const imgProps = img.split(",");
       return {
         base64ImageData: imgProps[1],
@@ -241,11 +242,11 @@ const addItemPage = (props: Props) => {
 
   const onAddItem = () => {
     const values: FormValues = formValuesAddItem;
-    const forRequest: Omit<IFullItemDetailsNew, "itemId" | "excludedDates"> = {
+    const forRequest: IInputItem = {
       condition: condition,
       categories: selectedCategories,
       title: values.title,
-      description: values.description,
+      description: values.description
     }
     debugger;
     sendRequest({ ...forRequest, images }).then(() => {
@@ -271,7 +272,6 @@ const addItemPage = (props: Props) => {
   };
 
   const recalculateCharsFreeText = (event: any) => {
-    console.log("free text counter event value:", event);
     const charCount = event.target.value.length;
     debugger
     if (charCount === 250) {

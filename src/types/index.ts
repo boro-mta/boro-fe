@@ -10,6 +10,11 @@ export interface IFullImageDetails {
   imageId: string;
 }
 
+export interface IInputImage { //image type to send to backend
+  base64ImageData: string;
+  base64ImageMetaData: string;
+}
+
 export interface IFullItemDetailsNew {
   itemId: string;
   condition: string;
@@ -18,4 +23,12 @@ export interface IFullItemDetailsNew {
   description?: string;
   images?: IFullImageDetails[];
   excludedDates: Date[];
+}
+
+export interface IInputItem { //item type to send to backend
+  title: string;
+  description?: string;
+  condition: string;
+  categories: string[];
+  images?: IInputImage[];
 }
