@@ -80,6 +80,7 @@ const itemDetailsPage = (props: Props) => {
   const [selectedDatesError, setSelectedDatesError] = useState<string>("");
   const [isValidDates, setIsValidDates] = useState<boolean>();
   const [open, setOpen] = useState<boolean>(false);
+  const [imagesAsString, setImagesAsString] = useState<string[]>([]);
 
   const handleChangeDates = (dates: Date[]) => {
     const [selectedStartDate, selectedEndDate] = dates;
@@ -116,11 +117,13 @@ const itemDetailsPage = (props: Props) => {
 
   useEffect(() => {
     const getFullDetails = async () => {
-      let fullDetails;
+      let fullDetails: IFullItemDetailsNew;
       // TODO Fetch from API here according to the itemId, for now we mock the data
       if (itemId !== undefined && itemId.length > 5) {
         fullDetails = await HttpClient.get(`items/${itemId}`);
-        fullDetails.images = formatImagesOnRecieve(fullDetails.images);
+        if (fullDetails.images != undefined) {
+          setImagesAsString(formatImagesOnRecieve(fullDetails.images));
+        }
       } else {
         fullDetails =
           allItemDetailsNew.find((item) => item.itemId === itemId) ||
@@ -137,7 +140,7 @@ const itemDetailsPage = (props: Props) => {
       <Card sx={{ marginBottom: "10px" }}>
         {itemDetails.images && (
           <CardMedia component="div" style={{ height: "230px" }}>
-            <ImagesCarousel images={[]} />
+            <ImagesCarousel images={formatImagesOnRecieve(itemDetails.images)} />
           </CardMedia>
         )}
       </Card>
