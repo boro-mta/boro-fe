@@ -161,7 +161,7 @@ const addItemPage = (props: Props) => {
     const reqBody = {
       title: obj.title,
       description: obj.description,
-      condiition: obj.condition,
+      condition: obj.condition,
       categories: obj.categories,
       images: imagesForBody,
     };
