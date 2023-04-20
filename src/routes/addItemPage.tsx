@@ -167,7 +167,6 @@ const addItemPage = (props: Props) => {
     };
 
     try {
-      console.log(reqBody);
       const data = await HttpClient.create("items/add", reqBody);
       console.log(data);
       setIsAddSuccess(true);
@@ -248,7 +247,6 @@ const addItemPage = (props: Props) => {
       title: values.title,
       description: values.description
     }
-    debugger;
     sendRequest({ ...forRequest, images }).then(() => {
       setOpen(true);
       formik.setSubmitting(false);
@@ -273,7 +271,6 @@ const addItemPage = (props: Props) => {
 
   const recalculateCharsFreeText = (event: any) => {
     const charCount = event.target.value.length;
-    debugger
     if (charCount === 250) {
       setFreeTextChar(freeTextChar);
     }
@@ -358,7 +355,6 @@ const addItemPage = (props: Props) => {
                         options={conditionArr}
                         getOptionLabel={(option: any) => option.text}
                         onChange={(event, value) => {
-                          console.log(value.text);
                           setCondition(value.text);
                         }}
                         renderInput={(params) => (
@@ -379,7 +375,6 @@ const addItemPage = (props: Props) => {
                           getOptionLabel={(option: any) => option.text}
                           filterSelectedOptions
                           onChange={(event, value) => {
-                            console.log(value.map(({ text }) => text))
                             setSelectedCategories(value.map(({ text }) => text));
                           }}
                           renderInput={(params) => (
