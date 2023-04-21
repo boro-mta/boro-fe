@@ -4,8 +4,9 @@ import { Provider as StoreProvider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { store } from "./app/store";
 import App from "./App";
-import ItemPage from "./routes/itemPage";
+import ItemDetailsPage from "./routes/itemDetailsPage";
 import UserPage from "./routes/userPage";
+
 import "./index.css";
 import ErrorPage from "./routes/errorPage";
 import FacebookLoginPage from "./routes/facebookLoginPage";
@@ -19,7 +20,6 @@ import "@fontsource/roboto/700.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import AddItemPage from "./routes/addItemPage";
-import CalendarPage from "./routes/calendarPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
   },
   {
     path: "item/:itemId",
-    element: <ItemPage />,
+    element: <ItemDetailsPage />,
   },
   {
     path: "login",
