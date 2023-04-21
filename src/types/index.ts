@@ -4,22 +4,31 @@ export interface IItem {
   img?: string;
 }
 
-export interface IExtraIncludedItemProperties {
-  title: string;
-  isIncluded: boolean;
-}
-
 export interface IFullImageDetails {
   base64ImageData: string;
   base64ImageMetaData: string;
   imageId: string;
-  isCover: boolean;
 }
 
-export interface IFullItemDetails extends Omit<IItem, "img"> {
-  images: string[];
+export interface IInputImage { //image type to send to backend
+  base64ImageData: string;
+  base64ImageMetaData: string;
+}
+
+export interface IFullItemDetailsNew {
+  itemId: string;
+  condition: string;
+  categories: string[];
+  title: string;
   description?: string;
-  extraIncludedItems: IExtraIncludedItemProperties[];
-  borrowerAddress?: string;
-  borrowerPhoneNumber?: string;
+  images?: IInputImage[];
+  excludedDates: Date[];
+}
+
+export interface IInputItem { //item type to send to backend
+  title: string;
+  description?: string;
+  condition: string;
+  categories: string[];
+  images?: IInputImage[];
 }
