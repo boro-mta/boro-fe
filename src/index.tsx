@@ -20,6 +20,9 @@ import "@fontsource/roboto/700.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import AddItemPage from "./routes/addItemPage";
+import UserEditPage from "./routes/userEditPage";
+import NewUserPage from "./routes/newUserPage";
+
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -44,6 +47,14 @@ const router = createBrowserRouter([
   {
     path: "/users/:userId",
     element: <UserPage />,
+  },
+  {
+    path: "/users/:userId/edit",
+    element: <UserEditPage />
+  },
+  {
+    path: "/newUser",
+    element: <NewUserPage />
   },
   {
     path: "*",

@@ -14,7 +14,7 @@ const FacebookLoginButton = ({ onLoginSuccess }: IProps) => {
     <FacebookLogin
       appId="3157987714491555"
       autoLoad={true}
-      fields="name,email,picture"
+      fields="name,email,picture.width(200)"
       callback={handleFacebookResponse}
       scope="public_profile,user_friends,user_actions.books"
     />

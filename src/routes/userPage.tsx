@@ -1,35 +1,61 @@
-import { Avatar, Box, CardMedia, Container, Divider, Grid, Typography } from "@mui/material";
-import Card from "@mui/material/Card";
+import { Avatar, Box, Container, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { IUserDetails } from "../types";
 import { allUserDetails } from "../mocks/userDetails";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
 import { items } from "../mocks/items";
+import Button from "@mui/material/Button";
+import api from "../api/HttpClient"
+import { getFormattedDate } from "../utils/calendarUtils";
 
 type IUserDetailsParams = {
     userId: string;
 };
 
+
+
+
 type Props = {};
 
 const userPage = (props: Props) => {
     const [userDetails, setUserDetails] = useState<IUserDetails>(
-        allUserDetails[2]
+        allUserDetails[3]
     );
 
-    let { userId } = useParams<IUserDetailsParams>();
 
+    let { userId } = useParams<IUserDetailsParams>();
+    const navigate = useNavigate();
+
+    const handleEditClick = () => {
+        navigate(`/users/${userId}/edit`);
+    }
+    // https://localhost:7124/Users/ab1c3164-8fbb-409a-972e-6572475a42b8/Profile
+    const serverUserProfileEndpoint = `Users/${userId}/Profile`;
 
     useEffect(() => {
-        // TODO Fetch from API here according to the itemId, for now we mock the data
-        const fullDetails =
-            allUserDetails.find((user) => user.id === userId) ||
-            allUserDetails[0];
-        setUserDetails(fullDetails);
-    }, []);
+        const getUserProfile = async () => {
+            try {
+                const userDetails = await api.get(serverUserProfileEndpoint);
+                setUserDetails(userDetails);
+                console.log(userDetails);
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
+        getUserProfile();
+    }, [userId]);
+
+    const formatDate = (date: string) => {
+        const formattedDate = new Date(date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+        return formattedDate;
+    };
 
 
 
@@ -37,19 +63,21 @@ const userPage = (props: Props) => {
         <Container>
             <Grid container spacing={2} alignItems="center">
                 <Grid item>
-                    <Card sx={{ marginBottom: "20px" }}>
-                        {userDetails.images && (
-                            <Avatar component="div" style={{ height: "150px", width: "150px" }}>
-                                <ImagesCarousel images={userDetails.images} />
-                            </Avatar>
-                        )}
-                    </Card>
+
+                    {userDetails.profileImage && (
+                        <Avatar component="div" style={{ height: "150px", width: "150px" }}>
+                            <ImagesCarousel images={[userDetails.profileImage]} />
+                        </Avatar>
+                    )}
                 </Grid>
                 <Grid item>
-                    <Typography variant="h4">{'Hi! I am ' + userDetails.name} </Typography>
+                    <Typography variant="h5">{'Hi! I am ' + userDetails.firstName + ' ' + userDetails.lastName} </Typography>
                     <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
-                        {'A Boro friend since: ' + userDetails.joined}
+                        {'A Boro friend since: ' + formatDate(userDetails.dateJoined)}
                     </Typography>
+                    <Button variant="outlined" onClick={handleEditClick}>
+                        Edit Profile
+                    </Button>
                 </Grid>
             </Grid>
             <br />
@@ -58,7 +86,7 @@ const userPage = (props: Props) => {
                 {userDetails.about}
             </Typography>
             <br />
-            <Typography variant="h4">{userDetails.name + ' \'s items'}</Typography>
+            <Typography variant="h4">{userDetails.firstName + ' \'s items'}</Typography>
             <Box>
                 <ItemsContainer containerTitle="My Tool Kit 🏠" items={items} />
             </Box>

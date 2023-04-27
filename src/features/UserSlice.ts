@@ -8,6 +8,7 @@ export const userSlice = createSlice({
     email: "",
     id: "",
     accessToken: "",
+    picture: ""
   },
   reducers: {
     updateUser: (state, action) => {
@@ -15,6 +16,7 @@ export const userSlice = createSlice({
       state.email = action.payload.email;
       state.id = action.payload.id;
       state.accessToken = action.payload.accessToken;
+      state.picture = action.payload.picture;
     },
   },
 });
@@ -23,5 +25,7 @@ export const userSlice = createSlice({
 export const { updateUser } = userSlice.actions;
 
 export const selectUserName = (state: RootState) => state.user.name;
+export const selectPicture = (state: RootState) => state.user.picture;
+
 
 export default userSlice.reducer;

@@ -5,6 +5,7 @@ import { ReactFacebookLoginInfo } from "react-facebook-login";
 import { useNavigate } from "react-router-dom";
 import { selectUserName, updateUser } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+
 interface IUserData {
   name?: string;
   email?: string;
@@ -17,6 +18,7 @@ const FacebookLoginPage = () => {
   const userName = useAppSelector(selectUserName);
 
   const handleLoginSuccess = (response: ReactFacebookLoginInfo) => {
+    const pictureUrl = response.picture && response.picture.data && response.picture.data.url;
     console.log(response);
     dispatch(
       updateUser({
@@ -24,6 +26,8 @@ const FacebookLoginPage = () => {
         email: response.email,
         id: response.id,
         accessToken: response.accessToken,
+        picture: pictureUrl || ""
+
       })
     );
 

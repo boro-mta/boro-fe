@@ -34,9 +34,11 @@ export interface IInputItem { //item type to send to backend
 }
 
 export interface IUserDetails {
-  images: string[];
-  name?: string;
+  userId: string;
+  profileImage: string;
+  firstName: string;
+  lastName: string;
   about?: string;
-  joined?: string;
-  id?: string;
+  dateJoined: string;
+  email?: string
 }
