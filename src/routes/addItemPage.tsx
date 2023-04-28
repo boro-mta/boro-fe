@@ -402,7 +402,7 @@ const addItemPage = (props: Props) => {
                         </Button> */}
                       </Stack>
 
-                      <div>
+                      {/* <div>
                         <TextField
                           id="free-text"
                           label="Write Here More Details"
@@ -413,7 +413,7 @@ const addItemPage = (props: Props) => {
                           sx={{ width: "100%" }}
                         />
                         <p>{freeTextCount}/250</p>
-                      </div>
+                      </div> */}
 
                       <LoadingButton
                         sx={{ mt: 1, mr: 1 }}

@@ -158,6 +158,14 @@ const itemDetailsPage = (props: Props) => {
       />
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
+      <Button
+        variant="contained"
+        sx={{ mt: 1, mr: 1 }}
+        onClick={() => navigate(`/editItem/${itemId}`)}
+      >
+        Edit Item
+      </Button>
+
       <Typography variant="h6" sx={{ marginBottom: "10px" }}>
         Find available dates
       </Typography>
