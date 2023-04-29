@@ -10,7 +10,8 @@ export interface IFullImageDetails {
   imageId: string;
 }
 
-export interface IInputImage { //image type to send to backend
+export interface IInputImage {
+  //image type to send to backend
   base64ImageData: string;
   base64ImageMetaData: string;
 }
@@ -25,10 +26,27 @@ export interface IFullItemDetailsNew {
   excludedDates: Date[];
 }
 
-export interface IInputItem { //item type to send to backend
+export interface IInputItem {
+  //item type to send to backend
   title: string;
   description?: string;
   condition: string;
   categories: string[];
   images?: IInputImage[];
 }
+
+export interface ICoordinate {
+  lat: number;
+  lng: number;
+}
+
+export interface IMarkerDetails extends ICoordinate {
+  name: string;
+}
+
+// TODO remove from comment when base version working
+// export interface IMarkerDetails extends ICoordinate {
+//   itemId: string;
+//   name: string;
+//   img: string;
+// }

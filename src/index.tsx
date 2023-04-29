@@ -18,6 +18,7 @@ import "@fontsource/roboto/700.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import AddItemPage from "./routes/addItemPage";
+import Map from "./components/MapComponent/Map";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "addItem",
     element: <AddItemPage />,
+  },
+  {
+    path: "map",
+    element: <Map />,
   },
   {
     path: "*",
