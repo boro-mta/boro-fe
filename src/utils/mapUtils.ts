@@ -21,7 +21,8 @@ export const renderMarkersByLocations = (
         <div class="info-window">
           <h2 class="info-title">${name}</h2>
           <img src="${IMG_1}" class="info-img"/>
-          <button onclick="onMarkerClick('${name}')">Go to item</button>
+          <hr class="divider"/>
+          <button class="info-button" onclick="onMarkerClick('${name}')">Go to item</button>
         </div>
       `);
       infoWindow.open(map);
