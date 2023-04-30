@@ -41,6 +41,21 @@ const validationSchema = yup.object({
 
 
 const EditItemPage = (props: Props) => {
+    const imagesInputRef = useRef<HTMLInputElement | null>(null);
+    const [images, setImages] = useState<string[]>();
+    const [imagesNames, setImagesNames] = useState<string[]>([]);
+    const [open, setOpen] = useState<boolean>(false);
+    const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
+    const [condition, setCondition] = useState<string>("");
+    const [newCategory, setNewCategory] = useState<any>("");
+
+    const [categoryArr, setCategoryArr] = React.useState<any[]>(categoriesOptions);
+    const [conditionArr, setConditionArr] = React.useState<any[]>(conditionOptions);
+    const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
+        []
+    );
+    const [itemInitialCategories, setItemInitialCategories] = useState<any[]>([]);
+
     let { itemId } = useParams<IFullItemDetailsParams>();
 
     const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
@@ -60,6 +75,7 @@ const EditItemPage = (props: Props) => {
             try {
                 itemServerDetails = await HttpClient.get(`items/${itemId}`);
                 setItemDetails(itemServerDetails);
+                setItemInitialCategories(itemDetails.categories);
             }
             catch (err) {
                 console.log("Error while loading item");
@@ -73,6 +89,7 @@ const EditItemPage = (props: Props) => {
 
     console.log("after use effect");
     console.log(itemDetails);
+    console.log(itemInitialCategories);
 
     const [formValuesEditItem, setFormValusEditItem] = React.useState<FormValues>({
         title: itemDetails.title,
@@ -206,59 +223,8 @@ const EditItemPage = (props: Props) => {
         }
     };
 
-
-    const imagesInputRef = useRef<HTMLInputElement | null>(null);
-    const [images, setImages] = useState<string[]>();
-    const [imagesNames, setImagesNames] = useState<string[]>([]);
-    const [open, setOpen] = useState<boolean>(false);
-    const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
-    const [condition, setCondition] = useState<string>("");
-    const [newCategory, setNewCategory] = useState<any>("");
-
-    const [categoryArr, setCategoryArr] = React.useState<any[]>(categoriesOptions);
-    const [conditionArr, setConditionArr] = React.useState<any[]>(conditionOptions);
-    const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
-        []
-    );
-    const [itemInitialCategories, setItemInitialCategories] = useState<any[]>([]);
-
-
-
-    //const serverUrl = 'https://localhost:';
-    // const serverPort = '7124'
-    //  const serverUserProfileEndpoint = '/Users/' + userId + '/Profile'
-
-    //need to change to api call like other pages, waiting for endpoint
-    // useEffect(() => {
-    //const url = serverUrl + serverPort + serverUserProfileEndpoint;
-    //fetch(url).then((response) => response.json()).then((data) => setUserDetails(data)).then((data) => console.log(data));
-    //  }, [userId]);
-
-    //const formik =
-
-    // useFormik({
-
-    //     initialValues: {
-    //         firstName: itemDetails.firstName,
-    //         lastName: userDetails.lastName,
-    //         about: userDetails.about,
-    //         profileImage: userDetails.profileImage,
-    //         userId: userDetails.userId,
-    //         dateJoined: userDetails.dateJoined
-    //     },
-    //     enableReinitialize: true,
-    //     validationSchema: validationSchema,
-    //     onSubmit: (
-    //         values: IUserDetails,
-    //         { setSubmitting }: FormikHelpers<IUserDetails>
-    //     ) => {
-    //         setTimeout(() => {
-    //             alert(JSON.stringify(values, null, 2));
-    //             setSubmitting(false);
-    //         }, 2000);
-    //     },
-    // },);
     const navigate = useNavigate();
+
     const handleCancelClick = () => {
         navigate(`/item/${itemId}`);
     }
@@ -282,9 +248,7 @@ const EditItemPage = (props: Props) => {
 
     const getConditionFronItemDetails = (conditionFromServer: any): any => {
         let contiditionToReturn: any = "";
-        debugger;
         conditionArr.forEach(function (value) {
-            debugger;
             if (value.text === conditionFromServer) {
                 contiditionToReturn = value;
             }
@@ -293,75 +257,24 @@ const EditItemPage = (props: Props) => {
         return contiditionToReturn;
     }
 
+    const getCategoriesFromServerDetails = (categories: string[]): any[] => {
+        const arrToReturn: any[] = [];
+
+        debugger;
+
+        for (let i = 0; i < categories.length; i++) {
+            for (let j = 0; j < categoryArr.length; j++) {
+                if (categoryArr[j] === categories[i])
+                    arrToReturn.push(categoryArr[j]);
+            }
+
+        }
+
+        return arrToReturn;
+        //return [categoryArr[0], categoryArr[2]];
+    }
+
     return (
-
-        // <Container>
-        //     <Typography variant="h3">Edit your Details</Typography>
-        //     <form onSubmit={formik.handleSubmit}>
-        //         <TextField
-        //             fullWidth
-        //             id="firstName"
-        //             name="firstName"
-        //             label="First Name"
-        //             margin="normal"
-        //             value={formik.values.firstName}
-        //             onChange={formik.handleChange}
-        //             error={
-        //                 formik.touched.firstName && Boolean(formik.errors.firstName)
-        //             }
-        //             helperText={formik.touched.firstName && formik.errors.firstName}
-        //         />
-        //         <TextField
-        //             fullWidth
-        //             id="lastName"
-        //             name="lastName"
-        //             label="Last Name"
-        //             margin="normal"
-        //             value={formik.values.lastName}
-        //             onChange={formik.handleChange}
-        //             error={
-        //                 formik.touched.lastName && Boolean(formik.errors.lastName)
-        //             }
-        //             helperText={formik.touched.lastName && formik.errors.lastName}
-        //         />
-        //         <TextField
-        //             fullWidth
-        //             id="about"
-        //             name="about"
-        //             label="About"
-        //             multiline
-        //             margin="normal"
-        //             value={formik.values.about}
-        //             onChange={formik.handleChange}
-        //             error={formik.touched.about && Boolean(formik.errors.about)}
-        //             helperText={formik.touched.about && formik.errors.about}
-        //         />
-        //         <Button
-        //             variant="contained"
-        //             type="submit"
-        //             disabled={false}
-        //             style={{ marginRight: "8px", padding: "8px 16px" }}
-
-        //         >
-        //             Save
-        //         </Button>
-        //         <Button
-        //             variant="contained"
-        //             type="button"
-        //             disabled={false}
-        //             style={{ marginLeft: "8px", padding: "8px 16px", backgroundColor: "white", color: "red" }}
-        //             onClick={handleCancelClick}
-        //         >
-
-        //             Cancel
-        //         </Button>
-
-        //         {formik.isSubmitting && <CircularProgress />}
-        //     </form>
-        // </Container>
-
-
-
         <Container>
             <Typography variant="h3">Edit Item</Typography>
             <Box
@@ -371,9 +284,7 @@ const EditItemPage = (props: Props) => {
                     <Step key={"Fill Item Information"}>
                         <StepLabel>{"Fill Item Information"}</StepLabel>
                         <StepContent>
-                            <Box sx={{
-                                height: "100%",
-                            }}>
+                            <Box sx={{ height: "100%" }}>
                                 <Typography>
                                     <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
                                         <form onSubmit={formik.handleSubmit}>
@@ -429,26 +340,27 @@ const EditItemPage = (props: Props) => {
 
                                             {/* categories - Autocomplete */}
                                             <Stack spacing={3} sx={{ width: 500 }}>
-                                                <Autocomplete
-                                                    defaultValue={itemInitialCategories}
+                                                {itemDetails.categories.length && <Autocomplete
+                                                    defaultValue={itemDetails.categories}
                                                     multiple
                                                     id="tags-outlined"
                                                     options={categoryArr}
-                                                    getOptionLabel={(option: any) => option.text}
+                                                    getOptionLabel={option => option}
                                                     filterSelectedOptions
                                                     onChange={(event, value) => {
-                                                        setSelectedCategories(value.map(({ text }) => text));
+                                                        setSelectedCategories(value);
                                                     }}
                                                     renderInput={(params) => (
                                                         <TextField
                                                             {...params}
                                                             label="Categories"
                                                             placeholder="Choose categories for your item"
+                                                        //defaultValue={getCategoriesFromServerDetails(itemDetails.categories)}
                                                         />
                                                     )}
 
                                                 />
-                                            </Stack>
+                                                }                                            </Stack>
 
                                             <LoadingButton
                                                 sx={{ mt: 1, mr: 1 }}

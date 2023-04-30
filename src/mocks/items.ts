@@ -19,28 +19,7 @@ export const items: IItem[] = [
   },
 ];
 
-export const categoriesOptions = [
-  {
-    value: 0,
-    text: 'Renovation',
-  },
-  {
-    value: 1,
-    text: 'Gardening',
-  },
-  {
-    value: 2,
-    text: 'Kitchen',
-  },
-  {
-    value: 3,
-    text: 'Gaming',
-  },
-  {
-    value: 4,
-    text: 'Electronics',
-  },
-];
+export const categoriesOptions: string[] = ['Renovation', 'Gardening', 'Kitchen', 'Gaming', 'Electronics'];
 
 export const conditionOptions = [
   {
