@@ -41,7 +41,9 @@ export interface ICoordinate {
 }
 
 export interface IMarkerDetails extends ICoordinate {
-  name: string;
+  id: string;
+  imageId: string;
+  title: string;
 }
 
 // TODO remove from comment when base version working

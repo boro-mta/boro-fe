@@ -11,7 +11,7 @@ export const renderMarkersByLocations = (
   const infoWindow = new google.maps.InfoWindow();
   (window as any).onMarkerClick = onMarkerClick;
 
-  return locations.map(({ name, lat, lng }) => {
+  return locations.map(({ id, imageId, title, lat, lng }) => {
     const marker = CustomMarker({ lat, lng });
 
     map.addListener("click", () => infoWindow.close());
@@ -19,10 +19,10 @@ export const renderMarkersByLocations = (
       infoWindow.setPosition({ lat, lng });
       infoWindow.setContent(`
         <div class="info-window">
-          <h2 class="info-title">${name}</h2>
+          <h2 class="info-title">${title}</h2>
           <img src="${IMG_1}" class="info-img"/>
           <hr class="divider"/>
-          <button class="info-button" onclick="onMarkerClick('${name}')">Go to item</button>
+          <button class="info-button" onclick="onMarkerClick('${id}')">Go to item</button>
         </div>
       `);
       infoWindow.open(map);
