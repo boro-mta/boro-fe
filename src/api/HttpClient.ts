@@ -1,6 +1,8 @@
 import apiConfig from "../config/apiConfig";
 
+
 const request = async (route: string, params?: any, method = "GET") => {
+  debugger;
   const options: any = {
     method,
     headers: {
@@ -20,13 +22,19 @@ const request = async (route: string, params?: any, method = "GET") => {
   const targetUrl = `${apiConfig.SERVER_URL}:${apiConfig.SERVER_PORT}/${route}`;
   console.log(targetUrl);
   const response = await fetch(targetUrl, options);
+  console.log(response);
 
   if (response.status !== 200) {
     throw new Error(`${response.status}: ${response.statusText}`);
   }
 
-  const result = await response.json();
+  let result;
+  try {
+    result = await response.json();
+  }
+  catch (err) {
 
+  }
   return result;
 };
 

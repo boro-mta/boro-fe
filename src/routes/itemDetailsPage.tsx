@@ -118,7 +118,6 @@ const itemDetailsPage = (props: Props) => {
   useEffect(() => {
     const getFullDetails = async () => {
       let fullDetails: IFullItemDetailsNew;
-      // TODO Fetch from API here according to the itemId, for now we mock the data
       if (itemId !== undefined && itemId.length > 5) {
         fullDetails = await HttpClient.get(`items/${itemId}`);
         if (fullDetails.images != undefined) {

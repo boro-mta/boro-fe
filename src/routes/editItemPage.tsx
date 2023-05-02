@@ -16,6 +16,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
 import { IFullItemDetailsNew } from "../types";
+import { debug } from "console";
 
 type IFullItemDetailsParams = {
     itemId: string;
@@ -51,10 +52,7 @@ const EditItemPage = (props: Props) => {
 
     const [categoryArr, setCategoryArr] = React.useState<any[]>(categoriesOptions);
     const [conditionArr, setConditionArr] = React.useState<any[]>(conditionOptions);
-    const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
-        []
-    );
-    const [itemInitialCategories, setItemInitialCategories] = useState<any[]>([]);
+    const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
 
     let { itemId } = useParams<IFullItemDetailsParams>();
 
@@ -75,7 +73,8 @@ const EditItemPage = (props: Props) => {
             try {
                 itemServerDetails = await HttpClient.get(`items/${itemId}`);
                 setItemDetails(itemServerDetails);
-                setItemInitialCategories(itemDetails.categories);
+                setCondition(itemServerDetails.condition);
+                setSelectedCategories(itemServerDetails.categories);
             }
             catch (err) {
                 console.log("Error while loading item");
@@ -86,10 +85,6 @@ const EditItemPage = (props: Props) => {
 
         onWakeFunction();
     }, []);
-
-    console.log("after use effect");
-    console.log(itemDetails);
-    console.log(itemInitialCategories);
 
     const [formValuesEditItem, setFormValusEditItem] = React.useState<FormValues>({
         title: itemDetails.title,
@@ -135,30 +130,22 @@ const EditItemPage = (props: Props) => {
         }
     };
 
-    const sendRequest = async (obj: any) => {
-        let imagesForBody: IInputImage[];
-        if (obj.images) {
-            imagesForBody = convertImagesTypeFromString(obj.images);
-        }
-        else {
-            imagesForBody = [];
-        }
-
+    const sendEditRequest = async (obj: any) => {
         const reqBody = {
             title: obj.title,
             description: obj.description,
             condition: obj.condition,
             categories: obj.categories,
-            images: imagesForBody,
         };
 
         try {
-            const data = await HttpClient.create("items/add", reqBody);
-            console.log(data);
+            console.log(reqBody);
+            await HttpClient.create(`items/${itemId}/update`, reqBody);
             setIsAddSuccess(true);
-            navigate(`/item/${data}`);
+            navigate(`/item/${itemId}`);
         } catch (e) {
             setIsAddSuccess(false);
+            console.log("error in updating item");
             console.log(e);
         }
     };
@@ -193,15 +180,15 @@ const EditItemPage = (props: Props) => {
         setCategoryArr((current: any) => [...current, category]);
     };
 
-    const onAddItem = () => {
+    const onEditItem = () => {
         const values: FormValues = formValuesEditItem;
         const forRequest: IInputItem = {
             condition: condition,
             categories: selectedCategories,
-            title: values.title,
-            description: values.description
+            title: formik.values.title,
+            description: formik.values.description
         }
-        sendRequest({ ...forRequest, images }).then(() => {
+        sendEditRequest({ ...forRequest, images }).then(() => {
             setOpen(true);
             formik.setSubmitting(false);
         });
@@ -227,6 +214,10 @@ const EditItemPage = (props: Props) => {
 
     const handleCancelClick = () => {
         navigate(`/item/${itemId}`);
+    }
+
+    const handleSaveClick = () => {
+        onEditItem();
     }
 
     const formik = useFormik({
@@ -257,22 +248,7 @@ const EditItemPage = (props: Props) => {
         return contiditionToReturn;
     }
 
-    const getCategoriesFromServerDetails = (categories: string[]): any[] => {
-        const arrToReturn: any[] = [];
 
-        debugger;
-
-        for (let i = 0; i < categories.length; i++) {
-            for (let j = 0; j < categoryArr.length; j++) {
-                if (categoryArr[j] === categories[i])
-                    arrToReturn.push(categoryArr[j]);
-            }
-
-        }
-
-        return arrToReturn;
-        //return [categoryArr[0], categoryArr[2]];
-    }
 
     return (
         <Container>
@@ -328,6 +304,7 @@ const EditItemPage = (props: Props) => {
                                                 getOptionLabel={(option: any) => option.text}
                                                 onChange={(event, value) => {
                                                     setCondition(value.text);
+                                                    setItemDetails({ ...itemDetails, condition: value.text });
                                                 }}
                                                 renderInput={(params) => (
                                                     <TextField
@@ -345,7 +322,7 @@ const EditItemPage = (props: Props) => {
                                                     multiple
                                                     id="tags-outlined"
                                                     options={categoryArr}
-                                                    getOptionLabel={option => option}
+                                                    getOptionLabel={(option: any) => option}
                                                     filterSelectedOptions
                                                     onChange={(event, value) => {
                                                         setSelectedCategories(value);
@@ -355,7 +332,6 @@ const EditItemPage = (props: Props) => {
                                                             {...params}
                                                             label="Categories"
                                                             placeholder="Choose categories for your item"
-                                                        //defaultValue={getCategoriesFromServerDetails(itemDetails.categories)}
                                                         />
                                                     )}
 
@@ -470,13 +446,6 @@ const EditItemPage = (props: Props) => {
                             <Box sx={{ mb: 2 }}>
                                 <div>
                                     <Button
-                                        variant="contained"
-                                        onClick={onAddItem}
-                                        sx={{ mt: 1, mr: 1 }}
-                                    >
-                                        {"Submit"}
-                                    </Button>
-                                    <Button
                                         disabled={false}
                                         onClick={handleBack}
                                         sx={{ mt: 1, mr: 1 }}
@@ -488,6 +457,27 @@ const EditItemPage = (props: Props) => {
                         </StepContent>
                     </Step>
                 </Stepper>
+
+                <Button
+                    variant="contained"
+                    type="submit"
+                    disabled={false}
+                    style={{ marginRight: "8px", padding: "8px 16px" }}
+                    onClick={handleSaveClick}
+                >
+                    Save
+                </Button>
+                <Button
+                    variant="contained"
+                    type="button"
+                    disabled={false}
+                    style={{ marginLeft: "8px", padding: "8px 16px", backgroundColor: "white", color: "red" }}
+                    onClick={handleCancelClick}
+                >
+
+                    Cancel
+                </Button>
+
                 {activeStep === 2 && (
                     <Paper square elevation={0} sx={{ p: 3 }}>
                         {/* todo: change message */}
