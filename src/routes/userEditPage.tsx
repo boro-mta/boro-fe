@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
+import api from "../api/HttpClient";
 type IUserDetailsParams = {
     userId: string;
 };
@@ -13,9 +14,11 @@ type IUserDetailsParams = {
 type Props = {};
 
 const validationSchema = yup.object({
-    first_name: yup.string().max(30, "Must be 30 characters or less"),
-    last_name: yup.string().max(30, "Must be 30 characters or less"),
-    about: yup.string().max(250, "Must be 250 characters or less"),
+
+    About: yup.string().max(250, "Must be 250 characters or less"),
+    Email: yup.string().email(),
+    Latitude: yup.string().max(30, "Must be 30 characters or less"),
+    Longitude: yup.string().max(30, "Must be 30 characters or less"),
 });
 
 
@@ -41,60 +44,59 @@ const UserEditPage = (props: Props) => {
         useFormik({
 
             initialValues: {
+                about: userDetails.about,
+                email: userDetails.email,
+                latitude: 0,
+                longitude: 0,
+                userId: userDetails.userId,
                 firstName: userDetails.firstName,
                 lastName: userDetails.lastName,
-                about: userDetails.about,
                 profileImage: userDetails.profileImage,
-                userId: userDetails.userId,
-                dateJoined: userDetails.dateJoined
+                dateJoined: userDetails.dateJoined,
             },
             enableReinitialize: true,
             validationSchema: validationSchema,
-            onSubmit: (
-                values: IUserDetails,
-                { setSubmitting }: FormikHelpers<IUserDetails>
-            ) => {
-                setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2));
-                    setSubmitting(false);
-                }, 2000);
-            },
+            onSubmit: () => { },
         },);
+
     const navigate = useNavigate();
     const handleCancelClick = () => {
         navigate(`/users/${userId}`);
+    }
+    const handleEditClick = async () => {
+        const userDetails = {
+            about: formik.values.about,
+            email: formik.values.email,
+            latitude: 0,
+            longitude: 0
+        };
+        try {
+            const response = await api.create(`Users/${userId}/Update`, userDetails);
+            console.log('User created successfully!', response);
+            navigate("/users/" + userId);
+        } catch (error) {
+            console.error('Failed to update user:', error);
+        }
     }
 
     return (
 
         <Container>
             <Typography variant="h3">Edit your Details</Typography>
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit} >
                 <TextField
                     fullWidth
-                    id="firstName"
-                    name="firstName"
-                    label="First Name"
+                    id="email"
+                    name="email"
+                    label="Email"
                     margin="normal"
-                    value={formik.values.firstName}
+                    value={formik.values.email}
                     onChange={formik.handleChange}
                     error={
-                        formik.touched.firstName && Boolean(formik.errors.firstName)
+                        formik.touched.email && Boolean(formik.errors.email)
                     }
-                    helperText={formik.touched.firstName && formik.errors.firstName}
-                />
-                <TextField
-                    fullWidth
-                    id="lastName"
-                    name="lastName"
-                    label="Last Name"
-                    margin="normal"
-                    value={formik.values.lastName}
-                    onChange={formik.handleChange}
-                    error={
-                        formik.touched.lastName && Boolean(formik.errors.lastName)
-                    }
-                    helperText={formik.touched.lastName && formik.errors.lastName}
+                    helperText={formik.touched.email && formik.errors.email}
+                    InputLabelProps={{ shrink: true }}
                 />
                 <TextField
                     fullWidth
@@ -107,12 +109,14 @@ const UserEditPage = (props: Props) => {
                     onChange={formik.handleChange}
                     error={formik.touched.about && Boolean(formik.errors.about)}
                     helperText={formik.touched.about && formik.errors.about}
+
                 />
                 <Button
                     variant="contained"
                     type="submit"
                     disabled={false}
                     style={{ marginRight: "8px", padding: "8px 16px" }}
+                    onClick={handleEditClick}
 
                 >
                     Save

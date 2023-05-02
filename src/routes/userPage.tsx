@@ -8,7 +8,9 @@ import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
 import { items } from "../mocks/items";
 import Button from "@mui/material/Button";
 import api from "../api/HttpClient"
-import { getFormattedDate } from "../utils/calendarUtils";
+import { selectPicture } from "../features/UserSlice";
+import { useAppSelector } from "../app/hooks";
+
 
 type IUserDetailsParams = {
     userId: string;
@@ -24,14 +26,18 @@ const userPage = (props: Props) => {
         allUserDetails[3]
     );
 
-
+    const userProfilePicture = useAppSelector(selectPicture);
     let { userId } = useParams<IUserDetailsParams>();
     const navigate = useNavigate();
 
     const handleEditClick = () => {
         navigate(`/users/${userId}/edit`);
     }
-    // https://localhost:7124/Users/ab1c3164-8fbb-409a-972e-6572475a42b8/Profile
+
+    const handleHomeClick = () => {
+        navigate('/');
+    }
+
     const serverUserProfileEndpoint = `Users/${userId}/Profile`;
 
     useEffect(() => {
@@ -64,9 +70,9 @@ const userPage = (props: Props) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid item>
 
-                    {userDetails.profileImage && (
+                    {(
                         <Avatar component="div" style={{ height: "150px", width: "150px" }}>
-                            <ImagesCarousel images={[userDetails.profileImage]} />
+                            <ImagesCarousel images={[userProfilePicture]} />
                         </Avatar>
                     )}
                 </Grid>
@@ -77,6 +83,9 @@ const userPage = (props: Props) => {
                     </Typography>
                     <Button variant="outlined" onClick={handleEditClick}>
                         Edit Profile
+                    </Button>
+                    <Button variant="outlined" onClick={handleHomeClick}>
+                        Home
                     </Button>
                 </Grid>
             </Grid>
@@ -93,6 +102,7 @@ const userPage = (props: Props) => {
             <Box>
                 <ItemsContainer containerTitle="My other Tool Kit 🏠" items={items} />
             </Box>
+
         </Container>
 
 

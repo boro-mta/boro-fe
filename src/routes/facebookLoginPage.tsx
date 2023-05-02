@@ -5,6 +5,7 @@ import { ReactFacebookLoginInfo } from "react-facebook-login";
 import { useNavigate } from "react-router-dom";
 import { selectUserName, updateUser } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import api from "../api/HttpClient"
 
 interface IUserData {
   name?: string;
@@ -30,6 +31,27 @@ const FacebookLoginPage = () => {
 
       })
     );
+
+    const userFacebookLoginDetails = {
+      accessToken: response.accessToken,
+      facebookId: response.userID
+    }
+    const backendFacebookAuthentication = async (userFacebookLoginDetails: any) => {
+      const backendResponse = await api.create(`Users/LoginWithFacebook?accessToken=${userFacebookLoginDetails.accessToken}&facebookId=${userFacebookLoginDetails.facebookId}`, userFacebookLoginDetails);
+      console.log(backendResponse);
+      if (backendResponse.firstLogin == true) {
+        navigate("/newUser");
+      }
+      else {
+        dispatch(
+          updateUser({
+            picture: pictureUrl || "",
+            guid: backendResponse.userId
+          }))
+      }
+    }
+    const backendResponse = backendFacebookAuthentication(userFacebookLoginDetails);
+
 
     navigate("/");
   };

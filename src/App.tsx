@@ -5,8 +5,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { useAppSelector } from "./app/hooks";
 import ItemsContainer from "./components/ItemsContainer/ItemsContainer";
-import { selectPicture, selectUserName } from "./features/UserSlice";
-
+import { selectGuid, selectPicture, selectUserName } from "./features/UserSlice";
 import { items } from "./mocks/items";
 import ImagesCarousel from "./components/ImagesCarousel/ImagesCarousel";
 
@@ -14,6 +13,8 @@ function App() {
   const userName = useAppSelector(selectUserName);
   const picture = useAppSelector(selectPicture);
   const navigate = useNavigate();
+  let userGuid = useAppSelector(selectGuid);
+
 
   return (
     <Container>
@@ -34,12 +35,22 @@ function App() {
         >
           Log in
         </Button>
+
+
       )}
       {userName !== "Guest" && (
         <Button
           variant="contained"
-          onClick={() => navigate("addItem")}
+          onClick={() => navigate(`/Users/${userGuid}`)}
           sx={{ width: "100%" }}
+        >
+          My Profile
+        </Button>)}
+      {userName !== "Guest" && (
+        <Button
+          variant="contained"
+          onClick={() => navigate("addItem")}
+          sx={{ width: "100%", margin: '10px 0' }}
         >
           Add new item
         </Button>

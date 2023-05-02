@@ -8,7 +8,8 @@ export const userSlice = createSlice({
     email: "",
     id: "",
     accessToken: "",
-    picture: ""
+    picture: "",
+    guid: ""
   },
   reducers: {
     updateUser: (state, action) => {
@@ -17,6 +18,7 @@ export const userSlice = createSlice({
       state.id = action.payload.id;
       state.accessToken = action.payload.accessToken;
       state.picture = action.payload.picture;
+      state.guid = action.payload.guid;
     },
   },
 });
@@ -26,6 +28,8 @@ export const { updateUser } = userSlice.actions;
 
 export const selectUserName = (state: RootState) => state.user.name;
 export const selectPicture = (state: RootState) => state.user.picture;
+export const selectGuid = (state: RootState) => state.user.guid;
+export const selectEmail = (state: RootState) => state.user.email;
 
 
 export default userSlice.reducer;

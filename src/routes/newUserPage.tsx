@@ -7,6 +7,10 @@ import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
 import api from "../api/HttpClient"
+import { updateUser } from "../features/UserSlice";
+import { selectEmail, selectUserName } from "../features/UserSlice";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+
 type IUserDetailsParams = {
     userId: string;
 };
@@ -17,50 +21,58 @@ const validationSchema = yup.object({
     first_name: yup.string().max(30, "Must be 30 characters or less"),
     last_name: yup.string().max(30, "Must be 30 characters or less"),
     about: yup.string().max(250, "Must be 250 characters or less"),
+    email: yup.string().email("Invalid email address").max(50, "Must be 50 characters or less"),
 });
 
 
 const NewUserPage = (props: Props) => {
+    const dispatch = useAppDispatch();
 
-    let { userId } = useParams<IUserDetailsParams>();
+    const userEmail = useAppSelector(selectEmail);
+    const userFullName = useAppSelector(selectUserName);
+    const [firstName, lastName] = userFullName.split(' ');
+
 
     const formik =
 
         useFormik({
 
             initialValues: {
-                firstName: " ",
-                lastName: " ",
+                firstName: firstName,
+                lastName: lastName,
                 about: "",
                 profileImage: " ",
                 userId: " ",
-                dateJoined: " "
+                dateJoined: " ",
+                longitude: 0,
+                latitude: 0,
+                email: userEmail
             },
             enableReinitialize: true,
             validationSchema: validationSchema,
-            onSubmit: (
-                values: IUserDetails,
-                { setSubmitting }: FormikHelpers<IUserDetails>
-            ) => {
-                setTimeout(() => {
-                    setSubmitting(false);
-                }, 2000);
-            },
+            onSubmit: () => { },
         },);
     const navigate = useNavigate();
 
 
     const handleCreateNewUserClick = async () => {
         const userDetails = {
+            FacebookId: '0',
             firstName: formik.values.firstName,
             lastName: formik.values.lastName,
             about: formik.values.about,
-            email: 'user@example.com'
+            email: formik.values.email,
+            longitude: 0,
+            latitude: 0
         };
 
         try {
             const response = await api.create('Users/Create', userDetails);
             console.log('User created successfully!', response);
+            dispatch(
+                updateUser({
+                    guid: response
+                }))
             navigate("/users/" + response);
         } catch (error) {
             console.error('Failed to create user:', error);
@@ -112,6 +124,18 @@ const NewUserPage = (props: Props) => {
                     onChange={formik.handleChange}
                     error={formik.touched.about && Boolean(formik.errors.about)}
                     helperText={formik.touched.about && formik.errors.about}
+                />
+                <TextField
+                    fullWidth
+                    id="email"
+                    name="email"
+                    label="Email"
+                    multiline
+                    margin="normal"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
+                    helperText={formik.touched.email && formik.errors.email}
                 />
                 <Button
                     variant="contained"

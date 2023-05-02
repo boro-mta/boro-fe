@@ -40,5 +40,7 @@ export interface IUserDetails {
   lastName: string;
   about?: string;
   dateJoined: string;
-  email?: string
+  email?: string,
+  latitude: number,
+  longitude: number
 }
