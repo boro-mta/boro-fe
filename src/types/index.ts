@@ -32,3 +32,15 @@ export interface IInputItem { //item type to send to backend
   categories: string[];
   images?: IInputImage[];
 }
+
+export interface IUserDetails {
+  userId: string;
+  profileImage: string;
+  firstName: string;
+  lastName: string;
+  about?: string;
+  dateJoined: string;
+  email?: string,
+  latitude: number,
+  longitude: number
+}

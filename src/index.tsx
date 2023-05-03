@@ -5,6 +5,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { store } from "./app/store";
 import App from "./App";
 import ItemDetailsPage from "./routes/itemDetailsPage";
+import UserPage from "./routes/userPage";
+
 import "./index.css";
 import ErrorPage from "./routes/errorPage";
 import FacebookLoginPage from "./routes/facebookLoginPage";
@@ -18,6 +20,9 @@ import "@fontsource/roboto/700.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import AddItemPage from "./routes/addItemPage";
+import UserEditPage from "./routes/userEditPage";
+import NewUserPage from "./routes/newUserPage";
+
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -38,6 +43,18 @@ const router = createBrowserRouter([
   {
     path: "addItem",
     element: <AddItemPage />,
+  },
+  {
+    path: "/users/:userId",
+    element: <UserPage />,
+  },
+  {
+    path: "/users/:userId/edit",
+    element: <UserEditPage />
+  },
+  {
+    path: "/newUser",
+    element: <NewUserPage />
   },
   {
     path: "*",

@@ -34,7 +34,7 @@
     "redux": "^4.2.1",
     "slick-carousel": "^1.8.1",
     "typescript": "^4.9.5",
-    "yup": "^1.0.2"
+    "yup": "^1.1.1"
   },
   "scripts": {
     "start": "react-scripts start",

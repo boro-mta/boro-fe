@@ -20,14 +20,16 @@ const request = async (route: string, params?: any, method = "GET") => {
   const targetUrl = `${apiConfig.SERVER_URL}:${apiConfig.SERVER_PORT}/${route}`;
   console.log(targetUrl);
   const response = await fetch(targetUrl, options);
-
   if (response.status !== 200) {
     throw new Error(`${response.status}: ${response.statusText}`);
   }
-
-  const result = await response.json();
-
-  return result;
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.indexOf("application/json") !== -1) {
+    const result = await response.json();
+    return result;
+  } else {
+    return response;
+  }
 };
 
 const objectToQueryString = (obj: any) => {
