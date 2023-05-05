@@ -22,6 +22,7 @@ import "slick-carousel/slick/slick-theme.css";
 import AddItemPage from "./routes/addItemPage";
 import UserEditPage from "./routes/userEditPage";
 import NewUserPage from "./routes/newUserPage";
+import EditItemPage from "./routes/editItemPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
