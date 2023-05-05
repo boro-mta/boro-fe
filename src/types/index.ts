@@ -20,14 +20,14 @@ export interface IFullItemDetailsNew {
   condition: string;
   categories: string[];
   title: string;
-  description?: string;
+  description: string;
   images?: IInputImage[];
   excludedDates: Date[];
 }
 
 export interface IInputItem { //item type to send to backend
   title: string;
-  description?: string;
+  description: string;
   condition: string;
   categories: string[];
   images?: IInputImage[];

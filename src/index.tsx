@@ -22,7 +22,7 @@ import "slick-carousel/slick/slick-theme.css";
 import AddItemPage from "./routes/addItemPage";
 import UserEditPage from "./routes/userEditPage";
 import NewUserPage from "./routes/newUserPage";
-
+import EditItemPage from "./routes/editItemPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -50,11 +50,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/users/:userId/edit",
-    element: <UserEditPage />
+    element: <UserEditPage />,
   },
   {
     path: "/newUser",
-    element: <NewUserPage />
+    element: <NewUserPage />,
+  },
+  {
+    path: "editItem/:itemId",
+    element: <EditItemPage />,
   },
   {
     path: "*",

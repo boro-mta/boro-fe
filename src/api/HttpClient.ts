@@ -1,6 +1,7 @@
 import apiConfig from "../config/apiConfig";
 
 const request = async (route: string, params?: any, method = "GET") => {
+  debugger;
   const options: any = {
     method,
     headers: {
@@ -25,8 +26,12 @@ const request = async (route: string, params?: any, method = "GET") => {
   }
   const contentType = response.headers.get("content-type");
   if (contentType && contentType.indexOf("application/json") !== -1) {
-    const result = await response.json();
-    return result;
+    try {
+      const result = await response.json();
+      return result;
+    } catch (err) {
+      console.log(err);
+    }
   } else {
     return response;
   }
