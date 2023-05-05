@@ -1,13 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import {
-  useJsApiLoader,
-  GoogleMap,
-  Autocomplete,
-  MarkerF,
-} from "@react-google-maps/api";
+import React, { useState, useEffect, useCallback, useRef, memo } from "react";
+import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
 import { ICoordinate } from "../../types";
 import locations from "../../mocks/locations";
-import CustomMarker from "./CustomMarker";
 import {
   MarkerClusterer,
   SuperClusterAlgorithm,
@@ -16,7 +10,7 @@ import { renderMarkersByLocations } from "../../utils/mapUtils";
 
 type Props = {};
 
-const Map = (props: Props) => {
+const Map = memo((props: Props) => {
   const [map, setMap] = useState<google.maps.Map>();
   const [myLocation, setMyLocation] = useState<ICoordinate>({ lat: 0, lng: 0 });
 
@@ -46,13 +40,11 @@ const Map = (props: Props) => {
     }
   };
 
-  const handleMarkerClick = (itemId: string) => {
+  const handleMarkerClick = useCallback((itemId: string) => {
     console.log(itemId);
-  };
+  }, []);
 
   const addMarkers = useCallback((map: google.maps.Map) => {
-    const infoWindow = new google.maps.InfoWindow();
-
     // TODO get array of markers from server instead of mock locations
     const markers = renderMarkersByLocations(map, locations, handleMarkerClick);
 
@@ -124,6 +116,6 @@ const Map = (props: Props) => {
       </div>
     </div>
   );
-};
+});
 
 export default Map;
