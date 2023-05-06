@@ -19,6 +19,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks"
 
 
 function ResponsiveAppBar() {
+    const navigate = useNavigate();
 
     const dispatch = useAppDispatch();
 
@@ -38,7 +39,6 @@ function ResponsiveAppBar() {
     }
 
 
-    const navigate = useNavigate();
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 

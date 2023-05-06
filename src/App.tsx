@@ -18,27 +18,26 @@ function App() {
 
 
   return (
-    <><ResponsiveAppBar />
-      <Container>
-        <Typography variant="h4" gutterBottom sx={{ marginTop: "10px" }}>
-          Welcome, {userName}!
-        </Typography>
-        {picture && <Avatar component="div" style={{ height: "150px", width: "150px" }}>
-          <ImagesCarousel images={[picture]} />
-        </Avatar>}
-        <Box>
-          <ItemsContainer containerTitle="Tools for your home 🏠" items={items} />
-        </Box>
-        {userName !== "Guest" && (
-          <Button
-            variant="contained"
-            onClick={() => navigate("addItem")}
-            sx={{ width: "100%", margin: '10px 0' }}
-          >
-            Add new item
-          </Button>
-        )}
-      </Container></>
+    <Container>
+      <Typography variant="h4" gutterBottom sx={{ marginTop: "10px" }}>
+        Welcome, {userName}!
+      </Typography>
+      {picture && <Avatar component="div" style={{ height: "150px", width: "150px" }}>
+        <ImagesCarousel images={[picture]} />
+      </Avatar>}
+      <Box>
+        <ItemsContainer containerTitle="Tools for your home 🏠" items={items} />
+      </Box>
+      {userName !== "Guest" && (
+        <Button
+          variant="contained"
+          onClick={() => navigate("addItem")}
+          sx={{ width: "100%", margin: '10px 0' }}
+        >
+          Add new item
+        </Button>
+      )}
+    </Container>
   );
 }
 

@@ -81,61 +81,61 @@ const UserEditPage = (props: Props) => {
     }
 
     return (
-        <><ResponsiveAppBar />
-            <Container>
-                <Typography variant="h3">Edit your Details</Typography>
-                <form onSubmit={formik.handleSubmit} >
-                    <TextField
-                        fullWidth
-                        id="email"
-                        name="email"
-                        label="Email"
-                        margin="normal"
-                        value={formik.values.email}
-                        onChange={formik.handleChange}
-                        error={
-                            formik.touched.email && Boolean(formik.errors.email)
-                        }
-                        helperText={formik.touched.email && formik.errors.email}
-                        InputLabelProps={{ shrink: true }}
-                    />
-                    <TextField
-                        fullWidth
-                        id="about"
-                        name="about"
-                        label="About"
-                        multiline
-                        margin="normal"
-                        value={formik.values.about}
-                        onChange={formik.handleChange}
-                        error={formik.touched.about && Boolean(formik.errors.about)}
-                        helperText={formik.touched.about && formik.errors.about}
+        <Container>
+            <Typography variant="h3">Edit your Details</Typography>
+            <form onSubmit={formik.handleSubmit} >
+                <TextField
+                    fullWidth
+                    id="email"
+                    name="email"
+                    label="Email"
+                    margin="normal"
+                    required={true}
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    error={
+                        formik.touched.email && Boolean(formik.errors.email)
+                    }
+                    helperText={formik.touched.email && formik.errors.email}
+                    InputLabelProps={{ shrink: true }}
+                />
+                <TextField
+                    fullWidth
+                    id="about"
+                    name="about"
+                    label="About"
+                    multiline
+                    margin="normal"
+                    value={formik.values.about}
+                    onChange={formik.handleChange}
+                    error={formik.touched.about && Boolean(formik.errors.about)}
+                    helperText={formik.touched.about && formik.errors.about}
 
-                    />
-                    <Button
-                        variant="contained"
-                        type="submit"
-                        disabled={false}
-                        style={{ marginRight: "8px", padding: "8px 16px" }}
-                        onClick={handleEditClick}
+                />
+                <Button
+                    variant="contained"
+                    type="submit"
+                    disabled={false}
+                    style={{ marginRight: "8px", padding: "8px 16px" }}
+                    onClick={handleEditClick}
 
-                    >
-                        Save
-                    </Button>
-                    <Button
-                        variant="contained"
-                        type="button"
-                        disabled={false}
-                        style={{ marginLeft: "8px", padding: "8px 16px", backgroundColor: "white", color: "red" }}
-                        onClick={handleCancelClick}
-                    >
+                >
+                    Save
+                </Button>
+                <Button
+                    variant="contained"
+                    type="button"
+                    disabled={false}
+                    style={{ marginLeft: "8px", padding: "8px 16px", backgroundColor: "white", color: "red" }}
+                    onClick={handleCancelClick}
+                >
 
-                        Cancel
-                    </Button>
+                    Cancel
+                </Button>
 
-                    {formik.isSubmitting && <CircularProgress />}
-                </form>
-            </Container></>
+                {formik.isSubmitting && <CircularProgress />}
+            </form>
+        </Container>
     );
 };
 

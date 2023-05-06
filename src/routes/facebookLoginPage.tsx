@@ -60,13 +60,12 @@ const FacebookLoginPage = () => {
 
   };
   return (
-    <><ResponsiveAppBar />
-      <div className="facebook-login-page">
-        <h1>Facebook Login</h1>
-        <Box>
-          <FacebookLoginButton onLoginSuccess={handleLoginSuccess} />
-        </Box>
-      </div></>
+    <div className="facebook-login-page">
+      <h1>Facebook Login</h1>
+      <Box>
+        <FacebookLoginButton onLoginSuccess={handleLoginSuccess} />
+      </Box>
+    </div>
   );
 };
 

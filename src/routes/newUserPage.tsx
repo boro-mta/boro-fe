@@ -98,6 +98,7 @@ const NewUserPage = (props: Props) => {
                     name="firstName"
                     label="First Name"
                     margin="normal"
+                    required={true}
                     value={formik.values.firstName}
                     onChange={formik.handleChange}
                     error={
@@ -110,6 +111,7 @@ const NewUserPage = (props: Props) => {
                     id="lastName"
                     name="lastName"
                     label="Last Name"
+                    required={true}
                     margin="normal"
                     value={formik.values.lastName}
                     onChange={formik.handleChange}
@@ -135,6 +137,7 @@ const NewUserPage = (props: Props) => {
                     fullWidth
                     id="email"
                     name="email"
+                    required={true}
                     label="Email"
                     multiline
                     margin="normal"

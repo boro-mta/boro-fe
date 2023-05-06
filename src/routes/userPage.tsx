@@ -10,7 +10,6 @@ import Button from "@mui/material/Button";
 import api from "../api/HttpClient"
 import { selectPicture } from "../features/UserSlice";
 import { useAppSelector } from "../app/hooks";
-import ResponsiveAppBar from "../components/AppBar/AppBar";
 
 type IUserDetailsParams = {
     userId: string;
@@ -63,42 +62,41 @@ const userPage = (props: Props) => {
 
 
     return (
-        <><ResponsiveAppBar />
-            <Container>
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item>
+        <Container>
+            <Grid container spacing={2} alignItems="center">
+                <Grid item>
 
-                        {(
-                            <Avatar component="div" style={{ height: "150px", width: "150px" }}>
-                                <ImagesCarousel images={[userProfilePicture]} />
-                            </Avatar>
-                        )}
-                    </Grid>
-                    <Grid item>
-                        <Typography variant="h5">{'Hi! I am ' + userDetails.firstName + ' ' + userDetails.lastName} </Typography>
-                        <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
-                            {'A Boro friend since: ' + formatDate(userDetails.dateJoined)}
-                        </Typography>
-                        <Button variant="outlined" onClick={handleEditClick}>
-                            Edit Profile
-                        </Button>
-                    </Grid>
+                    {(
+                        <Avatar component="div" style={{ height: "150px", width: "150px" }}>
+                            <ImagesCarousel images={[userProfilePicture]} />
+                        </Avatar>
+                    )}
                 </Grid>
-                <br />
-                <Typography variant="h5">{'About:'}</Typography>
-                <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
-                    {userDetails.about}
-                </Typography>
-                <br />
-                <Typography variant="h4">{userDetails.firstName + ' \'s items'}</Typography>
-                <Box>
-                    <ItemsContainer containerTitle="My Tool Kit 🏠" items={items} />
-                </Box>
-                <Box>
-                    <ItemsContainer containerTitle="My other Tool Kit 🏠" items={items} />
-                </Box>
+                <Grid item>
+                    <Typography variant="h5">{'Hi! I am ' + userDetails.firstName + ' ' + userDetails.lastName} </Typography>
+                    <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
+                        {'A Boro friend since: ' + formatDate(userDetails.dateJoined)}
+                    </Typography>
+                    <Button variant="outlined" onClick={handleEditClick}>
+                        Edit Profile
+                    </Button>
+                </Grid>
+            </Grid>
+            <br />
+            <Typography variant="h5">{'About:'}</Typography>
+            <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
+                {userDetails.about}
+            </Typography>
+            <br />
+            <Typography variant="h4">{userDetails.firstName + ' \'s items'}</Typography>
+            <Box>
+                <ItemsContainer containerTitle="My Tool Kit 🏠" items={items} />
+            </Box>
+            <Box>
+                <ItemsContainer containerTitle="My other Tool Kit 🏠" items={items} />
+            </Box>
 
-            </Container></>
+        </Container>
 
 
     );
