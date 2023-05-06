@@ -8,7 +8,7 @@ import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
 import api from "../api/HttpClient"
 import { updateUser } from "../features/UserSlice";
-import { selectEmail, selectUserName } from "../features/UserSlice";
+import { selectEmail, selectUserName, selectPicture } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 type IUserDetailsParams = {
@@ -30,6 +30,7 @@ const NewUserPage = (props: Props) => {
 
     const userEmail = useAppSelector(selectEmail);
     const userFullName = useAppSelector(selectUserName);
+    const userProfilePicture = useAppSelector(selectPicture);
     const [firstName, lastName] = userFullName.split(' ');
 
 
@@ -71,7 +72,12 @@ const NewUserPage = (props: Props) => {
             console.log('User created successfully!', response);
             dispatch(
                 updateUser({
-                    guid: response
+                    name: firstName + ' ' + lastName,
+                    guid: response,
+                    picture: userProfilePicture,
+                    email: formik.values.email,
+
+
                 }))
             navigate("/users/" + response);
         } catch (error) {

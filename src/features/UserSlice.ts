@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../app/store";
+import { Root } from "react-dom/client";
 
 export const userSlice = createSlice({
   name: "userData",

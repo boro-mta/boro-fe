@@ -17,6 +17,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
 import { IFullItemDetailsNew } from "../types";
 import { debug } from "console";
+import ResponsiveAppBar from "../components/AppBar/AppBar";
 
 type IFullItemDetailsParams = {
     itemId: string;
@@ -251,127 +252,203 @@ const EditItemPage = (props: Props) => {
 
 
     return (
-        <Container>
-            <Typography variant="h3">Edit Item</Typography>
-            <Box
-                sx={{ maxWidth: 400 }}>
-                <Stepper activeStep={activeStep} orientation="vertical">
-                    {/* step 1 */}
-                    <Step key={"Fill Item Information"}>
-                        <StepLabel>{"Fill Item Information"}</StepLabel>
-                        <StepContent>
-                            <Box sx={{ height: "100%" }}>
-                                <Typography>
-                                    <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
-                                        <form onSubmit={formik.handleSubmit}>
-                                            <TextField
-                                                fullWidth
-                                                required
-                                                id="title"
-                                                name="title"
-                                                label="Title"
-                                                margin="normal"
-                                                value={formik.values.title}
-                                                onChange={formik.handleChange}
-                                                error={
-                                                    formik.touched.title && Boolean(formik.errors.title)
-                                                }
-                                                helperText={formik.touched.title && formik.errors.title}
-                                            />
-                                            <TextField
-                                                fullWidth
-                                                required
-                                                id="description"
-                                                name="description"
-                                                label="Description"
-                                                multiline
-                                                margin="normal"
-                                                value={formik.values.description}
-                                                onChange={formik.handleChange}
-                                                error={
-                                                    formik.touched.description &&
-                                                    Boolean(formik.errors.description)
-                                                }
-                                                helperText={
-                                                    formik.touched.description && formik.errors.description
-                                                }
-                                            />
+        <><ResponsiveAppBar />
+            <Container>
+                <Typography variant="h3">Edit Item</Typography>
+                <Box
+                    sx={{ maxWidth: 400 }}>
+                    <Stepper activeStep={activeStep} orientation="vertical">
+                        {/* step 1 */}
+                        <Step key={"Fill Item Information"}>
+                            <StepLabel>{"Fill Item Information"}</StepLabel>
+                            <StepContent>
+                                <Box sx={{ height: "100%" }}>
+                                    <Typography>
+                                        <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
+                                            <form onSubmit={formik.handleSubmit}>
+                                                <TextField
+                                                    fullWidth
+                                                    required
+                                                    id="title"
+                                                    name="title"
+                                                    label="Title"
+                                                    margin="normal"
+                                                    value={formik.values.title}
+                                                    onChange={formik.handleChange}
+                                                    error={
+                                                        formik.touched.title && Boolean(formik.errors.title)
+                                                    }
+                                                    helperText={formik.touched.title && formik.errors.title}
+                                                />
+                                                <TextField
+                                                    fullWidth
+                                                    required
+                                                    id="description"
+                                                    name="description"
+                                                    label="Description"
+                                                    multiline
+                                                    margin="normal"
+                                                    value={formik.values.description}
+                                                    onChange={formik.handleChange}
+                                                    error={
+                                                        formik.touched.description &&
+                                                        Boolean(formik.errors.description)
+                                                    }
+                                                    helperText={
+                                                        formik.touched.description && formik.errors.description
+                                                    }
+                                                />
 
-                                            <Autocomplete
-                                                id="condition"
-                                                options={conditionArr}
-                                                value={getConditionFronItemDetails(itemDetails.condition)}
-                                                getOptionLabel={(option: any) => option.text}
-                                                onChange={(event, value) => {
-                                                    setCondition(value.text);
-                                                    setItemDetails({ ...itemDetails, condition: value.text });
-                                                }}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        label="Condition"
-                                                        placeholder="Choose your item condition"
-                                                    />
-                                                )}
-                                            />
-
-                                            {/* categories - Autocomplete */}
-                                            <Stack spacing={3} sx={{ width: 500 }}>
-                                                {itemDetails.categories.length && <Autocomplete
-                                                    defaultValue={itemDetails.categories}
-                                                    multiple
-                                                    id="tags-outlined"
-                                                    options={categoryArr}
-                                                    getOptionLabel={(option: any) => option}
-                                                    filterSelectedOptions
+                                                <Autocomplete
+                                                    id="condition"
+                                                    options={conditionArr}
+                                                    value={getConditionFronItemDetails(itemDetails.condition)}
+                                                    getOptionLabel={(option: any) => option.text}
                                                     onChange={(event, value) => {
-                                                        setSelectedCategories(value);
+                                                        setCondition(value.text);
+                                                        setItemDetails({ ...itemDetails, condition: value.text });
                                                     }}
                                                     renderInput={(params) => (
                                                         <TextField
                                                             {...params}
-                                                            label="Categories"
-                                                            placeholder="Choose categories for your item"
+                                                            label="Condition"
+                                                            placeholder="Choose your item condition"
                                                         />
                                                     )}
-
                                                 />
-                                                }                                            </Stack>
 
-                                            <LoadingButton
-                                                sx={{ mt: 1, mr: 1 }}
-                                                type="submit"
-                                                endIcon={<SendIcon />}
-                                                loading={formik.isSubmitting}
-                                                loadingPosition="center"
-                                                variant="contained"
-                                            >
-                                                <span>Continue</span>
-                                            </LoadingButton>
+                                                {/* categories - Autocomplete */}
+                                                <Stack spacing={3} sx={{ width: 500 }}>
+                                                    {itemDetails.categories.length && <Autocomplete
+                                                        defaultValue={itemDetails.categories}
+                                                        multiple
+                                                        id="tags-outlined"
+                                                        options={categoryArr}
+                                                        getOptionLabel={(option: any) => option}
+                                                        filterSelectedOptions
+                                                        onChange={(event, value) => {
+                                                            setSelectedCategories(value);
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                label="Categories"
+                                                                placeholder="Choose categories for your item"
+                                                            />
+                                                        )}
 
-                                        </form>
-                                    </fieldset>
-                                    <Snackbar
-                                        open={open}
-                                        autoHideDuration={6000}
-                                        onClose={() => setOpen(false)}
-                                    >
-                                        <Alert
+                                                    />
+                                                    }                                            </Stack>
+
+                                                <LoadingButton
+                                                    sx={{ mt: 1, mr: 1 }}
+                                                    type="submit"
+                                                    endIcon={<SendIcon />}
+                                                    loading={formik.isSubmitting}
+                                                    loadingPosition="center"
+                                                    variant="contained"
+                                                >
+                                                    <span>Continue</span>
+                                                </LoadingButton>
+
+                                            </form>
+                                        </fieldset>
+                                        <Snackbar
+                                            open={open}
+                                            autoHideDuration={6000}
                                             onClose={() => setOpen(false)}
-                                            severity={isAddSuccess ? "success" : "error"}
-                                            sx={{ width: "100%" }}
                                         >
-                                            {isAddSuccess
-                                                ? "The item was added successfully!"
-                                                : "There was an issue adding the item. please try again."}
-                                        </Alert>
-                                    </Snackbar>
-                                </Typography>
+                                            <Alert
+                                                onClose={() => setOpen(false)}
+                                                severity={isAddSuccess ? "success" : "error"}
+                                                sx={{ width: "100%" }}
+                                            >
+                                                {isAddSuccess
+                                                    ? "The item was added successfully!"
+                                                    : "There was an issue adding the item. please try again."}
+                                            </Alert>
+                                        </Snackbar>
+                                    </Typography>
 
+                                    <Box sx={{ mb: 2 }}>
+                                        <div>
+                                            <Button
+                                                disabled={true}
+                                                onClick={handleBack}
+                                                sx={{ mt: 1, mr: 1 }}
+                                            >
+                                                Back
+                                            </Button>
+                                        </div>
+                                    </Box>
+
+                                </Box>
+                            </StepContent>
+                        </Step>
+
+                        {/* step 2 */}
+                        <Step key={"Add Pictures of Your Item"}>
+                            <StepLabel>{"Add Pictures of Your Item"}</StepLabel>
+                            <StepContent>
+                                <Box
+                                    onClick={handleUploadButtonClick}
+                                    sx={{
+                                        height: "125px",
+                                        border: "1px dashed grey",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                    }}
+                                >
+                                    <FileUploadOutlinedIcon fontSize="large" />
+                                    <Button
+                                        variant="contained"
+                                        sx={{ borderRadius: "20px", width: "40%" }}
+                                    >
+                                        Browse
+                                    </Button>
+                                </Box>
+                                {imagesNames.length > 0 && (
+                                    <>
+                                        <Typography
+                                            variant="h6"
+                                            sx={{ fontWeight: "bold", marginTop: "10px" }}
+                                        >
+                                            Uploaded images
+                                        </Typography>
+                                        <List>
+                                            {imagesNames.map((name, index) => (
+                                                <ListItem
+                                                    key={index}
+                                                    sx={{ paddingTop: "1px", paddingBottom: "1px" }}
+                                                >
+                                                    <ListItemIcon>
+                                                        <ImageIcon sx={{ marginRight: "16px" }} />
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={name} />
+                                                    <IconButton onClick={() => removeImage(name)}>
+                                                        <DeleteForeverIcon />
+                                                    </IconButton>
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    </>
+                                )}
+                                <input
+                                    type="file"
+                                    style={{ display: "none" }}
+                                    ref={imagesInputRef}
+                                    onChange={convertToBase64}
+                                    multiple
+                                    accept="image/*"
+                                    disabled={formik.isSubmitting}
+                                />
                                 <Box sx={{ mb: 2 }}>
                                     <div>
                                         <Button
-                                            disabled={true}
+                                            disabled={false}
                                             onClick={handleBack}
                                             sx={{ mt: 1, mr: 1 }}
                                         >
@@ -379,113 +456,38 @@ const EditItemPage = (props: Props) => {
                                         </Button>
                                     </div>
                                 </Box>
+                            </StepContent>
+                        </Step>
+                    </Stepper>
 
-                            </Box>
-                        </StepContent>
-                    </Step>
+                    <Button
+                        variant="contained"
+                        type="submit"
+                        disabled={false}
+                        style={{ marginRight: "8px", padding: "8px 16px" }}
+                        onClick={handleSaveClick}
+                    >
+                        Save
+                    </Button>
+                    <Button
+                        variant="contained"
+                        type="button"
+                        disabled={false}
+                        style={{ marginLeft: "8px", padding: "8px 16px", backgroundColor: "white", color: "red" }}
+                        onClick={handleCancelClick}
+                    >
 
-                    {/* step 2 */}
-                    <Step key={"Add Pictures of Your Item"}>
-                        <StepLabel>{"Add Pictures of Your Item"}</StepLabel>
-                        <StepContent>
-                            <Box
-                                onClick={handleUploadButtonClick}
-                                sx={{
-                                    height: "125px",
-                                    border: "1px dashed grey",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    gap: "10px",
-                                }}
-                            >
-                                <FileUploadOutlinedIcon fontSize="large" />
-                                <Button
-                                    variant="contained"
-                                    sx={{ borderRadius: "20px", width: "40%" }}
-                                >
-                                    Browse
-                                </Button>
-                            </Box>
-                            {imagesNames.length > 0 && (
-                                <>
-                                    <Typography
-                                        variant="h6"
-                                        sx={{ fontWeight: "bold", marginTop: "10px" }}
-                                    >
-                                        Uploaded images
-                                    </Typography>
-                                    <List>
-                                        {imagesNames.map((name, index) => (
-                                            <ListItem
-                                                key={index}
-                                                sx={{ paddingTop: "1px", paddingBottom: "1px" }}
-                                            >
-                                                <ListItemIcon>
-                                                    <ImageIcon sx={{ marginRight: "16px" }} />
-                                                </ListItemIcon>
-                                                <ListItemText primary={name} />
-                                                <IconButton onClick={() => removeImage(name)}>
-                                                    <DeleteForeverIcon />
-                                                </IconButton>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </>
-                            )}
-                            <input
-                                type="file"
-                                style={{ display: "none" }}
-                                ref={imagesInputRef}
-                                onChange={convertToBase64}
-                                multiple
-                                accept="image/*"
-                                disabled={formik.isSubmitting}
-                            />
-                            <Box sx={{ mb: 2 }}>
-                                <div>
-                                    <Button
-                                        disabled={false}
-                                        onClick={handleBack}
-                                        sx={{ mt: 1, mr: 1 }}
-                                    >
-                                        Back
-                                    </Button>
-                                </div>
-                            </Box>
-                        </StepContent>
-                    </Step>
-                </Stepper>
+                        Cancel
+                    </Button>
 
-                <Button
-                    variant="contained"
-                    type="submit"
-                    disabled={false}
-                    style={{ marginRight: "8px", padding: "8px 16px" }}
-                    onClick={handleSaveClick}
-                >
-                    Save
-                </Button>
-                <Button
-                    variant="contained"
-                    type="button"
-                    disabled={false}
-                    style={{ marginLeft: "8px", padding: "8px 16px", backgroundColor: "white", color: "red" }}
-                    onClick={handleCancelClick}
-                >
-
-                    Cancel
-                </Button>
-
-                {activeStep === 2 && (
-                    <Paper square elevation={0} sx={{ p: 3 }}>
-                        {/* todo: change message */}
-                        <Typography>All steps completed - you&apos;re finished</Typography>
-                    </Paper>
-                )}
-            </Box>
-        </Container>
+                    {activeStep === 2 && (
+                        <Paper square elevation={0} sx={{ p: 3 }}>
+                            {/* todo: change message */}
+                            <Typography>All steps completed - you&apos;re finished</Typography>
+                        </Paper>
+                    )}
+                </Box>
+            </Container></>
     );
 };
 
