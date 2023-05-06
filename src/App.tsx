@@ -1,3 +1,4 @@
+import { styled } from "@mui/system";
 import React, { useState } from "react";
 import { Box, Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
@@ -18,7 +19,7 @@ function App() {
 
   const [toggle, setToggle] = useState<string>("List");
 
-  const toggleButtonStyle = {
+  const ToggleButton = styled(Button)(({ theme }) => ({
     borderRadius: "24px",
     backgroundColor: "#222222",
     color: "#ffffff",
@@ -29,7 +30,10 @@ function App() {
     left: "50%",
     zIndex: 100,
     transform: "translateX(-50%)",
-  };
+    "&:hover": {
+      backgroundColor: "#222222",
+    },
+  }));
 
   const AppComp = () => (
     <>
@@ -61,23 +65,18 @@ function App() {
   );
 
   const ShowMapButton = () => (
-    <Button
-      sx={toggleButtonStyle}
-      endIcon={<MapIcon />}
-      onClick={() => setToggle("Map")}
-    >
+    <ToggleButton endIcon={<MapIcon />} onClick={() => setToggle("Map")}>
       Show map
-    </Button>
+    </ToggleButton>
   );
 
   const ShowListButton = () => (
-    <Button
-      sx={toggleButtonStyle}
+    <ToggleButton
       endIcon={<FormatListBulletedIcon />}
       onClick={() => setToggle("List")}
     >
       Show list
-    </Button>
+    </ToggleButton>
   );
 
   return (

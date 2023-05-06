@@ -10,13 +10,21 @@ import { renderMarkersByLocations } from "../../utils/mapUtils";
 
 type Props = {};
 
+const libs: (
+  | "places"
+  | "drawing"
+  | "geometry"
+  | "localContext"
+  | "visualization"
+)[] = ["places"];
+
 const Map = memo((props: Props) => {
   const [map, setMap] = useState<google.maps.Map>();
   const [myLocation, setMyLocation] = useState<ICoordinate>({ lat: 0, lng: 0 });
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
-    libraries: ["places"],
+    libraries: libs,
   });
 
   useEffect(() => {
