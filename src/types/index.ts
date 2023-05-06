@@ -21,7 +21,7 @@ export interface IFullItemDetailsNew {
   condition: string;
   categories: string[];
   title: string;
-  description?: string;
+  description: string;
   images?: IInputImage[];
   excludedDates: Date[];
 }
@@ -29,10 +29,22 @@ export interface IFullItemDetailsNew {
 export interface IInputItem {
   //item type to send to backend
   title: string;
-  description?: string;
+  description: string;
   condition: string;
   categories: string[];
   images?: IInputImage[];
+}
+
+export interface IUserDetails {
+  userId: string;
+  profileImage: string;
+  firstName: string;
+  lastName: string;
+  about?: string;
+  dateJoined: string;
+  email?: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface ICoordinate {

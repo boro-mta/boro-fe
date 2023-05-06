@@ -31,7 +31,7 @@ const ItemsContainer = ({ containerTitle, items }: Props) => {
           <Item
             key={i}
             {...item}
-            onClick={() => navigate(`item/${item.itemId}`)}
+            onClick={() => navigate(`/item/${item.itemId}`)}
           />
         ))}
       </Container>

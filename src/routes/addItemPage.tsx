@@ -205,22 +205,6 @@ const addItemPage = (props: Props) => {
     setNewCategory(event.target.value);
   };
 
-  const updateCategoriesState = () => {
-    if (checkIfCategoryExist(newCategory)) {
-      console.log("This category already exist");
-    } else {
-      const lastValueNumber: number = categoriesOptions[categoriesOptions.length - 1].value;
-      const newCategoryByUser: object = {
-        value: lastValueNumber + 1,
-        text: newCategory,
-        selected: true,
-      };
-      addCategoryToArr(newCategoryByUser);
-      //todo: make the added category as selected
-      setNewCategory("");
-    }
-  };
-
   const checkIfCategoryExist = (category: string): boolean => {
     for (let i = 0; i < categoryArr.length; i++) {
       const categoryFromUserLowerCase: string = category.toLowerCase();
@@ -301,6 +285,10 @@ const addItemPage = (props: Props) => {
     }
   };
 
+  const handleChangeCategories = (value: any) => {
+    debugger;
+    setSelectedCategories(value);
+  }
   return (
     <Container>
       <Typography variant="h3">Add New Item</Typography>
@@ -372,10 +360,10 @@ const addItemPage = (props: Props) => {
                           multiple
                           id="tags-outlined"
                           options={categoryArr}
-                          getOptionLabel={(option: any) => option.text}
+                          getOptionLabel={(option: any) => option}
                           filterSelectedOptions
                           onChange={(event, value) => {
-                            setSelectedCategories(value.map(({ text }) => text));
+                            handleChangeCategories(value)
                           }}
                           renderInput={(params) => (
                             <TextField
@@ -385,35 +373,7 @@ const addItemPage = (props: Props) => {
                             />
                           )}
                         />
-
-                        {/* <TextField
-                          id="new-category"
-                          label="Add Other Category"
-                          variant="outlined"
-                          value={newCategory}
-                          onChange={handleNewCategory}
-                        />
-                        <Button
-                          sx={{ mt: 1, mr: 1 }}
-                          variant="contained"
-                          onClick={updateCategoriesState}
-                        >
-                          Add Category
-                        </Button> */}
                       </Stack>
-
-                      <div>
-                        <TextField
-                          id="free-text"
-                          label="Write Here More Details"
-                          multiline
-                          rows={5}
-                          value={freeTextChar}
-                          onChange={recalculateCharsFreeText}
-                          sx={{ width: "100%" }}
-                        />
-                        <p>{freeTextCount}/250</p>
-                      </div>
 
                       <LoadingButton
                         sx={{ mt: 1, mr: 1 }}
