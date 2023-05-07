@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
-import { ICoordinate } from "../../types";
-import locations from "../../mocks/locations";
+import { ICoordinate, IMarkerDetails } from "../../types";
 import {
   MarkerClusterer,
   SuperClusterAlgorithm,
@@ -20,8 +19,13 @@ const libs: (
 
 const Map = memo((props: Props) => {
   const [map, setMap] = useState<google.maps.Map>();
-  const [myLocation, setMyLocation] = useState<ICoordinate>({ lat: 0, lng: 0 });
-
+  const [myLocation, setMyLocation] = useState<ICoordinate>({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [locationsAroundMe, setLocationsAroundMe] = useState<IMarkerDetails[]>(
+    []
+  );
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
@@ -31,8 +35,8 @@ const Map = memo((props: Props) => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const newCenter = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
         };
         setMyLocation(newCenter);
       },
@@ -42,9 +46,14 @@ const Map = memo((props: Props) => {
     );
   }, []);
 
+  useEffect(() => {
+    if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
+      console.log(`Location Loaded!`, myLocation);
+    }
+  }, [myLocation]);
   const returnToCenter = () => {
     if (map) {
-      map.panTo(myLocation);
+      map.panTo({ lat: myLocation.latitude, lng: myLocation.longitude });
     }
   };
 
@@ -54,7 +63,11 @@ const Map = memo((props: Props) => {
 
   const addMarkers = useCallback((map: google.maps.Map) => {
     // TODO get array of markers from server instead of mock locations
-    const markers = renderMarkersByLocations(map, locations, handleMarkerClick);
+    const markers = renderMarkersByLocations(
+      map,
+      locationsAroundMe,
+      handleMarkerClick
+    );
 
     const algorithm = new SuperClusterAlgorithm({ radius: 200 });
     new MarkerClusterer({ markers, map, algorithm });
@@ -82,7 +95,7 @@ const Map = memo((props: Props) => {
         }}
       >
         <GoogleMap
-          center={myLocation}
+          center={{ lat: myLocation.latitude, lng: myLocation.longitude }}
           zoom={15}
           mapContainerStyle={{ width: "100%", height: "100%" }}
           options={{
@@ -93,7 +106,11 @@ const Map = memo((props: Props) => {
           }}
           onLoad={(map) => setMap(map)}
         >
-          {myLocation && <MarkerF position={myLocation} />}
+          {myLocation && (
+            <MarkerF
+              position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
+            />
+          )}
         </GoogleMap>
       </div>
       <div

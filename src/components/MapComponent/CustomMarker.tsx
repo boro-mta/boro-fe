@@ -2,9 +2,9 @@ import React from "react";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { ICoordinate } from "../../types";
 
-const CustomMarker = ({ lat, lng }: ICoordinate) => {
+const CustomMarker = ({ latitude, longitude }: ICoordinate) => {
   return new google.maps.Marker({
-    position: { lat, lng },
+    position: { lat: latitude, lng: longitude },
     icon: {
       path: faLocationDot.icon[4] as string,
       fillColor: "#006DAA",

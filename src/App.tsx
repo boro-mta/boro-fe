@@ -23,7 +23,7 @@ function App() {
   const navigate = useNavigate();
   let userGuid = useAppSelector(selectGuid);
 
-  const [toggle, setToggle] = useState<string>("List");
+  const [toggle, setToggle] = useState<string>("Map");
 
   const ToggleButton = styled(Button)(({ theme }) => ({
     borderRadius: "24px",
@@ -39,6 +39,7 @@ function App() {
     "&:hover": {
       backgroundColor: "#222222",
     },
+    width: "160px",
   }));
 
   const AppComp = () => (

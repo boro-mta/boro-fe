@@ -48,19 +48,12 @@ export interface IUserDetails {
 }
 
 export interface ICoordinate {
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
 }
 
 export interface IMarkerDetails extends ICoordinate {
   id: string;
-  imageId: string;
   title: string;
+  imageIds: string[];
 }
-
-// TODO remove from comment when base version working
-// export interface IMarkerDetails extends ICoordinate {
-//   itemId: string;
-//   name: string;
-//   img: string;
-// }
