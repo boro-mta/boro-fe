@@ -35,6 +35,8 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
 import { IFullItemDetailsNew } from "../types";
 import { debug } from "console";
+import { useAppSelector } from "../app/hooks";
+import { selectAddress } from "../features/UserSlice";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -206,6 +208,8 @@ const EditItemPage = (props: Props) => {
     setCategoryArr((current: any) => [...current, category]);
   };
 
+  const address = useAppSelector(selectAddress);
+
   const onEditItem = () => {
     const values: FormValues = formValuesEditItem;
     const forRequest: IInputItem = {
@@ -213,6 +217,8 @@ const EditItemPage = (props: Props) => {
       categories: selectedCategories,
       title: formik.values.title,
       description: formik.values.description,
+      latitude: address.latitude,
+      longitude: address.longitude,
     };
     sendEditRequest({ ...forRequest, images }).then(() => {
       setOpen(true);

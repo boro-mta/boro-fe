@@ -3,7 +3,11 @@ import FacebookLoginButton from "../components/FacebookLogin/FacebookLogin";
 import { Box } from "@mui/material";
 import { ReactFacebookLoginInfo } from "react-facebook-login";
 import { useNavigate } from "react-router-dom";
-import { selectUserName, updateUser } from "../features/UserSlice";
+import {
+  selectUserName,
+  updatePartialUser,
+  updateUser,
+} from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import api from "../api/HttpClient";
 
@@ -24,11 +28,13 @@ const FacebookLoginPage = () => {
     console.log(response);
     dispatch(
       updateUser({
-        name: response.name,
-        email: response.email,
+        name: response.name || "",
+        email: response.email || "",
         id: response.id,
         accessToken: response.accessToken,
         picture: pictureUrl || "",
+        address: { latitude: 0, longitude: 0 },
+        guid: "",
       })
     );
 
@@ -52,7 +58,7 @@ const FacebookLoginPage = () => {
         navigate("/newUser");
       } else {
         dispatch(
-          updateUser({
+          updatePartialUser({
             picture: pictureUrl || "",
             guid: backendResponse.userId,
           })

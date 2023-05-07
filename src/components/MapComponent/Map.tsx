@@ -10,6 +10,8 @@ import HttpClient from "../../api/HttpClient";
 import { getImgById } from "../../utils/imagesUtils";
 import "./mapStyles.css";
 import { useNavigate } from "react-router";
+import { useAppSelector } from "../../app/hooks";
+import { selectAddress } from "../../features/UserSlice";
 
 type Props = {};
 
@@ -35,6 +37,7 @@ const Map = memo((props: Props) => {
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
   });
+  const address = useAppSelector(selectAddress);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -55,6 +58,7 @@ const Map = memo((props: Props) => {
     const fetchAndSetMarkers = async () => {
       if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
         console.log(`Location Loaded!`, myLocation);
+        console.log(address);
         let markers = await HttpClient.get("Items/ByRadius", {
           latitude: myLocation.latitude,
           longitude: myLocation.longitude,
@@ -86,15 +90,16 @@ const Map = memo((props: Props) => {
       const infoWindow = new google.maps.InfoWindow();
       (window as any).onMarkerClick = onMarkerClick;
 
-      return locations.map(({ id, imageIds, title, latitude, longitude }) => {
-        const marker = CustomMarker({ latitude, longitude });
+      return locations.length > 0
+        ? locations.map(({ id, imageIds, title, latitude, longitude }) => {
+            const marker = CustomMarker({ latitude, longitude });
 
-        map.addListener("click", () => infoWindow.close());
-        marker.addListener("click", async () => {
-          let imgData = await getImgById(imageIds[0]);
+            map.addListener("click", () => infoWindow.close());
+            marker.addListener("click", async () => {
+              let imgData = await getImgById(imageIds[0]);
 
-          infoWindow.setPosition({ lat: latitude, lng: longitude });
-          infoWindow.setContent(`
+              infoWindow.setPosition({ lat: latitude, lng: longitude });
+              infoWindow.setContent(`
         <div class="info-window">
           <h2 class="info-title">${title}</h2>
           <img class="info-img" src="${imgData}" />
@@ -102,11 +107,12 @@ const Map = memo((props: Props) => {
           <button class="info-button" onclick="onMarkerClick('${id}')">Go to item</button>
         </div>
       `);
-          infoWindow.open(map);
-        });
+              infoWindow.open(map);
+            });
 
-        return marker;
-      });
+            return marker;
+          })
+        : [];
     },
     [locationsAroundMe]
   );
@@ -121,7 +127,7 @@ const Map = memo((props: Props) => {
       );
 
       const algorithm = new SuperClusterAlgorithm({ radius: 200 });
-      new MarkerClusterer({ markers, map, algorithm });
+      if (markers) new MarkerClusterer({ markers, map, algorithm });
     },
     [locationsAroundMe]
   );

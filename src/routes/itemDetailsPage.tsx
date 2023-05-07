@@ -95,8 +95,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-            getFormattedDate(loop) +
-            " is not available, please choose different dates."
+              getFormattedDate(loop) +
+              " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -139,7 +139,9 @@ const itemDetailsPage = (props: Props) => {
       <Card sx={{ marginBottom: "10px" }}>
         {itemDetails.images && (
           <CardMedia component="div" style={{ height: "230px" }}>
-            <ImagesCarousel images={formatImagesOnRecieve(itemDetails.images)} />
+            <ImagesCarousel
+              images={formatImagesOnRecieve(itemDetails.images)}
+            />
           </CardMedia>
         )}
       </Card>
@@ -164,7 +166,13 @@ const itemDetailsPage = (props: Props) => {
       >
         Edit Item
       </Button>
-
+      <Button
+        variant="contained"
+        sx={{ mt: 1, mr: 1 }}
+        onClick={() => navigate(`/`)}
+      >
+        Home
+      </Button>
       <Typography variant="h6" sx={{ marginBottom: "10px" }}>
         Find available dates
       </Typography>

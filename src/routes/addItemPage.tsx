@@ -45,6 +45,8 @@ import {
   IInputItem,
 } from "../types";
 import { IMG_1 } from "../mocks/images";
+import { useAppSelector } from "../app/hooks";
+import { selectAddress } from "../features/UserSlice";
 
 type Props = {};
 
@@ -178,7 +180,7 @@ const addItemPage = (props: Props) => {
       const data = await HttpClient.create("items/add", {}, reqBody);
       console.log(data);
       setIsAddSuccess(true);
-      navigate(`/item/${data}`);
+      navigate(`/`);
     } catch (e) {
       setIsAddSuccess(false);
       console.log(e);
@@ -233,6 +235,7 @@ const addItemPage = (props: Props) => {
     setCategoryArr((current: any) => [...current, category]);
   };
 
+  const address = useAppSelector(selectAddress);
   const onAddItem = () => {
     const values: FormValues = formValuesAddItem;
     const forRequest: IInputItem = {
@@ -240,6 +243,8 @@ const addItemPage = (props: Props) => {
       categories: selectedCategories,
       title: values.title,
       description: values.description,
+      latitude: address.latitude,
+      longitude: address.longitude,
     };
     sendRequest({ ...forRequest, images }).then(() => {
       setOpen(true);
@@ -295,7 +300,6 @@ const addItemPage = (props: Props) => {
   };
 
   const handleChangeCategories = (value: any) => {
-    debugger;
     setSelectedCategories(value);
   };
   return (

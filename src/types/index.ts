@@ -26,7 +26,12 @@ export interface IFullItemDetailsNew {
   excludedDates: Date[];
 }
 
-export interface IInputItem {
+export interface ICoordinate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface IInputItem extends ICoordinate {
   //item type to send to backend
   title: string;
   description: string;
@@ -43,11 +48,6 @@ export interface IUserDetails {
   about?: string;
   dateJoined: string;
   email?: string;
-  latitude: number;
-  longitude: number;
-}
-
-export interface ICoordinate {
   latitude: number;
   longitude: number;
 }

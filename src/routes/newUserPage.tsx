@@ -7,7 +7,7 @@ import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
 import api from "../api/HttpClient";
-import { updateUser } from "../features/UserSlice";
+import { initialState, updateUser } from "../features/UserSlice";
 import { selectEmail, selectUserName } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
@@ -66,11 +66,7 @@ const NewUserPage = (props: Props) => {
     try {
       const response = await api.create("Users/Create", {}, userDetails);
       console.log("User created successfully!", response);
-      dispatch(
-        updateUser({
-          guid: response,
-        })
-      );
+      dispatch(updateUser({ ...initialState, guid: response }));
       navigate("/users/" + response);
     } catch (error) {
       console.error("Failed to create user:", error);
