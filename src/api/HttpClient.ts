@@ -1,7 +1,11 @@
 import apiConfig from "../config/apiConfig";
 
-const request = async (route: string, params?: any, method = "GET") => {
-  debugger;
+const request = async (
+  route: string,
+  bodyParams?: any,
+  queryParams?: any,
+  method = "GET"
+) => {
   const options: any = {
     method,
     headers: {
@@ -9,13 +13,11 @@ const request = async (route: string, params?: any, method = "GET") => {
     },
   };
 
-  if (params) {
-    if (method === "GET") {
-      // In the future when we will have get with query params:
-      // route += "?" + objectToQueryString(params);
-    } else {
-      options.body = JSON.stringify(params);
-    }
+  if (queryParams && Object.keys(queryParams).length > 0) {
+    route += "?" + objectToQueryString(bodyParams);
+  }
+  if (bodyParams && Object.keys(bodyParams).length > 0) {
+    options.body = JSON.stringify(bodyParams);
   }
 
   const targetUrl = `${apiConfig.SERVER_URL}:${apiConfig.SERVER_PORT}/${route}`;
@@ -43,20 +45,20 @@ const objectToQueryString = (obj: any) => {
     .join("&");
 };
 
-const get = (route: string, params?: any) => {
-  return request(route, params);
+const get = (route: string, queryParams?: any, bodyParams?: any) => {
+  return request(route, queryParams, bodyParams);
 };
 
-const create = (route: string, params: any) => {
-  return request(route, params, "POST");
+const create = (route: string, queryParams?: any, bodyParams?: any) => {
+  return request(route, queryParams, bodyParams, "POST");
 };
 
-const update = (route: string, params: any) => {
-  return request(route, params, "PUT");
+const update = (route: string, queryParams?: any, bodyParams?: any) => {
+  return request(route, queryParams, bodyParams, "PUT");
 };
 
-const remove = (route: string, params: any) => {
-  return request(route, params, "DELETE");
+const remove = (route: string, queryParams?: any, bodyParams?: any) => {
+  return request(route, queryParams, bodyParams, "DELETE");
 };
 
 export default {
