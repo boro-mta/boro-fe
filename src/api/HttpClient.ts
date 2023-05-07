@@ -2,8 +2,8 @@ import apiConfig from "../config/apiConfig";
 
 const request = async (
   route: string,
-  bodyParams?: any,
   queryParams?: any,
+  bodyParams?: any,
   method = "GET"
 ) => {
   const options: any = {
@@ -14,7 +14,7 @@ const request = async (
   };
 
   if (queryParams && Object.keys(queryParams).length > 0) {
-    route += "?" + objectToQueryString(bodyParams);
+    route += "?" + objectToQueryString(queryParams);
   }
   if (bodyParams && Object.keys(bodyParams).length > 0) {
     options.body = JSON.stringify(bodyParams);
