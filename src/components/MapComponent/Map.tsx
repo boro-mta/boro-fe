@@ -6,6 +6,7 @@ import {
   SuperClusterAlgorithm,
 } from "@googlemaps/markerclusterer";
 import { renderMarkersByLocations } from "../../utils/mapUtils";
+import HttpClient from "../../api/HttpClient";
 
 type Props = {};
 
@@ -47,9 +48,19 @@ const Map = memo((props: Props) => {
   }, []);
 
   useEffect(() => {
-    if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
-      console.log(`Location Loaded!`, myLocation);
-    }
+    const fetchAndSetMarkers = async () => {
+      if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
+        console.log(`Location Loaded!`, myLocation);
+        let markers = await HttpClient.get("Items/ByRadius", {
+          latitude: myLocation.latitude,
+          longitude: myLocation.longitude,
+          radiusInMeters: 5000,
+        });
+        setLocationsAroundMe(markers);
+      }
+    };
+
+    fetchAndSetMarkers();
   }, [myLocation]);
   const returnToCenter = () => {
     if (map) {
@@ -61,17 +72,20 @@ const Map = memo((props: Props) => {
     console.log(itemId);
   }, []);
 
-  const addMarkers = useCallback((map: google.maps.Map) => {
-    // TODO get array of markers from server instead of mock locations
-    const markers = renderMarkersByLocations(
-      map,
-      locationsAroundMe,
-      handleMarkerClick
-    );
+  const addMarkers = useCallback(
+    (map: google.maps.Map) => {
+      // TODO get array of markers from server instead of mock locations
+      const markers = renderMarkersByLocations(
+        map,
+        locationsAroundMe,
+        handleMarkerClick
+      );
 
-    const algorithm = new SuperClusterAlgorithm({ radius: 200 });
-    new MarkerClusterer({ markers, map, algorithm });
-  }, []);
+      const algorithm = new SuperClusterAlgorithm({ radius: 200 });
+      new MarkerClusterer({ markers, map, algorithm });
+    },
+    [locationsAroundMe]
+  );
 
   useEffect(() => {
     if (map) {
