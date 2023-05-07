@@ -5,8 +5,11 @@ import {
   MarkerClusterer,
   SuperClusterAlgorithm,
 } from "@googlemaps/markerclusterer";
-import { renderMarkersByLocations } from "../../utils/mapUtils";
+import CustomMarker from "./CustomMarker";
 import HttpClient from "../../api/HttpClient";
+import { getImgById } from "../../utils/imagesUtils";
+import "./mapStyles.css";
+import { useNavigate } from "react-router";
 
 type Props = {};
 
@@ -19,6 +22,7 @@ const libs: (
 )[] = ["places"];
 
 const Map = memo((props: Props) => {
+  const navigate = useNavigate();
   const [map, setMap] = useState<google.maps.Map>();
   const [myLocation, setMyLocation] = useState<ICoordinate>({
     latitude: 0,
@@ -62,6 +66,7 @@ const Map = memo((props: Props) => {
 
     fetchAndSetMarkers();
   }, [myLocation]);
+
   const returnToCenter = () => {
     if (map) {
       map.panTo({ lat: myLocation.latitude, lng: myLocation.longitude });
@@ -69,8 +74,42 @@ const Map = memo((props: Props) => {
   };
 
   const handleMarkerClick = useCallback((itemId: string) => {
-    console.log(itemId);
+    navigate(`/item/${itemId}`);
   }, []);
+
+  const renderMarkersByLocations = useCallback(
+    (
+      map: google.maps.Map,
+      locations: IMarkerDetails[],
+      onMarkerClick: (itemId: string) => void
+    ) => {
+      const infoWindow = new google.maps.InfoWindow();
+      (window as any).onMarkerClick = onMarkerClick;
+
+      return locations.map(({ id, imageIds, title, latitude, longitude }) => {
+        const marker = CustomMarker({ latitude, longitude });
+
+        map.addListener("click", () => infoWindow.close());
+        marker.addListener("click", async () => {
+          let imgData = await getImgById(imageIds[0]);
+
+          infoWindow.setPosition({ lat: latitude, lng: longitude });
+          infoWindow.setContent(`
+        <div class="info-window">
+          <h2 class="info-title">${title}</h2>
+          <img class="info-img" src="${imgData}" />
+          <hr class="divider"/>
+          <button class="info-button" onclick="onMarkerClick('${id}')">Go to item</button>
+        </div>
+      `);
+          infoWindow.open(map);
+        });
+
+        return marker;
+      });
+    },
+    [locationsAroundMe]
+  );
 
   const addMarkers = useCallback(
     (map: google.maps.Map) => {
