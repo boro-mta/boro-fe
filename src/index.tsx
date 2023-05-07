@@ -23,6 +23,7 @@ import AddItemPage from "./routes/addItemPage";
 import UserEditPage from "./routes/userEditPage";
 import NewUserPage from "./routes/newUserPage";
 import EditItemPage from "./routes/editItemPage";
+import MyAddressesPage from "./routes/myAddressesPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
   {
     path: "editItem/:itemId",
     element: <EditItemPage />,
+  },
+  {
+    path: "address",
+    element: <MyAddressesPage />,
   },
   {
     path: "*",
