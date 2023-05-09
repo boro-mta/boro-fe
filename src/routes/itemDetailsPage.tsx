@@ -91,7 +91,7 @@ const itemDetailsPage = (props: Props) => {
     if (selectedStartDate && selectedEndDate) {
       while (loop <= selectedEndDate) {
         if (
-          checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)
+          (itemDetails.excludedDates !== undefined) && checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)
         ) {
           setSelectedDatesError(
             "The date " +
@@ -189,7 +189,7 @@ const itemDetailsPage = (props: Props) => {
             right: "2%",
             width: "96%",
           }}
-          onClick={() => navigate("/")}
+          onClick={() => navigate(`/bookingCompletedPage/${itemId}`, { state: { startDate: startDate, endDate: endDate, excludedDates: itemDetails.excludedDates } })}
         >
           Book now
         </Button>
