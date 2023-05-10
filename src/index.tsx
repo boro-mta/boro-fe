@@ -66,6 +66,7 @@ const router = createBrowserRouter([
     element: <BookingCompletedPage
       startDate={new Date()}
       endDate={new Date()}
+      onChange={([]) => { }}
       datesToExclude={[]}
     />,
   },

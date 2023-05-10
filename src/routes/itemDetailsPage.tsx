@@ -175,6 +175,12 @@ const itemDetailsPage = (props: Props) => {
           onChange={handleChangeDates}
           datesToExclude={itemDetails.excludedDates}
         />
+        {startDate && (
+          <p>start date: {startDate.toDateString()}</p>
+        )}
+        {endDate && (
+          <p>end date: {endDate.toDateString()}</p>
+        )}
       </div>
 
       {isValidDates === true && (
@@ -189,7 +195,7 @@ const itemDetailsPage = (props: Props) => {
             right: "2%",
             width: "96%",
           }}
-          onClick={() => navigate(`/bookingCompletedPage/${itemId}`, { state: { startDate: startDate, endDate: endDate, excludedDates: itemDetails.excludedDates } })}
+          onClick={() => navigate(`/bookingCompletedPage/${itemId}`, { state: { selectedStartDate: startDate, selectedEndDate: endDate, excludedDates: itemDetails.excludedDates } })}
         >
           Book now
         </Button>

@@ -18,7 +18,7 @@ import {
     IconButton,
 } from "@mui/material";
 import HttpClient from "../api/HttpClient";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import Autocomplete from "@mui/material/Autocomplete";
 import Stack from "@mui/material/Stack";
 import { categoriesOptions, conditionOptions } from "../mocks/items";
@@ -40,19 +40,42 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IFullImageDetails, IFullItemDetailsNew, IInputImage, IInputItem } from "../types";
 import { IMG_1 } from "../mocks/images";
+import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
+
+type IFullItemDetailsParams = {
+    itemId: string;
+};
 
 type Props = {
     startDate: Date;
     endDate: Date;
+    onChange: (dates: any) => void;
     datesToExclude: Date[];
 };
 
-const BookingCompletedPage = ({ startDate, endDate, datesToExclude }: Props) => {
+const BookingCompletedPage = ({ startDate, endDate, datesToExclude, onChange }: Props) => {
+    let { itemId } = useParams<IFullItemDetailsParams>();
+
+    const { state } = useLocation();
+    const { selectedStartDate, selectedEndDate } = state;
 
     return (
         <Container>
             <Typography variant="h3">Booking is Completed</Typography>
-            <p>{startDate.toDateString()}</p>
+            <p>{selectedStartDate.toDateString()}
+
+                {selectedEndDate.toDateString()}
+            </p>
+
+
+            <div style={{ display: "flex", justifyContent: "center" }}>
+                <DateRangePicker
+                    startDate={selectedStartDate}
+                    endDate={selectedEndDate}
+                    onChange={onChange}
+                    datesToExclude={datesToExclude}
+                />
+            </div>
         </Container>
     );
 };
