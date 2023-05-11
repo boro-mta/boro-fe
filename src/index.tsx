@@ -24,6 +24,7 @@ import UserEditPage from "./routes/userEditPage";
 import NewUserPage from "./routes/newUserPage";
 import EditItemPage from "./routes/editItemPage";
 import BookingCompletedPage from "./routes/bookingCompletedPage";
+import RequestToBookPage from "./routes/requestToBookPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
   {
     path: "/editItem/:itemId",
     element: <EditItemPage />,
+  },
+  {
+    path: "/requestToBookPage/:itemId",
+    element: <RequestToBookPage />,
   },
   {
     path: "/bookingCompletedPage/:itemId",

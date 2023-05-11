@@ -115,6 +115,7 @@ const itemDetailsPage = (props: Props) => {
 
   const handleOpenModal = () => setOpen(true);
 
+
   useEffect(() => {
     const getFullDetails = async () => {
       let fullDetails: IFullItemDetailsNew;
@@ -195,28 +196,44 @@ const itemDetailsPage = (props: Props) => {
             right: "2%",
             width: "96%",
           }}
-          onClick={() => navigate(`/bookingCompletedPage/${itemId}`, { state: { selectedStartDate: startDate, selectedEndDate: endDate, excludedDates: itemDetails.excludedDates } })}
-        >
-          Book now
-        </Button>
-      )}
-      {isValidDates === false && (
-        <Button
-          variant="contained"
-          color="error"
-          endIcon={<ErrorIcon />}
-          sx={{
-            marginTop: "10px",
-            position: "sticky",
-            bottom: "10px",
-            right: "2%",
-            width: "96%",
+          onClick={() => {
+            navigate(`/requestToBookPage/${itemId}`,
+              {
+                //state: { name: "gell" }
+                state:
+                {
+                  selectedStartDate: startDate,
+                  selectedEndDate: endDate,
+                  excludedDates: itemDetails.excludedDates,
+                  //onDateChange: handleChangeDates
+                }
+              }
+            )
           }}
-          onClick={handleOpenModal}
         >
-          Invalid dates
+          Reserve
         </Button>
-      )}
+      )
+      }
+      {
+        isValidDates === false && (
+          <Button
+            variant="contained"
+            color="error"
+            endIcon={<ErrorIcon />}
+            sx={{
+              marginTop: "10px",
+              position: "sticky",
+              bottom: "10px",
+              right: "2%",
+              width: "96%",
+            }}
+            onClick={handleOpenModal}
+          >
+            Invalid dates
+          </Button>
+        )
+      }
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
           sx={{
@@ -234,7 +251,7 @@ const itemDetailsPage = (props: Props) => {
           <Typography variant="body1">{selectedDatesError}</Typography>
         </Box>
       </Modal>
-    </Container>
+    </Container >
   );
 };
 
