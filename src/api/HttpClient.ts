@@ -24,7 +24,7 @@ const request = async (
   console.log(targetUrl);
   const response = await fetch(targetUrl, options);
   if (response.status !== 200) {
-    console.error(`${response.status}: ${response.statusText}`);
+    console.log(`${response.status}: ${response.statusText}`);
   }
   const contentType = response.headers.get("content-type");
   if (contentType && contentType.indexOf("application/json") !== -1) {

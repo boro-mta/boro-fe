@@ -174,6 +174,8 @@ const addItemPage = (props: Props) => {
       condition: obj.condition,
       categories: obj.categories,
       images: imagesForBody,
+      latitude: obj.latitude,
+      longitude: obj.longitude,
     };
 
     try {
