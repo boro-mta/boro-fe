@@ -199,13 +199,11 @@ const itemDetailsPage = (props: Props) => {
           onClick={() => {
             navigate(`/requestToBookPage/${itemId}`,
               {
-                //state: { name: "gell" }
                 state:
                 {
                   selectedStartDate: startDate,
                   selectedEndDate: endDate,
                   excludedDates: itemDetails.excludedDates,
-                  //onDateChange: handleChangeDates
                 }
               }
             )

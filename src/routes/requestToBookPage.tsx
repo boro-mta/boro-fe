@@ -86,7 +86,6 @@ const Row = ({ tableData }: ITableData) => {
 };
 
 const RequestToBookPage = (props: Props) => {
-    debugger;
     const location = useLocation();
     const { selectedStartDate, selectedEndDate, excludedDates, onDateChange } = location.state;
 
@@ -112,8 +111,10 @@ const RequestToBookPage = (props: Props) => {
         const getFullDetails = async () => {
             let fullDetails: IFullItemDetailsNew;
             try {
-                // fullDetails = await HttpClient.get(`items/${itemId}`);
-                //setItemDetails(fullDetails);
+                debugger;
+                fullDetails = await HttpClient.get(`items/${itemId}`);
+                debugger;
+                setItemDetails(fullDetails);
             }
             catch (err) {
                 console.log("Error while loading item");
@@ -128,13 +129,13 @@ const RequestToBookPage = (props: Props) => {
         <Container>
             <Typography variant="h3">Request To Book</Typography>
 
-            {/* <Card sx={{ marginBottom: "10px" }}>
+            <Card sx={{ marginBottom: "10px" }}>
                 {itemDetails.images && (
                     <CardMedia component="div" style={{ height: "230px" }}>
                         <ImagesCarousel images={formatImagesOnRecieve(itemDetails.images)} />
                     </CardMedia>
                 )}
-            </Card> */}
+            </Card>
             <Typography variant="h5">{itemDetails.title}</Typography>
             <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
             <Typography variant="h6">About the product</Typography>
@@ -179,13 +180,23 @@ const RequestToBookPage = (props: Props) => {
 
             </div>
 
-            <Button
-                variant="contained"
-                sx={{ mt: 1, mr: 1 }}
-                onClick={() => navigate(`/item/${itemId}`)} //todo: change 
-            >
-                Back
-            </Button>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Button
+                    variant="contained"
+                    sx={{ mt: 1, mr: 1 }}
+                    onClick={() => navigate(`/item/${itemId}`)}
+                >
+                    Back
+                </Button>
+                <Button
+                    variant="contained"
+                    sx={{ mt: 1, mr: 1 }}
+                    onClick={() => navigate(`/item/${itemId}`)}
+                >
+                    Confirm
+                </Button>
+            </div>
+
         </Container>
     );
 };
