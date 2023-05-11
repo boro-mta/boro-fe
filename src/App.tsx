@@ -16,6 +16,7 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import Map from "./components/MapComponent/Map";
 import { items } from "./mocks/items";
 import ImagesCarousel from "./components/ImagesCarousel/ImagesCarousel";
+import ItemsMapListContainer from "./components/ItemsMapListContainer/ItemsMapListContainer";
 
 function App() {
   const userName = useAppSelector(selectUserName);
@@ -102,19 +103,7 @@ function App() {
 
   return (
     <>
-      {toggle === "List" ? (
-        <div style={{ position: "relative", height: "100vh" }}>
-          <Container>
-            <AppComp />
-          </Container>
-          <ShowMapButton />
-        </div>
-      ) : (
-        <>
-          <Map />
-          <ShowListButton />
-        </>
-      )}
+      <ItemsMapListContainer />
     </>
   );
 }

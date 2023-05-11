@@ -13,7 +13,10 @@ import { useNavigate } from "react-router";
 import { useAppSelector } from "../../app/hooks";
 import { selectAddress } from "../../features/UserSlice";
 
-type Props = {};
+type Props = {
+  myLocation: ICoordinate;
+  locationsAroundMe: IMarkerDetails[];
+};
 
 const libs: (
   | "places"
@@ -23,53 +26,14 @@ const libs: (
   | "visualization"
 )[] = ["places"];
 
-const Map = memo((props: Props) => {
+const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
   const navigate = useNavigate();
   const [map, setMap] = useState<google.maps.Map>();
-  const [myLocation, setMyLocation] = useState<ICoordinate>({
-    latitude: 0,
-    longitude: 0,
-  });
-  const [locationsAroundMe, setLocationsAroundMe] = useState<IMarkerDetails[]>(
-    []
-  );
+
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
   });
-  const address = useAppSelector(selectAddress);
-
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const newCenter = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-        setMyLocation(newCenter);
-      },
-      () => {
-        console.log("Failed to get the user's location");
-      }
-    );
-  }, []);
-
-  useEffect(() => {
-    const fetchAndSetMarkers = async () => {
-      if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
-        console.log(`Location Loaded!`, myLocation);
-        console.log(address);
-        let markers = await HttpClient.get("Items/ByRadius", {
-          latitude: myLocation.latitude,
-          longitude: myLocation.longitude,
-          radiusInMeters: 5000,
-        });
-        setLocationsAroundMe(markers);
-      }
-    };
-
-    fetchAndSetMarkers();
-  }, [myLocation]);
 
   const returnToCenter = () => {
     if (map) {
