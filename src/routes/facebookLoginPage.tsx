@@ -9,7 +9,7 @@ import {
   updateUser,
 } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import api from "../api/HttpClient";
+import BoroWSClient from "../api/BoroWebServiceClient";
 
 interface IUserData {
   name?: string;
@@ -45,13 +45,9 @@ const FacebookLoginPage = () => {
     const backendFacebookAuthentication = async (
       userFacebookLoginDetails: any
     ) => {
-      const backendResponse = await api.create(
-        "Users/LoginWithFacebook",
-        {
-          accessToken: userFacebookLoginDetails.accessToken,
-          facebookId: userFacebookLoginDetails.facebookId,
-        },
-        userFacebookLoginDetails
+      const backendResponse = await BoroWSClient.loginWithFacebook(
+        userFacebookLoginDetails.accessToken,
+        userFacebookLoginDetails.facebookId
       );
       console.log(backendResponse);
       if (backendResponse.firstLogin == true) {

@@ -48,12 +48,12 @@ const ItemsMapListContainer = () => {
   useEffect(() => {
     const fetchAndSetMarkers = async () => {
       if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
-        let markers = await HttpClient.get("Items/ByRadius", {
-          latitude: myLocation.latitude,
-          longitude: myLocation.longitude,
-          radiusInMeters: 5000,
-        });
-        if (Array.isArray(markers)) setLocationsAroundMe(markers);
+        // let markers = await HttpClient.get("Items/ByRadius", {
+        //   latitude: myLocation.latitude,
+        //   longitude: myLocation.longitude,
+        //   radiusInMeters: 5000,
+        // });
+        if (true) setLocationsAroundMe([]);
       }
     };
 
