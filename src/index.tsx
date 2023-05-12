@@ -1,7 +1,13 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as StoreProvider } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  Route,
+  RouterProvider,
+  Routes,
+} from "react-router-dom";
 import { store } from "./app/store";
 import App from "./App";
 import ItemDetailsPage from "./routes/itemDetailsPage";
@@ -23,11 +29,13 @@ import AddItemPage from "./routes/addItemPage";
 import UserEditPage from "./routes/userEditPage";
 import NewUserPage from "./routes/newUserPage";
 import EditItemPage from "./routes/editItemPage";
+import ResponsiveAppBar from "./components/AppBar/AppBar";
+import MyAddressesPage from "./routes/myAddressesPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
 
-const router = createBrowserRouter([
+const router = [
   {
     path: "/",
     element: <App />,
@@ -61,15 +69,26 @@ const router = createBrowserRouter([
     element: <EditItemPage />,
   },
   {
+    path: "address",
+    element: <MyAddressesPage />,
+  },
+  {
     path: "*",
     element: <ErrorPage />,
   },
-]);
+];
 
 root.render(
   <React.StrictMode>
     <StoreProvider store={store}>
-      <RouterProvider router={router} />
+      <BrowserRouter>
+        <ResponsiveAppBar />
+        <Routes>
+          {router.map((routeItem, i) => (
+            <Route path={routeItem.path} element={routeItem.element} key={i} />
+          ))}
+        </Routes>
+      </BrowserRouter>
     </StoreProvider>
   </React.StrictMode>
 );

@@ -3,9 +3,13 @@ import FacebookLoginButton from "../components/FacebookLogin/FacebookLogin";
 import { Box } from "@mui/material";
 import { ReactFacebookLoginInfo } from "react-facebook-login";
 import { useNavigate } from "react-router-dom";
-import { selectUserName, updateUser } from "../features/UserSlice";
+import {
+  selectUserName,
+  updatePartialUser,
+  updateUser,
+} from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { LoginWithFacebook } from "../api/BoroWebServiceClient";
+import api from "../api/HttpClient";
 
 interface IUserData {
   name?: string;
@@ -24,11 +28,13 @@ const FacebookLoginPage = () => {
     console.log(response);
     dispatch(
       updateUser({
-        name: response.name,
-        email: response.email,
+        name: response.name || "",
+        email: response.email || "",
         id: response.id,
         accessToken: response.accessToken,
         picture: pictureUrl || "",
+        address: { latitude: 0, longitude: 0 },
+        guid: "",
       })
     );
 
@@ -39,19 +45,22 @@ const FacebookLoginPage = () => {
     const backendFacebookAuthentication = async (
       userFacebookLoginDetails: any
     ) => {
-      const loginResponse = await LoginWithFacebook(
-        userFacebookLoginDetails.accessToken,
-        userFacebookLoginDetails.facebookId
+      const backendResponse = await api.create(
+        "Users/LoginWithFacebook",
+        {
+          accessToken: userFacebookLoginDetails.accessToken,
+          facebookId: userFacebookLoginDetails.facebookId,
+        },
+        userFacebookLoginDetails
       );
-
-      console.log(loginResponse);
-      if (loginResponse.firstLogin === true) {
+      console.log(backendResponse);
+      if (backendResponse.firstLogin == true) {
         navigate("/newUser");
       } else {
         dispatch(
-          updateUser({
+          updatePartialUser({
             picture: pictureUrl || "",
-            guid: loginResponse.userId,
+            guid: backendResponse.userId,
           })
         );
       }
@@ -59,8 +68,6 @@ const FacebookLoginPage = () => {
     const backendResponse = backendFacebookAuthentication(
       userFacebookLoginDetails
     );
-
-    navigate("/");
   };
   return (
     <div className="facebook-login-page">
