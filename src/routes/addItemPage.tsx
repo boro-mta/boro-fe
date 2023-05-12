@@ -38,9 +38,15 @@ import Paper from "@mui/material/Paper";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { IFullImageDetails, IFullItemDetailsNew, IInputImage, IInputItem } from "../types";
+import {
+  IFullImageDetails,
+  IFullItemDetailsNew,
+  IInputImage,
+  IInputItem,
+} from "../types";
 import { IMG_1 } from "../mocks/images";
-import ResponsiveAppBar from "../components/AppBar/AppBar";
+import { useAppSelector } from "../app/hooks";
+import { selectAddress } from "../features/UserSlice";
 
 type Props = {};
 
@@ -95,8 +101,12 @@ const addItemPage = (props: Props) => {
   const [condition, setCondition] = useState<string>("");
   const [newCategory, setNewCategory] = useState<any>("");
 
-  const [categoryArr, setCategoryArr] = React.useState<any[]>(categoriesOptions);
-  const [conditionArr, setConditionArr] = React.useState<any[]>(conditionOptions);
+  const [categoryArr, setCategoryArr] = React.useState<any[]>(
+    categoriesOptions
+  );
+  const [conditionArr, setConditionArr] = React.useState<any[]>(
+    conditionOptions
+  );
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
@@ -154,8 +164,7 @@ const addItemPage = (props: Props) => {
     let imagesForBody: IInputImage[];
     if (obj.images) {
       imagesForBody = convertImagesTypeFromString(obj.images);
-    }
-    else {
+    } else {
       imagesForBody = [];
     }
 
@@ -165,27 +174,31 @@ const addItemPage = (props: Props) => {
       condition: obj.condition,
       categories: obj.categories,
       images: imagesForBody,
+      latitude: obj.latitude,
+      longitude: obj.longitude,
     };
 
     try {
-      const data = await HttpClient.create("items/add", reqBody);
+      const data = await HttpClient.create("items/add", {}, reqBody);
       console.log(data);
       setIsAddSuccess(true);
-      navigate(`/item/${data}`);
+      navigate(`/`);
     } catch (e) {
       setIsAddSuccess(false);
       console.log(e);
     }
   };
 
-  const convertImagesTypeFromString = (imagesArrInString: string[]): IInputImage[] => {
+  const convertImagesTypeFromString = (
+    imagesArrInString: string[]
+  ): IInputImage[] => {
     let imagesForBody: IInputImage[] = imagesArrInString.map((img: string) => {
       const imgProps = img.split(",");
       return {
         base64ImageData: imgProps[1],
         base64ImageMetaData: imgProps[0],
       };
-    })
+    });
 
     return imagesForBody;
   };
@@ -224,14 +237,17 @@ const addItemPage = (props: Props) => {
     setCategoryArr((current: any) => [...current, category]);
   };
 
+  const address = useAppSelector(selectAddress);
   const onAddItem = () => {
     const values: FormValues = formValuesAddItem;
     const forRequest: IInputItem = {
       condition: condition,
       categories: selectedCategories,
       title: values.title,
-      description: values.description
-    }
+      description: values.description,
+      latitude: address.latitude,
+      longitude: address.longitude,
+    };
     sendRequest({ ...forRequest, images }).then(() => {
       setOpen(true);
       formik.setSubmitting(false);
@@ -258,8 +274,7 @@ const addItemPage = (props: Props) => {
     const charCount = event.target.value.length;
     if (charCount === 250) {
       setFreeTextChar(freeTextChar);
-    }
-    else {
+    } else {
       setFreeTextChar(event.target.value);
     }
     setFreeTextCount(event.target.value.length);
@@ -288,22 +303,26 @@ const addItemPage = (props: Props) => {
 
   const handleChangeCategories = (value: any) => {
     setSelectedCategories(value);
-  }
+  };
   return (
     <Container>
       <Typography variant="h3">Add New Item</Typography>
-      <Box
-        sx={{ maxWidth: 400 }}>
+      <Box sx={{ maxWidth: 400 }}>
         <Stepper activeStep={activeStep} orientation="vertical">
           {/* step 1 */}
           <Step key={"Fill Item Information"}>
             <StepLabel>{"Fill Item Information"}</StepLabel>
             <StepContent>
-              <Box sx={{
-                height: "100%",
-              }}>
+              <Box
+                sx={{
+                  height: "100%",
+                }}
+              >
                 <Typography>
-                  <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
+                  <fieldset
+                    disabled={formik.isSubmitting}
+                    style={{ border: 0 }}
+                  >
                     <form onSubmit={formik.handleSubmit}>
                       <TextField
                         fullWidth
@@ -314,8 +333,11 @@ const addItemPage = (props: Props) => {
                         margin="normal"
                         value={formik.values.title}
                         onChange={formik.handleChange}
-                        error={formik.touched.title && Boolean(formik.errors.title)}
-                        helperText={formik.touched.title && formik.errors.title} />
+                        error={
+                          formik.touched.title && Boolean(formik.errors.title)
+                        }
+                        helperText={formik.touched.title && formik.errors.title}
+                      />
                       <TextField
                         fullWidth
                         required
@@ -326,9 +348,15 @@ const addItemPage = (props: Props) => {
                         margin="normal"
                         value={formik.values.description}
                         onChange={formik.handleChange}
-                        error={formik.touched.description &&
-                          Boolean(formik.errors.description)}
-                        helperText={formik.touched.description && formik.errors.description} />
+                        error={
+                          formik.touched.description &&
+                          Boolean(formik.errors.description)
+                        }
+                        helperText={
+                          formik.touched.description &&
+                          formik.errors.description
+                        }
+                      />
 
                       <Autocomplete
                         id="condition"
@@ -341,8 +369,10 @@ const addItemPage = (props: Props) => {
                           <TextField
                             {...params}
                             label="Condition"
-                            placeholder="Choose your item condition" />
-                        )} />
+                            placeholder="Choose your item condition"
+                          />
+                        )}
+                      />
 
                       {/* categories - Autocomplete */}
                       <Stack spacing={3} sx={{ width: 500 }}>
@@ -359,8 +389,10 @@ const addItemPage = (props: Props) => {
                             <TextField
                               {...params}
                               label="Categories"
-                              placeholder="Choose categories for your item" />
-                          )} />
+                              placeholder="Choose categories for your item"
+                            />
+                          )}
+                        />
                       </Stack>
 
                       <LoadingButton
@@ -373,7 +405,6 @@ const addItemPage = (props: Props) => {
                       >
                         <span>Continue</span>
                       </LoadingButton>
-
                     </form>
                   </fieldset>
                   <Snackbar
@@ -404,7 +435,6 @@ const addItemPage = (props: Props) => {
                     </Button>
                   </div>
                 </Box>
-
               </Box>
             </StepContent>
           </Step>
@@ -466,7 +496,8 @@ const addItemPage = (props: Props) => {
                 onChange={convertToBase64}
                 multiple
                 accept="image/*"
-                disabled={formik.isSubmitting} />
+                disabled={formik.isSubmitting}
+              />
               <Box sx={{ mb: 2 }}>
                 <div>
                   <Button

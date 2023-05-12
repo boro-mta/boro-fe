@@ -1,7 +1,13 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as StoreProvider } from "react-redux";
-import { BrowserRouter, createBrowserRouter, Route, RouterProvider, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  Route,
+  RouterProvider,
+  Routes,
+} from "react-router-dom";
 import { store } from "./app/store";
 import App from "./App";
 import ItemDetailsPage from "./routes/itemDetailsPage";
@@ -24,6 +30,7 @@ import UserEditPage from "./routes/userEditPage";
 import NewUserPage from "./routes/newUserPage";
 import EditItemPage from "./routes/editItemPage";
 import ResponsiveAppBar from "./components/AppBar/AppBar";
+import MyAddressesPage from "./routes/myAddressesPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -60,6 +67,10 @@ const router = createBrowserRouter([
   {
     path: "editItem/:itemId",
     element: <EditItemPage />,
+  },
+  {
+    path: "address",
+    element: <MyAddressesPage />,
   },
   {
     path: "*",
