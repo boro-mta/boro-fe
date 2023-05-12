@@ -44,10 +44,12 @@ export const ListContainer = ({
         return currObj;
       };
 
-      const promises = locationsAroundMe.map(fetchItem);
-      Promise.all(promises)
-        .then((items) => setItemsAroundMe(items))
-        .catch((err) => console.log(err));
+      if (locationsAroundMe) {
+        const promises = locationsAroundMe.map(fetchItem);
+        Promise.all(promises)
+          .then((items) => setItemsAroundMe(items))
+          .catch((err) => console.log(err));
+      }
     };
 
     fetchItemsAroundMe();
