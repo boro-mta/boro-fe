@@ -1,7 +1,13 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as StoreProvider } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  Route,
+  RouterProvider,
+  Routes,
+} from "react-router-dom";
 import { store } from "./app/store";
 import App from "./App";
 import ItemDetailsPage from "./routes/itemDetailsPage";
@@ -23,6 +29,7 @@ import AddItemPage from "./routes/addItemPage";
 import UserEditPage from "./routes/userEditPage";
 import NewUserPage from "./routes/newUserPage";
 import EditItemPage from "./routes/editItemPage";
+import ResponsiveAppBar from "./components/AppBar/AppBar";
 import MyAddressesPage from "./routes/myAddressesPage";
 
 const container = document.getElementById("root")!;
@@ -74,7 +81,20 @@ const router = createBrowserRouter([
 root.render(
   <React.StrictMode>
     <StoreProvider store={store}>
-      <RouterProvider router={router} />
+      <BrowserRouter>
+        <ResponsiveAppBar />
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="item/:itemId" element={<ItemDetailsPage />} />
+          <Route path="login" element={<FacebookLoginPage />} />
+          <Route path="addItem" element={<AddItemPage />} />
+          <Route path="/users/:userId" element={<UserPage />} />
+          <Route path="/users/:userId/edit" element={<UserEditPage />} />
+          <Route path="/newUser" element={<NewUserPage />} />
+          <Route path="editItem/:itemId" element={<EditItemPage />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </BrowserRouter>
     </StoreProvider>
   </React.StrictMode>
 );

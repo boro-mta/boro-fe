@@ -7,6 +7,7 @@ import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
 import api from "../api/HttpClient";
+import ResponsiveAppBar from "../components/AppBar/AppBar";
 type IUserDetailsParams = {
   userId: string;
 };
@@ -91,6 +92,7 @@ const UserEditPage = (props: Props) => {
           name="email"
           label="Email"
           margin="normal"
+          required={true}
           value={formik.values.email}
           onChange={formik.handleChange}
           error={formik.touched.email && Boolean(formik.errors.email)}

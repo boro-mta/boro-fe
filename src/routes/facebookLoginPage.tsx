@@ -68,8 +68,6 @@ const FacebookLoginPage = () => {
     const backendResponse = backendFacebookAuthentication(
       userFacebookLoginDetails
     );
-
-    navigate("/");
   };
   return (
     <div className="facebook-login-page">

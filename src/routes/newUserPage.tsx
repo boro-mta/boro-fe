@@ -8,7 +8,7 @@ import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
 import api from "../api/HttpClient";
 import { initialState, updateUser } from "../features/UserSlice";
-import { selectEmail, selectUserName } from "../features/UserSlice";
+import { selectEmail, selectUserName, selectPicture } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 type IUserDetailsParams = {
@@ -30,9 +30,10 @@ const validationSchema = yup.object({
 const NewUserPage = (props: Props) => {
   const dispatch = useAppDispatch();
 
-  const userEmail = useAppSelector(selectEmail);
-  const userFullName = useAppSelector(selectUserName);
-  const [firstName, lastName] = userFullName.split(" ");
+    const userEmail = useAppSelector(selectEmail);
+    const userFullName = useAppSelector(selectUserName);
+    const userProfilePicture = useAppSelector(selectPicture);
+    const [firstName, lastName] = userFullName.split(' ');
 
   const formik = useFormik({
     initialValues: {
@@ -63,13 +64,24 @@ const NewUserPage = (props: Props) => {
       latitude: 0,
     };
 
-    try {
-      const response = await api.create("Users/Create", {}, userDetails);
-      console.log("User created successfully!", response);
-      dispatch(updateUser({ ...initialState, guid: response }));
-      navigate("/users/" + response);
-    } catch (error) {
-      console.error("Failed to create user:", error);
+        try {
+            const response = await api.create('Users/Create', userDetails);
+            console.log('User created successfully!', response);
+            dispatch(
+                updateUser({
+                    name: firstName + ' ' + lastName,
+                    guid: response,
+                    picture: userProfilePicture,
+                    email: formik.values.email,
+
+
+                }))
+            navigate("/users/" + response);
+        } catch (error) {
+            console.error('Failed to create user:', error);
+        }
+
+
     }
   };
 

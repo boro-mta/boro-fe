@@ -25,7 +25,6 @@ import { Container, Stack } from "@mui/system";
 import { IInputItem } from "../types";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { allItemDetailsNew } from "../mocks/fullItemsDetails";
 import SendIcon from "@mui/icons-material/Send";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import HttpClient from "../api/HttpClient";
