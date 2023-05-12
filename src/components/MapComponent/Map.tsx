@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, memo } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
 import { ICoordinate, IMarkerDetails } from "../../types";
 import {
@@ -6,12 +6,9 @@ import {
   SuperClusterAlgorithm,
 } from "@googlemaps/markerclusterer";
 import CustomMarker from "./CustomMarker";
-import HttpClient from "../../api/HttpClient";
 import { getImgById } from "../../utils/imagesUtils";
 import "./mapStyles.css";
 import { useNavigate } from "react-router";
-import { useAppSelector } from "../../app/hooks";
-import { selectAddress } from "../../features/UserSlice";
 
 type Props = {
   myLocation: ICoordinate;
