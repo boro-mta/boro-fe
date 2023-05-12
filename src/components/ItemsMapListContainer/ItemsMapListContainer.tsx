@@ -53,7 +53,7 @@ const ItemsMapListContainer = () => {
           longitude: myLocation.longitude,
           radiusInMeters: 5000,
         });
-        if (!markers.status) setLocationsAroundMe(markers);
+        if (Array.isArray(markers)) setLocationsAroundMe(markers);
       }
     };
 
