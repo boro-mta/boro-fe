@@ -35,7 +35,7 @@ import MyAddressesPage from "./routes/myAddressesPage";
 const container = document.getElementById("root")!;
 const root = createRoot(container);
 
-const router = createBrowserRouter([
+const router = [
   {
     path: "/",
     element: <App />,
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
     path: "*",
     element: <ErrorPage />,
   },
-]);
+];
 
 root.render(
   <React.StrictMode>
@@ -84,15 +84,9 @@ root.render(
       <BrowserRouter>
         <ResponsiveAppBar />
         <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="item/:itemId" element={<ItemDetailsPage />} />
-          <Route path="login" element={<FacebookLoginPage />} />
-          <Route path="addItem" element={<AddItemPage />} />
-          <Route path="/users/:userId" element={<UserPage />} />
-          <Route path="/users/:userId/edit" element={<UserEditPage />} />
-          <Route path="/newUser" element={<NewUserPage />} />
-          <Route path="editItem/:itemId" element={<EditItemPage />} />
-          <Route path="*" element={<ErrorPage />} />
+          {router.map((routeItem, i) => (
+            <Route path={routeItem.path} element={routeItem.element} />
+          ))}
         </Routes>
       </BrowserRouter>
     </StoreProvider>
