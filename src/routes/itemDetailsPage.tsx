@@ -22,7 +22,6 @@ import {
 } from "../utils/calendarUtils";
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import ResponsiveAppBar from "../components/AppBar/AppBar";
 type IFullItemDetailsParams = {
   itemId: string;
 };

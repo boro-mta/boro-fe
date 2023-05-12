@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { selectUserName, updateUser } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import api from "../api/HttpClient"
-import ResponsiveAppBar from "../components/AppBar/AppBar";
 
 interface IUserData {
   name?: string;
