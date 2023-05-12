@@ -35,7 +35,9 @@ function ResponsiveAppBar() {
         settings.push('Profile');
         settings.push('Chats');
         settings.push('Log Out');
-        pages.push('Create New Borrow')
+        pages.push('Create New Borrow');
+        pages.push('My Items');
+        pages.push('My Borrows');
     }
 
 

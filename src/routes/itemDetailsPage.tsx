@@ -40,25 +40,24 @@ interface ITableData {
 
 const Row = ({ tableData }: ITableData) => {
   return (
-    <><ResponsiveAppBar />
-      <div>
-        {tableData.map((row, i) => (
-          <div key={i}>
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <Typography
-                variant="body1"
-                sx={{ flexBasis: "50%", color: "darkgray" }}
-              >
-                {row.key}
-              </Typography>
-              <Typography variant="body1" sx={{ flexBasis: "50%" }}>
-                {row.value}
-              </Typography>
-            </div>
-            {i < tableData.length - 1 && <Divider sx={{ margin: "5px" }} />}
+    <div>
+      {tableData.map((row, i) => (
+        <div key={i}>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <Typography
+              variant="body1"
+              sx={{ flexBasis: "50%", color: "darkgray" }}
+            >
+              {row.key}
+            </Typography>
+            <Typography variant="body1" sx={{ flexBasis: "50%" }}>
+              {row.value}
+            </Typography>
           </div>
-        ))}
-      </div></>
+          {i < tableData.length - 1 && <Divider sx={{ margin: "5px" }} />}
+        </div>
+      ))}
+    </div>
   );
 };
 
