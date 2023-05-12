@@ -18,7 +18,7 @@ import { ListContainer } from "./ListContainer";
 const ItemsMapListContainer = () => {
   const navigate = useNavigate();
 
-  const [toggle, setToggle] = useState<string>("Map");
+  const [toggle, setToggle] = useState<string>("List");
   const [myLocation, setMyLocation] = useState<ICoordinate>({
     latitude: 0,
     longitude: 0,

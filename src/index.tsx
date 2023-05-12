@@ -85,7 +85,7 @@ root.render(
         <ResponsiveAppBar />
         <Routes>
           {router.map((routeItem, i) => (
-            <Route path={routeItem.path} element={routeItem.element} />
+            <Route path={routeItem.path} element={routeItem.element} key={i} />
           ))}
         </Routes>
       </BrowserRouter>
