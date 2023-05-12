@@ -113,7 +113,7 @@ class BoroWebServiceClient {
     method: HttpOperation,
     endpointPath: string,
     body?: any
-  ): Promise<T> {
+  ) {
     this.refreshTokenIfExpiresIn();
     const tokenInfo = this.getTokenInfo();
     const headers = {
@@ -132,18 +132,24 @@ class BoroWebServiceClient {
       if (response.status !== 200) {
         throw new Error(`Requeset failed. ${response}`);
       }
-      const responseData: T = await response.json();
-
-      return responseData;
-    } catch (error) {
-      console.error(
-        `An error occurred while trying to execute a request to url: [${url}] with the following configuration: [${fetchConfig}]`
-      );
-      console.error(error);
-      throw error;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        try {
+          const responseData: T = await response.json();
+          return responseData;
+        } catch (error) {
+          console.error(
+            `An error occurred while trying to execute a request to url: [${url}] with the following configuration: [${fetchConfig}]`
+          );
+          console.error(error);
+          throw error;
+        }
+      }
+      return response;
+    } catch (err) {
+      console.log(err);
     }
   }
-
   public async loginWithFacebook(
     accessToken: string,
     facebookId: string

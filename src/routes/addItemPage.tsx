@@ -47,6 +47,8 @@ import {
 import { IMG_1 } from "../mocks/images";
 import { useAppSelector } from "../app/hooks";
 import { selectAddress } from "../features/UserSlice";
+import BoroWSClient from "../api/BoroWebServiceClient";
+import { addItem } from "../api/ItemService";
 
 type Props = {};
 
@@ -168,7 +170,7 @@ const addItemPage = (props: Props) => {
       imagesForBody = [];
     }
 
-    const reqBody = {
+    const reqBody: IInputItem = {
       title: obj.title,
       description: obj.description,
       condition: obj.condition,
@@ -179,10 +181,10 @@ const addItemPage = (props: Props) => {
     };
 
     try {
-      const data = await HttpClient.create("items/add", {}, reqBody);
-      console.log(data);
+      const itemId = await addItem(reqBody);
+      console.log(itemId);
       setIsAddSuccess(true);
-      navigate(`/`);
+      navigate(`/items/${itemId}`);
     } catch (e) {
       setIsAddSuccess(false);
       console.log(e);
