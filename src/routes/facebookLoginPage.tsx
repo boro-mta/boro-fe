@@ -28,7 +28,6 @@ const FacebookLoginPage = () => {
         id: response.id,
         accessToken: response.accessToken,
         picture: pictureUrl || ""
-
       })
     );
 
@@ -45,15 +44,19 @@ const FacebookLoginPage = () => {
       else {
         dispatch(
           updateUser({
+            name: response.name,
+            email: response.email,
+            id: response.id,
+            accessToken: response.accessToken,
             picture: pictureUrl || "",
             guid: backendResponse.userId
           }))
+        navigate("/");
       }
     }
     const backendResponse = backendFacebookAuthentication(userFacebookLoginDetails);
 
 
-    navigate("/");
   };
   return (
     <div className="facebook-login-page">

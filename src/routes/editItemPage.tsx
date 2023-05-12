@@ -7,7 +7,6 @@ import { Container, Stack } from "@mui/system";
 import { IInputItem } from "../types";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { allItemDetailsNew } from "../mocks/fullItemsDetails";
 import SendIcon from "@mui/icons-material/Send";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import HttpClient from "../api/HttpClient";
@@ -16,7 +15,6 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
 import { IFullItemDetailsNew } from "../types";
-import { debug } from "console";
 
 type IFullItemDetailsParams = {
     itemId: string;

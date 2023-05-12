@@ -11,13 +11,9 @@ import api from "../api/HttpClient"
 import { selectPicture } from "../features/UserSlice";
 import { useAppSelector } from "../app/hooks";
 
-
 type IUserDetailsParams = {
     userId: string;
 };
-
-
-
 
 type Props = {};
 
@@ -83,9 +79,6 @@ const userPage = (props: Props) => {
                     </Typography>
                     <Button variant="outlined" onClick={handleEditClick}>
                         Edit Profile
-                    </Button>
-                    <Button variant="outlined" onClick={handleHomeClick}>
-                        Home
                     </Button>
                 </Grid>
             </Grid>

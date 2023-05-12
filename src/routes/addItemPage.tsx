@@ -40,6 +40,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IFullImageDetails, IFullItemDetailsNew, IInputImage, IInputItem } from "../types";
 import { IMG_1 } from "../mocks/images";
+import ResponsiveAppBar from "../components/AppBar/AppBar";
 
 type Props = {};
 
@@ -286,7 +287,6 @@ const addItemPage = (props: Props) => {
   };
 
   const handleChangeCategories = (value: any) => {
-    debugger;
     setSelectedCategories(value);
   }
   return (
@@ -314,11 +314,8 @@ const addItemPage = (props: Props) => {
                         margin="normal"
                         value={formik.values.title}
                         onChange={formik.handleChange}
-                        error={
-                          formik.touched.title && Boolean(formik.errors.title)
-                        }
-                        helperText={formik.touched.title && formik.errors.title}
-                      />
+                        error={formik.touched.title && Boolean(formik.errors.title)}
+                        helperText={formik.touched.title && formik.errors.title} />
                       <TextField
                         fullWidth
                         required
@@ -329,14 +326,9 @@ const addItemPage = (props: Props) => {
                         margin="normal"
                         value={formik.values.description}
                         onChange={formik.handleChange}
-                        error={
-                          formik.touched.description &&
-                          Boolean(formik.errors.description)
-                        }
-                        helperText={
-                          formik.touched.description && formik.errors.description
-                        }
-                      />
+                        error={formik.touched.description &&
+                          Boolean(formik.errors.description)}
+                        helperText={formik.touched.description && formik.errors.description} />
 
                       <Autocomplete
                         id="condition"
@@ -349,10 +341,8 @@ const addItemPage = (props: Props) => {
                           <TextField
                             {...params}
                             label="Condition"
-                            placeholder="Choose your item condition"
-                          />
-                        )}
-                      />
+                            placeholder="Choose your item condition" />
+                        )} />
 
                       {/* categories - Autocomplete */}
                       <Stack spacing={3} sx={{ width: 500 }}>
@@ -363,16 +353,14 @@ const addItemPage = (props: Props) => {
                           getOptionLabel={(option: any) => option}
                           filterSelectedOptions
                           onChange={(event, value) => {
-                            handleChangeCategories(value)
+                            handleChangeCategories(value);
                           }}
                           renderInput={(params) => (
                             <TextField
                               {...params}
                               label="Categories"
-                              placeholder="Choose categories for your item"
-                            />
-                          )}
-                        />
+                              placeholder="Choose categories for your item" />
+                          )} />
                       </Stack>
 
                       <LoadingButton
@@ -478,8 +466,7 @@ const addItemPage = (props: Props) => {
                 onChange={convertToBase64}
                 multiple
                 accept="image/*"
-                disabled={formik.isSubmitting}
-              />
+                disabled={formik.isSubmitting} />
               <Box sx={{ mb: 2 }}>
                 <div>
                   <Button

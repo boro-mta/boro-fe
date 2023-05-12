@@ -8,6 +8,7 @@ import ItemsContainer from "./components/ItemsContainer/ItemsContainer";
 import { selectGuid, selectPicture, selectUserName } from "./features/UserSlice";
 import { items } from "./mocks/items";
 import ImagesCarousel from "./components/ImagesCarousel/ImagesCarousel";
+import ResponsiveAppBar from "./components/AppBar/AppBar";
 
 function App() {
   const userName = useAppSelector(selectUserName);
@@ -27,25 +28,6 @@ function App() {
       <Box>
         <ItemsContainer containerTitle="Tools for your home 🏠" items={items} />
       </Box>
-      {userName === "Guest" && (
-        <Button
-          variant="contained"
-          onClick={() => navigate("login")}
-          sx={{ width: "100%" }}
-        >
-          Log in
-        </Button>
-
-
-      )}
-      {userName !== "Guest" && (
-        <Button
-          variant="contained"
-          onClick={() => navigate(`/Users/${userGuid}`)}
-          sx={{ width: "100%" }}
-        >
-          My Profile
-        </Button>)}
       {userName !== "Guest" && (
         <Button
           variant="contained"
