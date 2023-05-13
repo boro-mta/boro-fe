@@ -7,10 +7,10 @@ export const getUserProfile = async (
 ): Promise<IUserProfile> => {
   console.log("getUserProfile - entry with " + userId);
   const endpoint = `Users/${userId}/Profile`;
-  const profile = await BoroWSClient.request<IUserProfile>(
+  const profile = (await BoroWSClient.request<IUserProfile>(
     HttpOperation.GET,
     endpoint
-  );
+  )) as IUserProfile;
 
   return { ...profile, dateJoined: new Date(profile.dateJoined) };
 };
