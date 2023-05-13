@@ -66,6 +66,7 @@ const FacebookLoginPage = () => {
             guid: backendResponse.userId,
           })
         );
+        navigate("/");
       }
     };
     const backendResponse = backendFacebookAuthentication(

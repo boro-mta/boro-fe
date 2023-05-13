@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IUserDetails } from "../types";
-import { FormikHelpers, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as yup from "yup";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
-import api from "../api/HttpClient";
-import ResponsiveAppBar from "../components/AppBar/AppBar";
+import IUpdateUserData from "../api/Models/IUpdateUserData";
+import { updateUser as apiUpdateUser, getUserProfile } from "../api/UserService"
+import { selectPicture } from "../features/UserSlice";
+import { useAppSelector } from "../app/hooks";
+
+
 type IUserDetailsParams = {
   userId: string;
 };
@@ -23,22 +27,38 @@ const validationSchema = yup.object({
 
 const UserEditPage = (props: Props) => {
   const [userDetails, setUserDetails] = useState<IUserDetails>(
-    allUserDetails[2]
+    allUserDetails[3]
   );
 
   let { userId } = useParams<IUserDetailsParams>();
 
-  const serverUrl = "https://localhost:";
-  const serverPort = "7124";
-  const serverUserProfileEndpoint = "/Users/" + userId + "/Profile";
+  const userProfilePicture = useAppSelector(selectPicture);
 
-  //need to change to api call like other pages, waiting for endpoint
+
   useEffect(() => {
-    const url = serverUrl + serverPort + serverUserProfileEndpoint;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => setUserDetails(data))
-      .then((data) => console.log(data));
+
+    const getUserDetails = async () => {
+      try {
+        const userProfile = await getUserProfile(userId as string);
+        const userDetails: IUserDetails = {
+          firstName: userProfile.firstName,
+          lastName: userProfile.lastName,
+          userId: userProfile.facebookId,
+          profileImage: userProfilePicture,
+          dateJoined: userProfile.dateJoined,
+          longitude: 0,
+          latitude: 0,
+          about: userProfile.about,
+          email: userProfile.email
+        };
+        setUserDetails(userDetails);
+      } catch (error) {
+        console.error(error);
+      }
+
+    }
+    getUserDetails();
+
   }, [userId]);
 
   const formik = useFormik({
@@ -55,7 +75,7 @@ const UserEditPage = (props: Props) => {
     },
     enableReinitialize: true,
     validationSchema: validationSchema,
-    onSubmit: () => {},
+    onSubmit: () => { },
   });
 
   const navigate = useNavigate();
@@ -68,13 +88,9 @@ const UserEditPage = (props: Props) => {
       email: formik.values.email,
       latitude: 0,
       longitude: 0,
-    };
+    } as IUpdateUserData;
     try {
-      const response = await api.create(
-        `Users/${userId}/Update`,
-        {},
-        userDetails
-      );
+      const response = apiUpdateUser(userDetails);
       console.log("User created successfully!", response);
       navigate("/users/" + userId);
     } catch (error) {

@@ -40,6 +40,7 @@ const userPage = (props: Props) => {
         const getUserDetails = async () => {
             try {
                 const userProfile = await getUserProfile(userId as string);
+                console.log(userProfile);
                 const userDetails: IUserDetails = {
                     firstName: userProfile.firstName,
                     lastName: userProfile.lastName,
@@ -47,7 +48,8 @@ const userPage = (props: Props) => {
                     profileImage: userProfilePicture,
                     dateJoined: userProfile.dateJoined,
                     longitude: 0,
-                    latitude: 0
+                    latitude: 0,
+                    about: userProfile.about
                 };
                 setUserDetails(userDetails);
             } catch (error) {

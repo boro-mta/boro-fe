@@ -69,8 +69,6 @@ const NewUserPage = (props: Props) => {
     try {
       const response = await apiUpdateUser(userDetails);
       console.log("User created successfully!", response);
-
-      console.log(userGuid);
       dispatch(
         updateUser({
           ...initialState,
