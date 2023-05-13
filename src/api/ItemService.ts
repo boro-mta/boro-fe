@@ -1,4 +1,4 @@
-import { IInputItem } from "../types";
+import { ICoordinateRadius, IInputItem } from "../types";
 import BoroWSClient, { HttpOperation } from "./BoroWebServiceClient";
 import { IItemResponse } from "./Models/IItemResponse";
 
@@ -33,4 +33,14 @@ export const editItem = async (itemDetails: any) => {
     endpoint,
     itemDetails
   );
+};
+
+export const getItemsByRadius = async (coordinate: ICoordinateRadius) => {
+  const endpoint = `Items/ByRadius?latitude=${coordinate.latitude}&longitude=${coordinate.longitude}&radiusInMeters=${coordinate.radiusInMeters}`;
+  const itemsInRadius = await BoroWSClient.request<IItemResponse>(
+    HttpOperation.GET,
+    endpoint
+  );
+
+  return itemsInRadius;
 };

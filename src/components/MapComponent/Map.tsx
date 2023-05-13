@@ -6,9 +6,9 @@ import {
   SuperClusterAlgorithm,
 } from "@googlemaps/markerclusterer";
 import CustomMarker from "./CustomMarker";
-import { getImgById } from "../../utils/imagesUtils";
 import "./mapStyles.css";
 import { useNavigate } from "react-router";
+import { getImgById } from "../../api/ImageService";
 
 type Props = {
   myLocation: ICoordinate;

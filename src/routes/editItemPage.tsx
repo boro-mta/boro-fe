@@ -27,7 +27,6 @@ import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import HttpClient from "../api/HttpClient";
 import { categoriesOptions, conditionOptions } from "../mocks/items";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";

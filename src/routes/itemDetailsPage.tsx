@@ -13,7 +13,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemDetailsNew } from "../mocks/fullItemsDetails";
 import { IFullItemDetailsNew } from "../types";
-import HttpClient from "../api/HttpClient";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
 import {
