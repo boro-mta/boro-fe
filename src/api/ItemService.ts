@@ -15,7 +15,7 @@ export const getItem = async (itemId: string) => {
 
 export const addItem = async (itemDetails: IInputItem) => {
   console.log("addItem - entry with ", itemDetails);
-  const endpoint = "Items/add";
+  const endpoint = "Items/Add";
   const itemId = await BoroWSClient.request<IItemResponse>(
     HttpOperation.POST,
     endpoint,
@@ -23,4 +23,14 @@ export const addItem = async (itemDetails: IInputItem) => {
   );
 
   return itemId;
+};
+
+export const editItem = async (itemDetails: any) => {
+  console.log("editItem - entry with ", itemDetails);
+  const endpoint = `Items/${itemDetails.itemId}/Update`;
+  await BoroWSClient.request<IItemResponse>(
+    HttpOperation.POST,
+    endpoint,
+    itemDetails
+  );
 };

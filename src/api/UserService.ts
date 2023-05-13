@@ -7,23 +7,11 @@ export const getUserProfile = async (
 ): Promise<IUserProfile> => {
   console.log("getUserProfile - entry with " + userId);
   const endpoint = `Users/${userId}/Profile`;
-  const profile = await BoroWSClient.request<IUserProfile>(
+  const profile = (await BoroWSClient.request<IUserProfile>(
     HttpOperation.GET,
     endpoint
-  ) as IUserProfile;
+  )) as IUserProfile;
 
-
-  /*
-  userId: string;
-  facebookId: string;
-  firstName: string;
-  lastName: string;
-  about: string;
-  dateJoined: Date;
-  email: string;
-  latitude: number;
-  longitude: number;
-  */
   return profile;
 };
 
