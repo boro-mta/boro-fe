@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { IUserDetails } from "../types";
-import { FormikHelpers, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as yup from "yup";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
-import { allUserDetails } from "../mocks/userDetails";
-import api from "../api/HttpClient";
 import { initialState, updateUser } from "../features/UserSlice";
 import {
   selectEmail,
