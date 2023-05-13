@@ -12,8 +12,11 @@ import {
   selectEmail,
   selectUserName,
   selectPicture,
+  selectGuid
 } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { updateUser as apiUpdateUser } from "../api/UserService"
+import IUpdateUserData from "../api/Models/IUpdateUserData";
 
 type IUserDetailsParams = {
   userId: string;
@@ -38,6 +41,7 @@ const NewUserPage = (props: Props) => {
   const userFullName = useAppSelector(selectUserName);
   const userProfilePicture = useAppSelector(selectPicture);
   const [firstName, lastName] = userFullName.split(" ");
+  const userGuid = useAppSelector(selectGuid);
 
   const formik = useFormik({
     initialValues: {
@@ -53,34 +57,34 @@ const NewUserPage = (props: Props) => {
     },
     enableReinitialize: true,
     validationSchema: validationSchema,
-    onSubmit: () => {},
+    onSubmit: () => { },
   });
   const navigate = useNavigate();
 
   const handleCreateNewUserClick = async () => {
     const userDetails = {
-      FacebookId: "0",
-      firstName: formik.values.firstName,
-      lastName: formik.values.lastName,
       about: formik.values.about,
       email: formik.values.email,
       longitude: 0,
       latitude: 0,
-    };
+    } as IUpdateUserData;
 
     try {
-      const response = await api.create("Users/Create", userDetails);
+      const response = await apiUpdateUser(userDetails);
       console.log("User created successfully!", response);
+
+      console.log(userGuid);
       dispatch(
         updateUser({
           ...initialState,
           name: firstName + " " + lastName,
-          guid: response,
+          guid: userGuid,
           picture: userProfilePicture,
           email: formik.values.email,
         })
       );
-      navigate("/users/" + response);
+
+      navigate("/Users/" + userGuid);
     } catch (error) {
       console.error("Failed to create user:", error);
     }
@@ -92,28 +96,6 @@ const NewUserPage = (props: Props) => {
         Welcome to Boro! Enter your details so other Boros can know who you are{" "}
       </Typography>
       <form onSubmit={formik.handleSubmit}>
-        <TextField
-          fullWidth
-          id="firstName"
-          name="firstName"
-          label="First Name"
-          margin="normal"
-          value={formik.values.firstName}
-          onChange={formik.handleChange}
-          error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-          helperText={formik.touched.firstName && formik.errors.firstName}
-        />
-        <TextField
-          fullWidth
-          id="lastName"
-          name="lastName"
-          label="Last Name"
-          margin="normal"
-          value={formik.values.lastName}
-          onChange={formik.handleChange}
-          error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-          helperText={formik.touched.lastName && formik.errors.lastName}
-        />
         <TextField
           fullWidth
           id="about"

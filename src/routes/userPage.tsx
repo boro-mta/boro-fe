@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import api from "../api/HttpClient"
 import { selectPicture } from "../features/UserSlice";
 import { useAppSelector } from "../app/hooks";
-
+import { getUserProfile } from "../api/UserService";
 type IUserDetailsParams = {
     userId: string;
 };
@@ -21,6 +21,7 @@ const userPage = (props: Props) => {
     const [userDetails, setUserDetails] = useState<IUserDetails>(
         allUserDetails[3]
     );
+
 
     const userProfilePicture = useAppSelector(selectPicture);
     let { userId } = useParams<IUserDetailsParams>();
@@ -34,21 +35,28 @@ const userPage = (props: Props) => {
         navigate('/');
     }
 
-    const serverUserProfileEndpoint = `Users/${userId}/Profile`;
+    // const serverUserProfileEndpoint = `Users/${userId}/Profile`;
 
     useEffect(() => {
-        const getUserProfile = async () => {
+        const getUserDetails = async () => {
             try {
-                const userDetails = await api.get(serverUserProfileEndpoint);
+                const userProfile = await getUserProfile(userId as string);
+                const userDetails: IUserDetails = {
+                    firstName: userProfile.firstName,
+                    lastName: userProfile.lastName,
+                    userId: userProfile.facebookId,
+                    profileImage: userProfilePicture,
+                    dateJoined: userProfile.dateJoined,
+                    longitude: 0,
+                    latitude: 0
+                };
                 setUserDetails(userDetails);
-                console.log(userDetails);
             } catch (error) {
                 console.error(error);
             }
         };
-
-        getUserProfile();
-    }, [userId]);
+        getUserDetails();
+    }, [userId, setUserDetails]);
 
     const formatDate = (date: string) => {
         const formattedDate = new Date(date).toLocaleDateString("en-US", {

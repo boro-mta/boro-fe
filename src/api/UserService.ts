@@ -10,13 +10,25 @@ export const getUserProfile = async (
   const profile = await BoroWSClient.request<IUserProfile>(
     HttpOperation.GET,
     endpoint
-  );
+  ) as IUserProfile;
 
-  return { ...profile, dateJoined: new Date(profile.dateJoined) };
+
+  /*
+  userId: string;
+  facebookId: string;
+  firstName: string;
+  lastName: string;
+  about: string;
+  dateJoined: Date;
+  email: string;
+  latitude: number;
+  longitude: number;
+  */
+  return profile;
 };
 
 export const updateUser = async (updateData: IUpdateUserData) => {
   console.log("updateUser - entry");
   const endpoint = `Users/Me/Update`;
-  await BoroWSClient.request<void>(HttpOperation.POST, endpoint, updateData);
+  return await BoroWSClient.request<string>(HttpOperation.POST, endpoint, updateData) as string;
 };

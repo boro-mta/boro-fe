@@ -42,6 +42,7 @@ const FacebookLoginPage = () => {
       accessToken: response.accessToken,
       facebookId: response.userID,
     };
+
     const backendFacebookAuthentication = async (
       userFacebookLoginDetails: any
     ) => {
@@ -51,6 +52,12 @@ const FacebookLoginPage = () => {
       );
       console.log(backendResponse);
       if (backendResponse.firstLogin == true) {
+        dispatch(
+          updatePartialUser({
+            picture: pictureUrl || "",
+            guid: backendResponse.userId,
+          })
+        );
         navigate("/newUser");
       } else {
         dispatch(

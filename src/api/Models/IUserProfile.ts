@@ -4,7 +4,7 @@ export default interface IUserProfile {
   firstName: string;
   lastName: string;
   about: string;
-  dateJoined: Date;
+  dateJoined: string; //should be date in the future
   email: string;
   latitude: number;
   longitude: number;
