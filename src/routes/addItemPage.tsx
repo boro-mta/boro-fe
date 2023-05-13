@@ -184,7 +184,7 @@ const addItemPage = (props: Props) => {
       const itemId = await addItem(reqBody);
       console.log(itemId);
       setIsAddSuccess(true);
-      navigate(`/items/${itemId}`);
+      navigate(`/item/${itemId}`);
     } catch (e) {
       setIsAddSuccess(false);
       console.log(e);
