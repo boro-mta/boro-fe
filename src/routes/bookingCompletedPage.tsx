@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import { FormikHelpers, useFormik } from "formik";
 import { Container } from "@mui/system";
@@ -17,6 +17,8 @@ import {
     ListItemText,
     IconButton,
     Divider,
+    Card,
+    CardMedia,
 } from "@mui/material";
 import HttpClient from "../api/HttpClient";
 import { useLocation, useNavigate, useParams } from "react-router";
@@ -42,6 +44,8 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IFullImageDetails, IFullItemDetailsNew, IInputImage, IInputItem } from "../types";
 import { IMG_1 } from "../mocks/images";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
+import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
+import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 type IFullItemDetailsParams = {
     itemId: string;
@@ -87,17 +91,66 @@ const Row = ({ tableData }: ITableData) => {
 };
 
 const BookingCompletedPage = ({ startDate, endDate, datesToExclude, onChange }: Props) => {
+    const { state } = useLocation();
+    const { selectedStartDate, selectedEndDate, excludedDates, onDateChange } = state;
+
     const navigate = useNavigate();
 
     let { itemId } = useParams<IFullItemDetailsParams>();
 
-    const { state } = useLocation();
-    const { selectedStartDate, selectedEndDate, onDateChange } = state;
+    const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
+        categories: [],
+        condition: "",
+        itemId: "",
+        title: "",
+        images: [],
+        description: "",
+        excludedDates: [],
+    });
+
+    const [serverRequestError, setServerRequestError] = useState<any>();
+
+    useEffect(() => {
+        const getFullDetails = async () => {
+            let fullDetails: IFullItemDetailsNew;
+            try {
+                debugger;
+                fullDetails = await HttpClient.get(`items/${itemId}`);
+                debugger;
+                setItemDetails(fullDetails);
+            }
+            catch (err) {
+                console.log("Error while loading item");
+                setServerRequestError(err);
+                //todo:show error
+            }
+        }
+        getFullDetails();
+    }, []);
 
     return (
         <Container>
             <Typography variant="h3">Booking is Completed</Typography>
+            <Card sx={{ marginBottom: "10px" }}>
+                {itemDetails.images && (
+                    <CardMedia component="div" style={{ height: "230px" }}>
+                        <ImagesCarousel images={formatImagesOnRecieve(itemDetails.images)} />
+                    </CardMedia>
+                )}
+            </Card>
+            <Typography variant="h5">{itemDetails.title}</Typography>
+            <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
+            <Typography variant="h6">About the product</Typography>
+            <Typography variant="body1">{itemDetails.description}</Typography>
 
+            <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+            <Row
+                tableData={[
+                    { key: "Condition", value: itemDetails.condition },
+                    { key: "Category", value: itemDetails.categories.join(", ") },
+                ]}
+            />
+            <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
             <Typography variant="h6">Chosen Dates:</Typography>
 
             <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
@@ -109,12 +162,12 @@ const BookingCompletedPage = ({ startDate, endDate, datesToExclude, onChange }: 
             />
             <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
                 <DateRangePicker
                     startDate={selectedStartDate}
                     endDate={selectedEndDate}
-                    onChange={onDateChange}
-                    datesToExclude={datesToExclude}
+                    onChange={() => { }}
+                    datesToExclude={excludedDates}
                 />
             </div>
 

@@ -191,7 +191,15 @@ const RequestToBookPage = (props: Props) => {
                 <Button
                     variant="contained"
                     sx={{ mt: 1, mr: 1 }}
-                    onClick={() => navigate(`/item/${itemId}`)}
+                    onClick={() => navigate(`/bookingCompletedPage/${itemId}`,
+                        {
+                            state:
+                            {
+                                selectedStartDate,
+                                selectedEndDate,
+                                excludedDates
+                            }
+                        })}
                 >
                     Confirm
                 </Button>
