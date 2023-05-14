@@ -144,10 +144,10 @@ const itemDetailsPage = (props: Props) => {
           </CardMedia>
         )}
       </Card>
-      <Typography variant="h5">{itemDetails.title}</Typography>
+      <Typography component={'span'} variant="h5">{itemDetails.title}</Typography>
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-      <Typography variant="h6">About the product</Typography>
-      <Typography variant="body1">{itemDetails.description}</Typography>
+      <Typography component={'span'} variant="h6">About the product</Typography>
+      <Typography component={'span'} variant="body1">{itemDetails.description}</Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
       <Row
@@ -166,7 +166,7 @@ const itemDetailsPage = (props: Props) => {
         Edit Item
       </Button>
 
-      <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+      <Typography component={'span'} variant="h6" sx={{ marginBottom: "10px" }}>
         Find available dates
       </Typography>
       <div style={{ display: "flex", justifyContent: "center" }}>
@@ -246,7 +246,7 @@ const itemDetailsPage = (props: Props) => {
             p: 4,
           }}
         >
-          <Typography variant="body1">{selectedDatesError}</Typography>
+          <Typography component={'span'} variant="body1">{selectedDatesError}</Typography>
         </Box>
       </Modal>
     </Container >
