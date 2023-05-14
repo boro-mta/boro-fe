@@ -1,51 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
-import SendIcon from "@mui/icons-material/Send";
-import { FormikHelpers, useFormik } from "formik";
 import { Container } from "@mui/system";
-import LoadingButton from "@mui/lab/LoadingButton";
-import * as yup from "yup";
 import {
     Button,
-    CircularProgress,
-    TextField,
     Typography,
-    Snackbar,
-    Alert,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    IconButton,
     Divider,
     Card,
     CardMedia,
 } from "@mui/material";
 import HttpClient from "../api/HttpClient";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import Autocomplete from "@mui/material/Autocomplete";
-import Stack from "@mui/material/Stack";
-import { categoriesOptions, conditionOptions } from "../mocks/items";
-import { Theme, useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import StepContent from "@mui/material/StepContent";
-import Paper from "@mui/material/Paper";
-import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import ImageIcon from "@mui/icons-material/Image";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { IFullImageDetails, IFullItemDetailsNew, IInputImage, IInputItem } from "../types";
-import { IMG_1 } from "../mocks/images";
+import { IFullItemDetailsNew } from "../types";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { checkExcludeDatesArrayContainsDate, getFormattedDate } from "../utils/calendarUtils";
 
 type IFullItemDetailsParams = {
     itemId: string;
@@ -89,6 +63,12 @@ const RequestToBookPage = (props: Props) => {
     const location = useLocation();
     const { selectedStartDate, selectedEndDate, excludedDates, onDateChange } = location.state;
 
+    const [requestStartDate, setRequestStartDate] = useState<Date>(selectedStartDate);
+    const [requestEndDate, setRequestEndDate] = useState<Date>(selectedEndDate);
+
+    const [calendarStartDate, setCalendarStartDate] = useState<Date>(selectedStartDate);
+    const [calendarEndDate, setCalendarEndDate] = useState<Date>(selectedEndDate);
+
     const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
         categories: [],
         condition: "",
@@ -103,7 +83,22 @@ const RequestToBookPage = (props: Props) => {
 
     let { itemId } = useParams<IFullItemDetailsParams>();
 
+    const [open, setOpen] = React.useState(false);
 
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleChange = () => {
+        //todo: update chosen dates on request to book fields
+        setRequestStartDate(calendarStartDate);
+        setRequestEndDate(calendarEndDate);
+        setOpen(false);
+    };
 
     const [serverRequestError, setServerRequestError] = useState<any>();
 
@@ -111,9 +106,7 @@ const RequestToBookPage = (props: Props) => {
         const getFullDetails = async () => {
             let fullDetails: IFullItemDetailsNew;
             try {
-                debugger;
                 fullDetails = await HttpClient.get(`items/${itemId}`);
-                debugger;
                 setItemDetails(fullDetails);
             }
             catch (err) {
@@ -124,6 +117,41 @@ const RequestToBookPage = (props: Props) => {
         }
         getFullDetails();
     }, []);
+
+    const [selectedDatesError, setSelectedDatesError] = useState<string>("");
+    const [isValidDates, setIsValidDates] = useState<boolean>();
+
+    //todo: add the invalid dates flow
+    const handleChangeDates = (dates: Date[]) => {
+        const [selectedStartDate, selectedEndDate] = dates;
+        setCalendarStartDate(selectedStartDate);
+        setCalendarEndDate(selectedEndDate);
+        setSelectedDatesError("");
+        let loop: Date = new Date(selectedStartDate);
+        if (selectedStartDate && selectedEndDate) {
+            while (loop <= selectedEndDate) {
+                if (
+                    (itemDetails.excludedDates !== undefined) && checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)
+                ) {
+                    setSelectedDatesError(
+                        "The date " +
+                        getFormattedDate(loop) +
+                        " is not available, please choose different dates."
+                    );
+                    setIsValidDates(false);
+                    break;
+                } else {
+                    setCalendarStartDate(selectedStartDate);
+                    setCalendarEndDate(selectedEndDate);
+                    setSelectedDatesError("");
+                    setIsValidDates(true);
+                }
+
+                let newDate = loop.setDate(loop.getDate() + 1);
+                loop = new Date(newDate);
+            }
+        }
+    };
 
     return (
         <Container>
@@ -150,33 +178,54 @@ const RequestToBookPage = (props: Props) => {
             />
             <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
-
-
             <Typography component={'span'} variant="h6">Chosen Dates:</Typography>
 
             <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
             <Row
                 tableData={[
-                    { key: "Start Date:", value: selectedStartDate.toDateString() },
-                    { key: "End Date:", value: selectedEndDate.toDateString() },
+                    { key: "Start Date:", value: requestStartDate.toDateString() },
+                    { key: "End Date:", value: requestEndDate.toDateString() },
                 ]}
             />
             <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
                 <DateRangePicker
-                    startDate={selectedStartDate}
-                    endDate={selectedEndDate}
+                    startDate={requestStartDate}
+                    endDate={requestEndDate}
                     onChange={() => { }}
                     datesToExclude={excludedDates}
                 />
-                <Button
-                    variant="contained"
-                    sx={{ mt: 1, mr: 1 }}
-                    onClick={() => navigate(`/item/${itemId}`)} //todo: change 
-                >
-                    Edit
-                </Button>
+
+                <div>
+                    <Button variant="contained" sx={{ mt: 1, mr: 1 }} onClick={handleClickOpen}>
+                        Edit Dates
+                    </Button>
+                    <Dialog open={open} onClose={handleClose}>
+                        <DialogTitle>Edit Dates</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Please choose your desired dates:
+                            </DialogContentText>
+                            <DateRangePicker
+                                startDate={calendarStartDate}
+                                endDate={calendarEndDate}
+                                onChange={handleChangeDates}
+                                datesToExclude={excludedDates}
+                            />
+                            {calendarStartDate && (
+                                <p>start date: {calendarStartDate.toDateString()}</p> //todo: change <p>
+                            )}
+                            {calendarEndDate && (
+                                <p>end date: {calendarEndDate.toDateString()}</p>
+                            )}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button onClick={handleChange}>change</Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
 
             </div>
 
