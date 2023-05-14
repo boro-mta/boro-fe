@@ -130,7 +130,7 @@ const BookingCompletedPage = ({ startDate, endDate, datesToExclude, onChange }: 
 
     return (
         <Container>
-            <Typography variant="h3">Booking is Completed</Typography>
+            <Typography component={'span'} variant="h3">Booking is Completed</Typography>
             <Card sx={{ marginBottom: "10px" }}>
                 {itemDetails.images && (
                     <CardMedia component="div" style={{ height: "230px" }}>
@@ -138,10 +138,10 @@ const BookingCompletedPage = ({ startDate, endDate, datesToExclude, onChange }: 
                     </CardMedia>
                 )}
             </Card>
-            <Typography variant="h5">{itemDetails.title}</Typography>
+            <Typography component={'span'} variant="h5">{itemDetails.title}</Typography>
             <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-            <Typography variant="h6">About the product</Typography>
-            <Typography variant="body1">{itemDetails.description}</Typography>
+            <Typography component={'span'} variant="h6">About the product</Typography>
+            <Typography component={'span'} variant="body1">{itemDetails.description}</Typography>
 
             <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
             <Row
@@ -151,7 +151,7 @@ const BookingCompletedPage = ({ startDate, endDate, datesToExclude, onChange }: 
                 ]}
             />
             <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-            <Typography variant="h6">Chosen Dates:</Typography>
+            <Typography component={'span'} variant="h6">Chosen Dates:</Typography>
 
             <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
             <Row

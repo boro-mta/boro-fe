@@ -127,7 +127,7 @@ const RequestToBookPage = (props: Props) => {
 
     return (
         <Container>
-            <Typography variant="h3">Request To Book</Typography>
+            <Typography component={'span'} variant="h3">Request To Book</Typography>
 
             <Card sx={{ marginBottom: "10px" }}>
                 {itemDetails.images && (
@@ -136,10 +136,10 @@ const RequestToBookPage = (props: Props) => {
                     </CardMedia>
                 )}
             </Card>
-            <Typography variant="h5">{itemDetails.title}</Typography>
+            <Typography component={'span'} variant="h5">{itemDetails.title}</Typography>
             <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-            <Typography variant="h6">About the product</Typography>
-            <Typography variant="body1">{itemDetails.description}</Typography>
+            <Typography component={'span'} variant="h6">About the product</Typography>
+            <Typography component={'span'} variant="body1">{itemDetails.description}</Typography>
 
             <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
             <Row
@@ -152,7 +152,7 @@ const RequestToBookPage = (props: Props) => {
 
 
 
-            <Typography variant="h6">Chosen Dates:</Typography>
+            <Typography component={'span'} variant="h6">Chosen Dates:</Typography>
 
             <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
             <Row

@@ -252,7 +252,7 @@ const EditItemPage = (props: Props) => {
 
     return (
         <Container>
-            <Typography variant="h3">Edit Item</Typography>
+            <Typography component={'span'} variant="h3">Edit Item</Typography>
             <Box
                 sx={{ maxWidth: 400 }}>
                 <Stepper activeStep={activeStep} orientation="vertical">
@@ -261,7 +261,7 @@ const EditItemPage = (props: Props) => {
                         <StepLabel>{"Fill Item Information"}</StepLabel>
                         <StepContent>
                             <Box sx={{ height: "100%" }}>
-                                <Typography>
+                                <Typography component={'span'}>
                                     <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
                                         <form onSubmit={formik.handleSubmit}>
                                             <TextField
@@ -411,6 +411,7 @@ const EditItemPage = (props: Props) => {
                             {imagesNames.length > 0 && (
                                 <>
                                     <Typography
+                                        component={'span'}
                                         variant="h6"
                                         sx={{ fontWeight: "bold", marginTop: "10px" }}
                                     >
@@ -481,7 +482,7 @@ const EditItemPage = (props: Props) => {
                 {activeStep === 2 && (
                     <Paper square elevation={0} sx={{ p: 3 }}>
                         {/* todo: change message */}
-                        <Typography>All steps completed - you&apos;re finished</Typography>
+                        <Typography component={'span'}>All steps completed - you&apos;re finished</Typography>
                     </Paper>
                 )}
             </Box>

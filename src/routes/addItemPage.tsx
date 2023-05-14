@@ -291,7 +291,7 @@ const addItemPage = (props: Props) => {
   }
   return (
     <Container>
-      <Typography variant="h3">Add New Item</Typography>
+      <Typography component={'span'} variant="h3">Add New Item</Typography>
       <Box
         sx={{ maxWidth: 400 }}>
         <Stepper activeStep={activeStep} orientation="vertical">
@@ -302,7 +302,7 @@ const addItemPage = (props: Props) => {
               <Box sx={{
                 height: "100%",
               }}>
-                <Typography>
+                <Typography component={'span'}>
                   <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
                     <form onSubmit={formik.handleSubmit}>
                       <TextField
@@ -406,15 +406,13 @@ const addItemPage = (props: Props) => {
                 </Typography>
 
                 <Box sx={{ mb: 2 }}>
-                  <div>
-                    <Button
-                      disabled={true}
-                      onClick={handleBack}
-                      sx={{ mt: 1, mr: 1 }}
-                    >
-                      Back
-                    </Button>
-                  </div>
+                  <Button
+                    disabled={true}
+                    onClick={handleBack}
+                    sx={{ mt: 1, mr: 1 }}
+                  >
+                    Back
+                  </Button>
                 </Box>
 
               </Box>
@@ -447,7 +445,7 @@ const addItemPage = (props: Props) => {
               </Box>
               {imagesNames.length > 0 && (
                 <>
-                  <Typography
+                  <Typography component={'span'}
                     variant="h6"
                     sx={{ fontWeight: "bold", marginTop: "10px" }}
                   >
@@ -504,7 +502,7 @@ const addItemPage = (props: Props) => {
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
             {/* todo: change message */}
-            <Typography>All steps completed - you&apos;re finished</Typography>
+            <Typography component={'span'}>All steps completed - you&apos;re finished</Typography>
           </Paper>
         )}
       </Box>
