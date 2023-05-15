@@ -6,7 +6,6 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import * as yup from "yup";
 import {
   Button,
-  CircularProgress,
   TextField,
   Typography,
   Snackbar,
@@ -17,19 +16,13 @@ import {
   ListItemText,
   IconButton,
 } from "@mui/material";
-import HttpClient from "../api/HttpClient";
 import { useNavigate } from "react-router";
 import Autocomplete from "@mui/material/Autocomplete";
 import Stack from "@mui/material/Stack";
 import { categoriesOptions, conditionOptions } from "../mocks/items";
 import { Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
+import { SelectChangeEvent } from "@mui/material/Select";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -38,8 +31,10 @@ import Paper from "@mui/material/Paper";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { IFullImageDetails, IFullItemDetailsNew, IInputImage, IInputItem } from "../types";
-import { IMG_1 } from "../mocks/images";
+import { IInputImage, IInputItem } from "../types";
+import { useAppSelector } from "../app/hooks";
+import { selectAddress } from "../features/UserSlice";
+import { addItem } from "../api/ItemService";
 
 type Props = {};
 
@@ -94,8 +89,12 @@ const addItemPage = (props: Props) => {
   const [condition, setCondition] = useState<string>("");
   const [newCategory, setNewCategory] = useState<any>("");
 
-  const [categoryArr, setCategoryArr] = React.useState<any[]>(categoriesOptions);
-  const [conditionArr, setConditionArr] = React.useState<any[]>(conditionOptions);
+  const [categoryArr, setCategoryArr] = React.useState<any[]>(
+    categoriesOptions
+  );
+  const [conditionArr, setConditionArr] = React.useState<any[]>(
+    conditionOptions
+  );
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
@@ -153,38 +152,41 @@ const addItemPage = (props: Props) => {
     let imagesForBody: IInputImage[];
     if (obj.images) {
       imagesForBody = convertImagesTypeFromString(obj.images);
-    }
-    else {
+    } else {
       imagesForBody = [];
     }
 
-    const reqBody = {
+    const reqBody: IInputItem = {
       title: obj.title,
       description: obj.description,
       condition: obj.condition,
       categories: obj.categories,
       images: imagesForBody,
+      latitude: obj.latitude,
+      longitude: obj.longitude,
     };
 
     try {
-      const data = await HttpClient.create("items/add", reqBody);
-      console.log(data);
+      const itemId = await addItem(reqBody);
+      console.log(itemId);
       setIsAddSuccess(true);
-      navigate(`/item/${data}`);
+      navigate(`/item/${itemId}`);
     } catch (e) {
       setIsAddSuccess(false);
       console.log(e);
     }
   };
 
-  const convertImagesTypeFromString = (imagesArrInString: string[]): IInputImage[] => {
+  const convertImagesTypeFromString = (
+    imagesArrInString: string[]
+  ): IInputImage[] => {
     let imagesForBody: IInputImage[] = imagesArrInString.map((img: string) => {
       const imgProps = img.split(",");
       return {
         base64ImageData: imgProps[1],
         base64ImageMetaData: imgProps[0],
       };
-    })
+    });
 
     return imagesForBody;
   };
@@ -223,14 +225,17 @@ const addItemPage = (props: Props) => {
     setCategoryArr((current: any) => [...current, category]);
   };
 
+  const address = useAppSelector(selectAddress);
   const onAddItem = () => {
     const values: FormValues = formValuesAddItem;
     const forRequest: IInputItem = {
       condition: condition,
       categories: selectedCategories,
       title: values.title,
-      description: values.description
-    }
+      description: values.description,
+      latitude: address.latitude,
+      longitude: address.longitude,
+    };
     sendRequest({ ...forRequest, images }).then(() => {
       setOpen(true);
       formik.setSubmitting(false);
@@ -257,8 +262,7 @@ const addItemPage = (props: Props) => {
     const charCount = event.target.value.length;
     if (charCount === 250) {
       setFreeTextChar(freeTextChar);
-    }
-    else {
+    } else {
       setFreeTextChar(event.target.value);
     }
     setFreeTextCount(event.target.value.length);
@@ -286,24 +290,29 @@ const addItemPage = (props: Props) => {
   };
 
   const handleChangeCategories = (value: any) => {
-    debugger;
     setSelectedCategories(value);
-  }
+  };
   return (
     <Container>
-      <Typography component={'span'} variant="h3">Add New Item</Typography>
-      <Box
-        sx={{ maxWidth: 400 }}>
+      <Typography component={"span"} variant="h3">
+        Add New Item
+      </Typography>
+      <Box sx={{ maxWidth: 400 }}>
         <Stepper activeStep={activeStep} orientation="vertical">
           {/* step 1 */}
           <Step key={"Fill Item Information"}>
             <StepLabel>{"Fill Item Information"}</StepLabel>
             <StepContent>
-              <Box sx={{
-                height: "100%",
-              }}>
-                <Typography component={'span'}>
-                  <fieldset disabled={formik.isSubmitting} style={{ border: 0 }}>
+              <Box
+                sx={{
+                  height: "100%",
+                }}
+              >
+                <Typography component={"span"}>
+                  <fieldset
+                    disabled={formik.isSubmitting}
+                    style={{ border: 0 }}
+                  >
                     <form onSubmit={formik.handleSubmit}>
                       <TextField
                         fullWidth
@@ -334,7 +343,8 @@ const addItemPage = (props: Props) => {
                           Boolean(formik.errors.description)
                         }
                         helperText={
-                          formik.touched.description && formik.errors.description
+                          formik.touched.description &&
+                          formik.errors.description
                         }
                       />
 
@@ -363,7 +373,7 @@ const addItemPage = (props: Props) => {
                           getOptionLabel={(option: any) => option}
                           filterSelectedOptions
                           onChange={(event, value) => {
-                            handleChangeCategories(value)
+                            handleChangeCategories(value);
                           }}
                           renderInput={(params) => (
                             <TextField
@@ -385,7 +395,6 @@ const addItemPage = (props: Props) => {
                       >
                         <span>Continue</span>
                       </LoadingButton>
-
                     </form>
                   </fieldset>
                   <Snackbar
@@ -414,7 +423,6 @@ const addItemPage = (props: Props) => {
                     Back
                   </Button>
                 </Box>
-
               </Box>
             </StepContent>
           </Step>
@@ -445,7 +453,8 @@ const addItemPage = (props: Props) => {
               </Box>
               {imagesNames.length > 0 && (
                 <>
-                  <Typography component={'span'}
+                  <Typography
+                    component={"span"}
                     variant="h6"
                     sx={{ fontWeight: "bold", marginTop: "10px" }}
                   >
@@ -502,7 +511,9 @@ const addItemPage = (props: Props) => {
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
             {/* todo: change message */}
-            <Typography component={'span'}>All steps completed - you&apos;re finished</Typography>
+            <Typography component={"span"}>
+              All steps completed - you&apos;re finished
+            </Typography>
           </Paper>
         )}
       </Box>

@@ -10,7 +10,8 @@ export interface IFullImageDetails {
   imageId: string;
 }
 
-export interface IInputImage { //image type to send to backend
+export interface IInputImage {
+  //image type to send to backend
   base64ImageData: string;
   base64ImageMetaData: string;
 }
@@ -25,7 +26,17 @@ export interface IFullItemDetailsNew {
   excludedDates: Date[];
 }
 
-export interface IInputItem { //item type to send to backend
+export interface ICoordinate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface ICoordinateRadius extends ICoordinate {
+  radiusInMeters: number;
+}
+
+export interface IInputItem extends ICoordinate {
+  //item type to send to backend
   title: string;
   description: string;
   condition: string;
@@ -40,7 +51,13 @@ export interface IUserDetails {
   lastName: string;
   about?: string;
   dateJoined: string;
-  email?: string,
-  latitude: number,
-  longitude: number
+  email?: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface IMarkerDetails extends ICoordinate {
+  id: string;
+  title: string;
+  imageIds: string[];
 }

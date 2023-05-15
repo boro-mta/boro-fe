@@ -1,7 +1,13 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as StoreProvider } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  Route,
+  RouterProvider,
+  Routes,
+} from "react-router-dom";
 import { store } from "./app/store";
 import App from "./App";
 import ItemDetailsPage from "./routes/itemDetailsPage";
@@ -25,11 +31,13 @@ import NewUserPage from "./routes/newUserPage";
 import EditItemPage from "./routes/editItemPage";
 import BookingCompletedPage from "./routes/bookingCompletedPage";
 import RequestToBookPage from "./routes/requestToBookPage";
+import ResponsiveAppBar from "./components/AppBar/AppBar";
+import MyAddressesPage from "./routes/myAddressesPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
 
-const router = createBrowserRouter([
+const router = [
   {
     path: "/",
     element: <App />,
@@ -68,23 +76,36 @@ const router = createBrowserRouter([
   },
   {
     path: "/bookingCompletedPage/:itemId",
-    element: <BookingCompletedPage
-      startDate={new Date()}
-      endDate={new Date()}
-      onChange={([]) => { }}
-      datesToExclude={[]}
-    />,
+    element: (
+      <BookingCompletedPage
+        startDate={new Date()}
+        endDate={new Date()}
+        onChange={([]) => {}}
+        datesToExclude={[]}
+      />
+    ),
+  },
+  {
+    path: "address",
+    element: <MyAddressesPage />,
   },
   {
     path: "*",
     element: <ErrorPage />,
   },
-]);
+];
 
 root.render(
   <React.StrictMode>
     <StoreProvider store={store}>
-      <RouterProvider router={router} />
+      <BrowserRouter>
+        <ResponsiveAppBar />
+        <Routes>
+          {router.map((routeItem, i) => (
+            <Route path={routeItem.path} element={routeItem.element} key={i} />
+          ))}
+        </Routes>
+      </BrowserRouter>
     </StoreProvider>
   </React.StrictMode>
 );

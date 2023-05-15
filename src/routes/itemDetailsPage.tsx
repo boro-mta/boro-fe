@@ -18,7 +18,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemDetailsNew } from "../mocks/fullItemsDetails";
 import { IFullItemDetailsNew } from "../types";
-import HttpClient from "../api/HttpClient";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
 import {
@@ -27,6 +26,7 @@ import {
 } from "../utils/calendarUtils";
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import { getItem } from "../api/ItemService";
 type IFullItemDetailsParams = {
   itemId: string;
 };
@@ -96,12 +96,13 @@ const itemDetailsPage = (props: Props) => {
     if (selectedStartDate && selectedEndDate) {
       while (loop <= selectedEndDate) {
         if (
-          (itemDetails.excludedDates !== undefined) && checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)
+          itemDetails.excludedDates !== undefined &&
+          checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)
         ) {
           setSelectedDatesError(
             "The date " +
-            getFormattedDate(loop) +
-            " is not available, please choose different dates."
+              getFormattedDate(loop) +
+              " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -120,18 +121,17 @@ const itemDetailsPage = (props: Props) => {
 
   const handleOpenModal = () => setOpen(true);
 
-  const Demo = styled('div')(({ theme }) => ({
+  const Demo = styled("div")(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
   }));
 
   const [dense, setDense] = React.useState(false);
 
-
   useEffect(() => {
     const getFullDetails = async () => {
       let fullDetails: IFullItemDetailsNew;
       if (itemId !== undefined && itemId.length > 5) {
-        fullDetails = await HttpClient.get(`items/${itemId}`);
+        fullDetails = (await getItem(itemId)) as IFullItemDetailsNew;
         if (fullDetails.images != undefined) {
           setImagesAsString(formatImagesOnRecieve(fullDetails.images));
         }
@@ -151,14 +151,18 @@ const itemDetailsPage = (props: Props) => {
       <Card sx={{ marginBottom: "10px" }}>
         {itemDetails.images && (
           <CardMedia component="div" style={{ height: "230px" }}>
-            <ImagesCarousel images={formatImagesOnRecieve(itemDetails.images)} />
+            <ImagesCarousel
+              images={formatImagesOnRecieve(itemDetails.images)}
+            />
           </CardMedia>
         )}
       </Card>
       <Typography variant="h5">{itemDetails.title}</Typography>
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
       <Typography variant="h6">About the product</Typography>
-      <Typography component={'span'} variant="body1">{itemDetails.description}</Typography>
+      <Typography component={"span"} variant="body1">
+        {itemDetails.description}
+      </Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
       <Row
@@ -181,7 +185,6 @@ const itemDetailsPage = (props: Props) => {
       <Typography variant="h6" sx={{ marginBottom: "10px" }}>
         Find available dates:
       </Typography>
-
 
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <DateRangePicker
@@ -232,41 +235,35 @@ const itemDetailsPage = (props: Props) => {
             width: "96%",
           }}
           onClick={() => {
-            navigate(`/requestToBookPage/${itemId}`,
-              {
-                state:
-                {
-                  selectedStartDate: startDate,
-                  selectedEndDate: endDate,
-                  excludedDates: itemDetails.excludedDates,
-                }
-              }
-            )
+            navigate(`/requestToBookPage/${itemId}`, {
+              state: {
+                selectedStartDate: startDate,
+                selectedEndDate: endDate,
+                excludedDates: itemDetails.excludedDates,
+              },
+            });
           }}
         >
           Reserve
         </Button>
-      )
-      }
-      {
-        isValidDates === false && (
-          <Button
-            variant="contained"
-            color="error"
-            endIcon={<ErrorIcon />}
-            sx={{
-              marginTop: "10px",
-              position: "sticky",
-              bottom: "10px",
-              right: "2%",
-              width: "96%",
-            }}
-            onClick={handleOpenModal}
-          >
-            Invalid dates
-          </Button>
-        )
-      }
+      )}
+      {isValidDates === false && (
+        <Button
+          variant="contained"
+          color="error"
+          endIcon={<ErrorIcon />}
+          sx={{
+            marginTop: "10px",
+            position: "sticky",
+            bottom: "10px",
+            right: "2%",
+            width: "96%",
+          }}
+          onClick={handleOpenModal}
+        >
+          Invalid dates
+        </Button>
+      )}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
           sx={{
@@ -281,10 +278,12 @@ const itemDetailsPage = (props: Props) => {
             p: 4,
           }}
         >
-          <Typography component={'span'} variant="body1">{selectedDatesError}</Typography>
+          <Typography component={"span"} variant="body1">
+            {selectedDatesError}
+          </Typography>
         </Box>
       </Modal>
-    </Container >
+    </Container>
   );
 };
 
