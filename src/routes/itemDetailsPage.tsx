@@ -13,7 +13,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemDetailsNew } from "../mocks/fullItemsDetails";
 import { IFullItemDetailsNew } from "../types";
-import HttpClient from "../api/HttpClient";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
 import {
@@ -22,6 +21,7 @@ import {
 } from "../utils/calendarUtils";
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import { getItem } from "../api/ItemService";
 type IFullItemDetailsParams = {
   itemId: string;
 };
@@ -119,7 +119,7 @@ const itemDetailsPage = (props: Props) => {
     const getFullDetails = async () => {
       let fullDetails: IFullItemDetailsNew;
       if (itemId !== undefined && itemId.length > 5) {
-        fullDetails = await HttpClient.get(`items/${itemId}`);
+        fullDetails = (await getItem(itemId)) as IFullItemDetailsNew;
         if (fullDetails.images != undefined) {
           setImagesAsString(formatImagesOnRecieve(fullDetails.images));
         }

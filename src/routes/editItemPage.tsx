@@ -27,7 +27,6 @@ import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import HttpClient from "../api/HttpClient";
 import { categoriesOptions, conditionOptions } from "../mocks/items";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -36,6 +35,7 @@ import { IFullItemDetailsNew } from "../types";
 import { debug } from "console";
 import { useAppSelector } from "../app/hooks";
 import { selectAddress } from "../features/UserSlice";
+import { editItem, getItem } from "../api/ItemService";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -95,10 +95,12 @@ const EditItemPage = (props: Props) => {
   useEffect(() => {
     const onWakeFunction = async () => {
       try {
-        itemServerDetails = await HttpClient.get(`items/${itemId}`);
-        setItemDetails(itemServerDetails);
-        setCondition(itemServerDetails.condition);
-        setSelectedCategories(itemServerDetails.categories);
+        if (itemId) {
+          itemServerDetails = (await getItem(itemId)) as IFullItemDetailsNew;
+          setItemDetails(itemServerDetails);
+          setCondition(itemServerDetails.condition);
+          setSelectedCategories(itemServerDetails.categories);
+        }
       } catch (err) {
         console.log("Error while loading item");
         setServerRequestError(err);
@@ -161,11 +163,12 @@ const EditItemPage = (props: Props) => {
       description: obj.description,
       condition: obj.condition,
       categories: obj.categories,
+      itemId,
     };
 
     try {
       console.log(reqBody);
-      await HttpClient.create(`items/${itemId}/update`, {}, reqBody);
+      await editItem(reqBody);
       setIsAddSuccess(true);
       navigate(`/item/${itemId}`);
     } catch (e) {

@@ -31,6 +31,10 @@ export interface ICoordinate {
   longitude: number;
 }
 
+export interface ICoordinateRadius extends ICoordinate {
+  radiusInMeters: number;
+}
+
 export interface IInputItem extends ICoordinate {
   //item type to send to backend
   title: string;

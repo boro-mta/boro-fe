@@ -5,15 +5,15 @@ import {
   selectPicture,
   selectUserName,
 } from "../../features/UserSlice";
-import { Container, styled } from "@mui/material";
+import { Container } from "@mui/material";
 import Map from "../MapComponent/Map";
 import MapIcon from "@mui/icons-material/Map";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import ToggleButton from "./ToggleButton";
 import { useNavigate } from "react-router";
-import { ICoordinate, IMarkerDetails } from "../../types";
-import HttpClient from "../../api/HttpClient";
+import { ICoordinate, ICoordinateRadius, IMarkerDetails } from "../../types";
 import { ListContainer } from "./ListContainer";
+import { getItemsByRadius } from "../../api/ItemService";
 
 const ItemsMapListContainer = () => {
   const navigate = useNavigate();
@@ -48,11 +48,11 @@ const ItemsMapListContainer = () => {
   useEffect(() => {
     const fetchAndSetMarkers = async () => {
       if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
-        let markers = await HttpClient.get("Items/ByRadius", {
-          latitude: myLocation.latitude,
-          longitude: myLocation.longitude,
+        let coordinateToSearch: ICoordinateRadius = {
+          ...myLocation,
           radiusInMeters: 5000,
-        });
+        };
+        let markers = await getItemsByRadius(coordinateToSearch);
         if (Array.isArray(markers)) setLocationsAroundMe(markers);
       }
     };
