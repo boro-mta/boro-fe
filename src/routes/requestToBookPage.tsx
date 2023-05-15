@@ -11,9 +11,7 @@ import HttpClient from "../api/HttpClient";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IFullItemDetailsNew } from "../types";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
-import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
-import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -152,31 +150,29 @@ const RequestToBookPage = (props: Props) => {
         }
     };
 
+
+
     return (
         <Container>
             <Typography component={'span'} variant="h3">Request To Book</Typography>
 
-            <Card sx={{ marginBottom: "10px" }}>
-                {itemDetails.images && (
-                    <CardMedia component="div" style={{ height: "230px" }}>
-                        <ImagesCarousel images={formatImagesOnRecieve(itemDetails.images)} />
-                    </CardMedia>
-                )}
-            </Card>
-            <Typography component={'span'} variant="h5">{itemDetails.title}</Typography>
-            <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-            <Typography component={'span'} variant="h6">About the product</Typography>
-            <Typography component={'span'} variant="body1">{itemDetails.description}</Typography>
+            <div style={{ display: "flex", alignItems: "flex-start", flexDirection: "row" }}>
+                <Card sx={{ marginBottom: "10px", width: "230px", marginRight: "10px" }}>
+                    {itemDetails.images && (
+                        <CardMedia
+                            component="img"
+                            style={{ height: "230px", width: "230px" }}
+                            image={formatImagesOnRecieve(itemDetails.images)[0]}
+                        >
+                        </CardMedia>
+                    )}
+                </Card>
 
-            <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-            <Row
-                tableData={[
-                    { key: "Condition", value: itemDetails.condition },
-                    { key: "Category", value: itemDetails.categories.join(", ") },
-                ]}
-            />
-            <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                    <Typography variant="h5">{itemDetails.title}</Typography>
+                    <Typography variant="body1">{itemDetails.description}</Typography>
+                </div>
+            </div>
             <Typography component={'span'} variant="h6">Chosen Dates:</Typography>
 
             <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
@@ -243,8 +239,8 @@ const RequestToBookPage = (props: Props) => {
                         {
                             state:
                             {
-                                requestStartDate,
-                                requestEndDate,
+                                selectedStartDate: requestStartDate,
+                                selectedEndDate: requestEndDate,
                                 excludedDates
                             }
                         })}

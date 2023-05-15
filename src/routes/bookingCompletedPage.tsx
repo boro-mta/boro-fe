@@ -11,7 +11,6 @@ import HttpClient from "../api/HttpClient";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { IFullItemDetailsNew } from "../types";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
-import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 type IFullItemDetailsParams = {
@@ -81,9 +80,7 @@ const BookingCompletedPage = ({ startDate, endDate, datesToExclude, onChange }: 
         const getFullDetails = async () => {
             let fullDetails: IFullItemDetailsNew;
             try {
-                debugger;
                 fullDetails = await HttpClient.get(`items/${itemId}`);
-                debugger;
                 setItemDetails(fullDetails);
             }
             catch (err) {
@@ -97,28 +94,36 @@ const BookingCompletedPage = ({ startDate, endDate, datesToExclude, onChange }: 
 
     return (
         <Container>
-            <Typography component={'span'} variant="h3">Booking is Completed</Typography>
-            <Card sx={{ marginBottom: "10px" }}>
-                {itemDetails.images && (
-                    <CardMedia component="div" style={{ height: "230px" }}>
-                        <ImagesCarousel images={formatImagesOnRecieve(itemDetails.images)} />
-                    </CardMedia>
-                )}
-            </Card>
-            <Typography component={'span'} variant="h5">{itemDetails.title}</Typography>
-            <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-            <Typography component={'span'} variant="h6">About the product</Typography>
-            <Typography component={'span'} variant="body1">{itemDetails.description}</Typography>
+            <Typography component={'span'} variant="h3">Booking Request is Completed</Typography>
+            <div style={{ display: "flex", alignItems: "flex-start", flexDirection: "row" }}>
+                <Card sx={{ marginBottom: "10px", width: "230px", marginRight: "10px" }}>
+                    {itemDetails.images && (
+                        <CardMedia
+                            component="img"
+                            style={{ height: "230px", width: "230px" }}
+                            image={formatImagesOnRecieve(itemDetails.images)[0]}
+                        >
+                        </CardMedia>
+                    )}
+                </Card>
+
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                    <Typography variant="h5">{itemDetails.title}</Typography>
+                    <Typography variant="body1">{itemDetails.description}</Typography>
+                </div>
+            </div>
+
+
+            <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+                <Typography variant="h6" sx={{ marginRight: "10px" }}>Request Status: </Typography>
+                <Typography variant="body1">Pending</Typography>
+                {/* todo: change to real status */}
+            </div>
 
             <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-            <Row
-                tableData={[
-                    { key: "Condition", value: itemDetails.condition },
-                    { key: "Category", value: itemDetails.categories.join(", ") },
-                ]}
-            />
-            <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-            <Typography component={'span'} variant="h6">Chosen Dates:</Typography>
+            <Typography component={'span'} variant="h6">
+                Chosen dates:
+            </Typography>
 
             <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
             <Row
@@ -137,6 +142,8 @@ const BookingCompletedPage = ({ startDate, endDate, datesToExclude, onChange }: 
                     datesToExclude={excludedDates}
                 />
             </div>
+
+
 
             <Button
                 variant="contained"
