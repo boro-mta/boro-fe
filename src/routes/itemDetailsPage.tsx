@@ -4,8 +4,13 @@ import {
   CardMedia,
   Container,
   Divider,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
   Modal,
   Typography,
+  styled,
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
@@ -115,6 +120,12 @@ const itemDetailsPage = (props: Props) => {
 
   const handleOpenModal = () => setOpen(true);
 
+  const Demo = styled('div')(({ theme }) => ({
+    backgroundColor: theme.palette.background.paper,
+  }));
+
+  const [dense, setDense] = React.useState(false);
+
 
   useEffect(() => {
     const getFullDetails = async () => {
@@ -144,9 +155,9 @@ const itemDetailsPage = (props: Props) => {
           </CardMedia>
         )}
       </Card>
-      <Typography component={'span'} variant="h5">{itemDetails.title}</Typography>
+      <Typography variant="h5">{itemDetails.title}</Typography>
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-      <Typography component={'span'} variant="h6">About the product</Typography>
+      <Typography variant="h6">About the product</Typography>
       <Typography component={'span'} variant="body1">{itemDetails.description}</Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
@@ -165,23 +176,47 @@ const itemDetailsPage = (props: Props) => {
       >
         Edit Item
       </Button>
+      <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
 
-      <Typography component={'span'} variant="h6" sx={{ marginBottom: "10px" }}>
-        Find available dates
+      <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+        Find available dates:
       </Typography>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+
+
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         <DateRangePicker
           startDate={startDate}
           endDate={endDate}
           onChange={handleChangeDates}
           datesToExclude={itemDetails.excludedDates}
         />
-        {startDate && (
-          <p>start date: {startDate.toDateString()}</p>
-        )}
-        {endDate && (
-          <p>end date: {endDate.toDateString()}</p>
-        )}
+
+        <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Demo>
+                <List dense={dense}>
+                  <ListItem>
+                    {startDate && (
+                      <ListItemText
+                        primary="Start Date:"
+                        secondary={startDate.toDateString()}
+                      />
+                    )}
+                  </ListItem>
+                  <ListItem>
+                    {endDate && (
+                      <ListItemText
+                        primary="End Date:"
+                        secondary={endDate.toDateString()}
+                      />
+                    )}
+                  </ListItem>
+                </List>
+              </Demo>
+            </Grid>
+          </Grid>
+        </Box>
       </div>
 
       {isValidDates === true && (

@@ -1,7 +1,6 @@
 import apiConfig from "../config/apiConfig";
 
 const request = async (route: string, params?: any, method = "GET") => {
-  debugger;
   const options: any = {
     method,
     headers: {

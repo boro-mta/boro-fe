@@ -94,7 +94,6 @@ const RequestToBookPage = (props: Props) => {
     };
 
     const handleChange = () => {
-        //todo: update chosen dates on request to book fields
         setRequestStartDate(calendarStartDate);
         setRequestEndDate(calendarEndDate);
         setOpen(false);
@@ -244,8 +243,8 @@ const RequestToBookPage = (props: Props) => {
                         {
                             state:
                             {
-                                selectedStartDate,
-                                selectedEndDate,
+                                requestStartDate,
+                                requestEndDate,
                                 excludedDates
                             }
                         })}
