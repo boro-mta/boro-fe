@@ -1,6 +1,11 @@
 import apiConfig from "../config/apiConfig";
 import IUserLoginResults from "./Models/IUserLoginResults";
 import ITokenInfo from "./Models/ITokenInfo";
+import {
+  getCurrentToken,
+  getCurrentTokenExpiration,
+  setAuthToken,
+} from "../utils/authUtils";
 
 export enum HttpOperation {
   GET = "GET",
@@ -12,13 +17,11 @@ export enum HttpOperation {
 class BoroWebServiceClient {
   private readonly webServiceUrl: string;
   private readonly AuthTokenKey: string;
-  private readonly AuthTokenExpirationKey: string;
   private readonly defaultHeaders: object;
 
   constructor() {
     this.webServiceUrl = apiConfig.SERVER_URL + ":" + apiConfig.SERVER_PORT;
     this.AuthTokenKey = apiConfig.AUTH_TOKEN_KEY;
-    this.AuthTokenExpirationKey = apiConfig.AUTH_TOKEN_EXPIRATION_KEY;
     this.defaultHeaders = apiConfig.HEADERS;
 
     // Check token expiration every 5 minutes
@@ -27,86 +30,54 @@ class BoroWebServiceClient {
     }, 5 * 60 * 1000);
   }
 
-  private refreshTokenIfExpiresIn(seconds: number = 300) {
-    const tokenInfo = this.getTokenInfo();
-    if (!tokenInfo) {
-      console.log("token info is null");
-      return;
+  private async refreshTokenIfExpiresIn(
+    seconds: number = 300
+  ): Promise<string | null> {
+    const expirationTime = getCurrentTokenExpiration();
+    if (expirationTime == null) {
+      console.log("no expiration info");
+      return null;
     }
 
-    if (tokenInfo.token == null || tokenInfo.token === "") {
-      console.log(
-        "current token is either null or empty. Can't refresh a token that doesn't exist."
-      );
-      return;
-    }
-    let expirationTime;
-    if (tokenInfo && tokenInfo.expirationTime)
-      expirationTime = tokenInfo.expirationTime.getTime();
-    else expirationTime = Date.now();
+    const time = expirationTime.getTime();
     const now = Date.now();
     console.log(
-      `expiration time is: ${new Date(
-        expirationTime
-      )}UTC. Which is ${expirationTime - now}seconds from now.`
+      `expiration time is: ${new Date(time)}UTC. Which is ${time -
+        now}seconds from now.`
     );
 
-    if (now + seconds >= expirationTime) {
+    if (now < time && now + seconds >= time) {
       console.log(
         `Token will expire in the next ${seconds}seconds. Refreshing token.`
       );
-      this.refreshToken();
+      await this.refreshToken();
     }
-  }
-
-  private updateTokenInLocalStorage(tokenInfo: ITokenInfo): void {
-    let expiration = "";
-    if (tokenInfo && tokenInfo.expirationTime) {
-      expiration = tokenInfo.expirationTime.toISOString();
-    }
-    localStorage.setItem(this.AuthTokenKey, tokenInfo.token);
-    localStorage.setItem(this.AuthTokenExpirationKey, expiration);
-  }
-
-  private getTokenInfo(): ITokenInfo {
-    let token = localStorage.getItem(this.AuthTokenKey);
-    if (!token) {
-      token = "";
-    }
-    let expirationTimeString = localStorage.getItem(
-      this.AuthTokenExpirationKey
-    );
-    if (!expirationTimeString) {
-      expirationTimeString = "";
-    }
-
-    let expirationTime =
-      expirationTimeString != ""
-        ? new Date(expirationTimeString)
-        : new Date(Date.now());
-
-    const tokenInfo: ITokenInfo = {
-      token: token,
-      expirationTime: expirationTime,
-    };
-    return tokenInfo;
+    return getCurrentToken();
   }
 
   private async refreshToken(): Promise<void> {
-    const token = this.getTokenInfo();
-    const headers = {
-      ...this.defaultHeaders,
-      Authorization: `Bearer ${token.token}`,
-    };
-    const refreshTokenResponse = await fetch(
-      `${this.webServiceUrl}/Identity/RefreshToken`,
-      {
-        method: HttpOperation.POST,
-        headers: headers,
-      }
-    );
-    const tokenInfo: ITokenInfo = await refreshTokenResponse.json();
-    this.updateTokenInLocalStorage(tokenInfo);
+    const currentToken = getCurrentToken();
+    if (currentToken === null || currentToken === "") {
+      return;
+    }
+    try {
+      const headers = {
+        ...this.defaultHeaders,
+        Authorization: `Bearer ${currentToken}`,
+      };
+      const refreshTokenResponse = await fetch(
+        `${this.webServiceUrl}/Identity/RefreshToken`,
+        {
+          method: HttpOperation.POST,
+          headers: headers,
+        }
+      );
+      const tokenInfo = (await refreshTokenResponse.json()) as ITokenInfo;
+      setAuthToken(tokenInfo.token);
+    } catch (error) {
+      console.log("couldn't refresh token");
+      setAuthToken("");
+    }
   }
 
   public async request<T>(
@@ -114,12 +85,14 @@ class BoroWebServiceClient {
     endpointPath: string,
     body?: any
   ) {
-    this.refreshTokenIfExpiresIn();
-    const tokenInfo = this.getTokenInfo();
-    const headers = {
+    const token = await this.refreshTokenIfExpiresIn();
+    const headers: HeadersInit = {
       ...this.defaultHeaders,
-      Authorization: `Bearer ${tokenInfo.token}`,
     };
+    if (token && token !== "") {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const url = `${this.webServiceUrl}/${endpointPath}`;
     const fetchConfig: RequestInit = {
       method,
@@ -169,9 +142,8 @@ class BoroWebServiceClient {
       const loginResponse: IUserLoginResults = await response.json();
       const tokenDetails: ITokenInfo = {
         ...loginResponse.tokenDetails,
-        expirationTime: new Date(loginResponse.tokenDetails.expirationTime),
       };
-      this.updateTokenInLocalStorage(tokenDetails);
+      setAuthToken(tokenDetails.token);
 
       return { ...loginResponse, tokenDetails: tokenDetails };
     } catch (error) {
