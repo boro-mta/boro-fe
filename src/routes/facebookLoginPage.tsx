@@ -6,11 +6,12 @@ import { useNavigate } from "react-router-dom";
 import {
   selectUserName,
   updatePartialUser,
-  updateUser,
+  updateUser
 } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import BoroWSClient from "../api/BoroWebServiceClient";
-
+import useLocalStorage from "../hooks/useLocalStorage";
+//import { setName } from "../utils/isFunctions"
 interface IUserData {
   name?: string;
   email?: string;
@@ -21,6 +22,13 @@ const FacebookLoginPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const userName = useAppSelector(selectUserName);
+
+  const [userInfo, setUser] = useLocalStorage("user", "");
+
+  if (userInfo != "") {
+    const userLocalInfo = JSON.parse(userInfo);
+    console.log("Parsed info ", userLocalInfo);
+  }
 
   const handleLoginSuccess = (response: ReactFacebookLoginInfo) => {
     const pictureUrl =
@@ -50,6 +58,7 @@ const FacebookLoginPage = () => {
         userFacebookLoginDetails.accessToken,
         userFacebookLoginDetails.facebookId
       );
+
       console.log(backendResponse);
       if (backendResponse.firstLogin == true) {
         dispatch(
@@ -66,6 +75,17 @@ const FacebookLoginPage = () => {
             guid: backendResponse.userId,
           })
         );
+
+
+        const savedUser = {
+          name: response.name || "",
+          email: response.email || "",
+          id: response.id,
+          accessToken: response.accessToken,
+          picture: pictureUrl || "",
+          guid: backendResponse.userId
+        }
+        setUser(JSON.stringify(savedUser));
         navigate("/");
       }
     };
@@ -73,6 +93,7 @@ const FacebookLoginPage = () => {
       userFacebookLoginDetails
     );
   };
+
   return (
     <div className="facebook-login-page">
       <h1>Facebook Login</h1>

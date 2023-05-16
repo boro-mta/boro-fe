@@ -35,6 +35,7 @@ import MyAddressesPage from "./routes/myAddressesPage";
 const container = document.getElementById("root")!;
 const root = createRoot(container);
 
+
 const router = [
   {
     path: "/",
