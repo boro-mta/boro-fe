@@ -25,7 +25,7 @@ export const getCurrentTokenExpiration = (): Date | null => {
   const token = getCurrentToken();
   if (token && token !== "") {
     const decodedToken = jwt_decode<{ exp: number }>(token);
-    const date = new Date(decodedToken.exp);
+    const date = new Date(new Date(0).setUTCSeconds(decodedToken.exp));
     return date;
   } else {
     console.error("Token not found in local storage");

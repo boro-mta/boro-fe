@@ -42,11 +42,11 @@ class BoroWebServiceClient {
     const time = expirationTime.getTime();
     const now = Date.now();
     console.log(
-      `expiration time is: ${new Date(time)}UTC. Which is ${time -
-        now}seconds from now.`
+      `expiration time is: ${new Date(time)}UTC. Which is ${(time - now) /
+        1000}seconds from now.`
     );
 
-    if (now < time && now + seconds >= time) {
+    if (now < time && now + seconds * 1000 >= time) {
       console.log(
         `Token will expire in the next ${seconds}seconds. Refreshing token.`
       );
