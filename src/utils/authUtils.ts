@@ -2,7 +2,11 @@ import jwt_decode from "jwt-decode";
 import apiConfig from "../config/apiConfig";
 
 export const getCurrentToken = (): string | null => {
-  return localStorage.getItem(apiConfig.AUTH_TOKEN_KEY);
+  const token = localStorage.getItem(apiConfig.AUTH_TOKEN_KEY);
+  if (token == undefined || token == null || token === "") {
+    return "";
+  }
+  return token;
 };
 
 export const setAuthToken = (token: string) => {
