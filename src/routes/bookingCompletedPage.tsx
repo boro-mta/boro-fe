@@ -3,9 +3,12 @@ import { Container } from "@mui/system";
 import { Button, Typography, Divider, Card, CardMedia } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { IFullItemDetailsNew } from "../types";
-import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import { getItem } from "../api/ItemService";
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -97,79 +100,98 @@ const BookingCompletedPage = ({
     getFullDetails();
   }, []);
 
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'left',
+    color: theme.palette.text.secondary,
+  }));
+
   return (
     <Container>
       <Typography component={"span"} variant="h3">
         Booking Request is Completed
       </Typography>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          flexDirection: "row",
-        }}
-      >
-        <Card
-          sx={{ marginBottom: "10px", width: "230px", marginRight: "10px" }}
-        >
-          {itemDetails.images && (
-            <CardMedia
-              component="img"
-              style={{ height: "230px", width: "230px" }}
-              image={formatImagesOnRecieve(itemDetails.images)[0]}
-            ></CardMedia>
-          )}
-        </Card>
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <Typography variant="h5">{itemDetails.title}</Typography>
-          <Typography variant="body1">{itemDetails.description}</Typography>
-        </div>
-      </div>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h6" sx={{ marginRight: "10px" }}>
-          Request Status:{" "}
-        </Typography>
-        <Typography variant="body1">Pending</Typography>
-        {/* todo: change to real status */}
-      </div>
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Item>
+              <Typography component={"span"} variant="h6">
+                Veriffication Pending
+              </Typography>
+              <Typography variant="body1">
+                The lender will review your booking request, come back later for updates!
+              </Typography>
+            </Item>
+          </Grid>
+          <Grid item xs={12}>
+            <Item>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  flexDirection: "row",
+                }}
+              >
+                <Card
+                  sx={{ marginBottom: "10px", marginRight: "10px" }}
+                >
+                  {itemDetails.images && (
+                    <CardMedia
+                      component="img"
+                      style={{ height: "130px", width: "130px" }}
+                      image={formatImagesOnRecieve(itemDetails.images)[0]}
+                    ></CardMedia>
+                  )}
+                </Card>
 
-      <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-      <Typography component={"span"} variant="h6">
-        Chosen dates:
-      </Typography>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <Typography variant="h5">{itemDetails.title}</Typography>
+                  <Typography variant="body1">{itemDetails.description}</Typography>
+                </div>
+              </div>
 
-      <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-      <Row
-        tableData={[
-          { key: "Start Date:", value: selectedStartDate.toDateString() },
-          { key: "End Date:", value: selectedEndDate.toDateString() },
-        ]}
-      />
-      <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <DateRangePicker
-          startDate={selectedStartDate}
-          endDate={selectedEndDate}
-          onChange={() => {}}
-          datesToExclude={excludedDates}
-        />
-      </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h6" sx={{ marginRight: "10px" }}>
+                  Request Status:{" "}
+                </Typography>
+                <Typography variant="body1">Pending</Typography>
+                {/* todo: change to real status */}
+              </div>
+            </Item>
+          </Grid>
+          <Grid item xs={5}>
+            <Item>
+              <Typography variant="h6">
+                {selectedStartDate.toDateString()}
+              </Typography>
+            </Item>
+          </Grid>
+          <Grid item xs={2}>
+            <Item>
+              <Typography textAlign={"center"} variant="h6">
+                {'>'}
+              </Typography>
+            </Item>
+          </Grid>
+          <Grid item xs={5}>
+            <Item>
+              <Typography variant="h6">
+                {selectedEndDate.toDateString()}
+              </Typography>
+            </Item>
+          </Grid>
+        </Grid>
+      </Box>
 
       <Button
         variant="contained"

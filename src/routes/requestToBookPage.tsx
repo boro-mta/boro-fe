@@ -140,8 +140,8 @@ const RequestToBookPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -172,12 +172,12 @@ const RequestToBookPage = (props: Props) => {
         }}
       >
         <Card
-          sx={{ marginBottom: "10px", width: "230px", marginRight: "10px" }}
+          sx={{ marginBottom: "10px", marginRight: "10px" }}
         >
           {itemDetails.images && (
             <CardMedia
               component="img"
-              style={{ height: "230px", width: "230px" }}
+              style={{ height: "130px", width: "130px" }}
               image={formatImagesOnRecieve(itemDetails.images)[0]}
             ></CardMedia>
           )}
@@ -212,7 +212,7 @@ const RequestToBookPage = (props: Props) => {
         <DateRangePicker
           startDate={requestStartDate}
           endDate={requestEndDate}
-          onChange={() => {}}
+          onChange={() => { }}
           datesToExclude={excludedDates}
         />
 
