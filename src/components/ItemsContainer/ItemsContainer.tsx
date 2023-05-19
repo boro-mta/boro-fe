@@ -27,13 +27,15 @@ const ItemsContainer = ({ containerTitle, items }: Props) => {
           overflowX: "auto",
         }}
       >
-        {items.map((item, i) => (
-          <Item
-            key={i}
-            {...item}
-            onClick={() => navigate(`/item/${item.itemId}`)}
-          />
-        ))}
+        {items &&
+          items.length > 0 &&
+          items.map((item, i) => (
+            <Item
+              key={i}
+              {...item}
+              onClick={() => navigate(`/item/${item.itemId}`)}
+            />
+          ))}
       </Container>
     </Container>
   );

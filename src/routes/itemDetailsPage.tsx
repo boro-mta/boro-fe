@@ -118,6 +118,7 @@ const itemDetailsPage = (props: Props) => {
   useEffect(() => {
     const getFullDetails = async () => {
       let fullDetails: IFullItemDetailsNew;
+      debugger;
       if (itemId !== undefined && itemId.length > 5) {
         fullDetails = (await getItem(itemId)) as IFullItemDetailsNew;
         if (fullDetails.images != undefined) {
@@ -128,7 +129,9 @@ const itemDetailsPage = (props: Props) => {
           allItemDetailsNew.find((item) => item.itemId === itemId) ||
           allItemDetailsNew[0];
       }
-      setItemDetails(fullDetails);
+      if (fullDetails && Object.keys(fullDetails).length > 0) {
+        setItemDetails(fullDetails);
+      }
     };
 
     getFullDetails();
@@ -153,8 +156,19 @@ const itemDetailsPage = (props: Props) => {
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
       <Row
         tableData={[
-          { key: "Condition", value: itemDetails.condition },
-          { key: "Category", value: itemDetails.categories.join(", ") },
+          {
+            key: "Condition",
+            value: itemDetails.condition
+              ? itemDetails.condition
+              : "No Condition Selected!",
+          },
+          {
+            key: "Category",
+            value:
+              itemDetails && itemDetails.categories.length > 0
+                ? itemDetails.categories.join(", ")
+                : "No Categories Selected!",
+          },
         ]}
       />
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
