@@ -21,12 +21,37 @@ import {
   initialState,
 } from "../../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import useLocalStorage from "../../hooks/useLocalStorage";
 
 function ResponsiveAppBar() {
+
+  //Use local storage for user info
+  const [userInfo, setUser] = useLocalStorage("user", "");
+
+  //Navigation tool
   const navigate = useNavigate();
 
+  //Redux dispatcher
   const dispatch = useAppDispatch();
 
+  //If user has info in local storage, retrive it
+  if (userInfo != "") {
+    const userLocalInfo = JSON.parse(userInfo);
+    console.log("Parsed info ", userLocalInfo);
+    //Send user's local storage information to redux to keep in app state
+    dispatch(
+      updateUser({
+        name: userLocalInfo.name || "",
+        email: userLocalInfo.email || "",
+        id: userLocalInfo.id,
+        accessToken: userLocalInfo.accessToken,
+        picture: userLocalInfo.picture || "",
+        address: { latitude: 0, longitude: 0 },
+        guid: userLocalInfo.guid
+      }))
+  }
+
+  //Get the user's profile picture to show in avatar
   const profilePicture = useAppSelector(selectPicture);
 
   const pages = ["Home", "Borrowers around me"];
@@ -34,6 +59,8 @@ function ResponsiveAppBar() {
   const userName = useAppSelector(selectUserName);
   const userGuid = useAppSelector(selectGuid);
 
+  //In case the user is logged in and in redux is not represented as Guest
+  //Change the options in the app bar menu
   if (userName != "Guest") {
     settings.pop();
     settings.push("Profile");
