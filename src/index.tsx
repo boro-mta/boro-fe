@@ -33,6 +33,7 @@ import ResponsiveAppBar from "./components/AppBar/AppBar";
 import MyAddressesPage from "./routes/myAddressesPage";
 import MyItemsPage from "./routes/myItemsPage";
 import LenderDashboard from "./routes/lenderDashboard";
+import BorrowerDashboard from "./routes/borrowerDashboard";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -61,6 +62,10 @@ const router = [
   {
     path: "lenderDashboard",
     element: <LenderDashboard />,
+  },
+  {
+    path: "borrowerDashboard",
+    element: <BorrowerDashboard />,
   },
   {
     path: "/users/:userId",
