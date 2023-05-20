@@ -19,10 +19,10 @@ type Props = {};
 
 //A validation schema for the form
 const validationSchema = yup.object({
-  About: yup.string().max(250, "Must be 250 characters or less"),
-  Email: yup.string().email("Invalid email address").max(50, "Must be 50 characters or less"),
-  Latitude: yup.string().max(30, "Must be 30 characters or less"),
-  Longitude: yup.string().max(30, "Must be 30 characters or less"),
+  about: yup.string().max(250, "Must be 250 characters or less"),
+  email: yup.string().email("Invalid email address").max(50, "Must be 50 characters or less"),
+  latitude: yup.string().max(30, "Must be 30 characters or less"),
+  longitude: yup.string().max(30, "Must be 30 characters or less"),
 });
 
 const UserEditPage = (props: Props) => {
@@ -86,20 +86,24 @@ const UserEditPage = (props: Props) => {
 
 
   const handleEditClick = async () => {
-    //Get the user's new details filled in the form
-    const userDetails = {
-      about: formik.values.about,
-      email: formik.values.email,
-      latitude: 0,
-      longitude: 0,
-    } as IUpdateUserData;
-    try {
-      //Send the new details to the server
-      const response = apiUpdateUser(userDetails);
-      console.log("User created successfully!", response);
+
+    await formik.validateForm();
+    if (formik.isValid) {
+      //Get the user's new details filled in the form
+      const userDetails = {
+        about: formik.values.about,
+        email: formik.values.email,
+        latitude: 0,
+        longitude: 0,
+      } as IUpdateUserData;
+      try {
+        //Send the new details to the server
+        const response = apiUpdateUser(userDetails);
+        console.log("User created successfully!", response);
+      } catch (error) {
+        console.error("Failed to update user:", error);
+      }
       navigate("/users/" + userId);
-    } catch (error) {
-      console.error("Failed to update user:", error);
     }
   };
 

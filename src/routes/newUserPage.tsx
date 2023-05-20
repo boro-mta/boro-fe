@@ -19,8 +19,8 @@ type Props = {};
 
 //A validation schema for the form
 const validationSchema = yup.object({
-  first_name: yup.string().max(30, "Must be 30 characters or less"),
-  last_name: yup.string().max(30, "Must be 30 characters or less"),
+  firstName: yup.string().max(30, "Must be 30 characters or less"),
+  lastName: yup.string().max(30, "Must be 30 characters or less"),
   about: yup.string().max(250, "Must be 250 characters or less"),
   email: yup
     .string()
