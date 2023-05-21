@@ -169,7 +169,7 @@ class BoroWebServiceClient {
       const loginResponse: IUserLoginResults = await response.json();
       const tokenDetails: ITokenInfo = {
         ...loginResponse.tokenDetails,
-        expirationTime: new Date(loginResponse.tokenDetails.expirationTime || 0), // made a change because of a bug, need to inspect, added || 0
+        expirationTime: new Date(loginResponse.tokenDetails.expirationTime),
       };
       this.updateTokenInLocalStorage(tokenDetails);
 
