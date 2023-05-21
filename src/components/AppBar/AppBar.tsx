@@ -102,6 +102,12 @@ function ResponsiveAppBar() {
     if (page === "Create New Borrow") {
       navigate("/addItem");
     }
+    if (page === "My Items") {
+      navigate("/myItems");
+    }
+    if (page === "Lending Dashboard") {
+      navigate("/lenderDashboard");
+    }
   };
 
   const handleSettingButtonClick = (setting: any) => {
