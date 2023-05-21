@@ -33,6 +33,8 @@ import BookingCompletedPage from "./routes/bookingCompletedPage";
 import RequestToBookPage from "./routes/requestToBookPage";
 import ResponsiveAppBar from "./components/AppBar/AppBar";
 import MyAddressesPage from "./routes/myAddressesPage";
+import MyItemsPage from "./routes/myItemsPage";
+import LenderDashboard from "./routes/lenderDashboard";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -53,6 +55,14 @@ const router = [
   {
     path: "addItem",
     element: <AddItemPage />,
+  },
+  {
+    path: "myItems",
+    element: <MyItemsPage />,
+  },
+  {
+    path: "lenderDashboard",
+    element: <LenderDashboard />,
   },
   {
     path: "/users/:userId",
