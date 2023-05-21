@@ -9,30 +9,47 @@ export const getCurrentToken = (): string | null => {
   return token;
 };
 
+export const isTokenExpiringIn = (seconds: number): boolean => {
+  const token = getCurrentToken();
+  if (token && token !== "") {
+    try {
+      const decodedToken = jwt_decode<{ exp: number }>(token);
+      const expirationTime = decodedToken.exp * 1000;
+      const currentTime = Date.now();
+      const remainingTime = expirationTime - currentTime;
+
+      return remainingTime <= seconds * 1000;
+    } catch (error) {
+      console.error("Invalid token:", error);
+      setAuthToken("");
+    }
+  }
+  //some error happened or invalid token
+  //treated as expiring
+  return true;
+};
+
+export const isLoggedIn = (): boolean => {
+  return isTokenExpiringIn(30) === false;
+};
+
 export const setAuthToken = (token: string) => {
   localStorage.setItem(apiConfig.AUTH_TOKEN_KEY, token);
 };
 
 export const getCurrentUserId = (): string | null => {
-  const token = getCurrentToken();
-  if (token && token !== "") {
-    const decodedToken = jwt_decode<{ sub: string }>(token);
-    const sub = decodedToken.sub;
-    return sub;
-  } else {
-    console.error("Token not found in local storage");
-    return null;
+  if (isLoggedIn()) {
+    const token = getCurrentToken();
+    if (token && token !== "") {
+      try {
+        const decodedToken = jwt_decode<{ sub: string }>(token);
+        const sub = decodedToken.sub;
+        return sub;
+      } catch (error) {
+        console.error("Invalid token:", error);
+        setAuthToken("");
+      }
+    }
   }
-};
-
-export const getCurrentTokenExpiration = (): Date | null => {
-  const token = getCurrentToken();
-  if (token && token !== "") {
-    const decodedToken = jwt_decode<{ exp: number }>(token);
-    const date = new Date(new Date(0).setUTCSeconds(decodedToken.exp));
-    return date;
-  } else {
-    console.error("Token not found in local storage");
-    return null;
-  }
+  return null;
 };
