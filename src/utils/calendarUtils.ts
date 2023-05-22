@@ -27,8 +27,8 @@ export const getFormattedDate = (date: Date) => {
   return formattedDate;
 };
 
-export const getDayAndDayNumber = (date: Date) => {
-  const options = { weekday: "short" as const, day: "2-digit" as const };
+export const getMonthAndDayNumber = (date: Date) => {
+  const options = { month: "short" as const, day: "2-digit" as const };
   const formattedDate = date.toLocaleString("en-US", options);
 
   return formattedDate.split(" ");
