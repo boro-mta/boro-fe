@@ -61,3 +61,28 @@ export interface IMarkerDetails extends ICoordinate {
   title: string;
   imageIds: string[];
 }
+
+export enum ReservationStatus {
+  Canceled = 10,
+  Returned = 20,
+  Declined = 30,
+  Pending = 40,
+  Approved = 50,
+  Borrowed = 60,
+}
+
+export interface IReservationRow {
+  id: string;
+  itemTitle: string;
+  itemId: string;
+  itemImg: string;
+  itemDescription: string;
+  startDate: Date;
+  endDate: Date;
+  status: ReservationStatus;
+  partyName: string;
+  partyImg: string;
+  partyId: string;
+  requestTimestamp: Date;
+  updateTimestamp: Date;
+}
