@@ -15,7 +15,9 @@ const MinimizedUserDetails = ({ profileImg, fullName, partyId }: Props) => {
         <div className="img-container">
           <img className="img-data" src={profileImg} />
         </div>
-        <div className="name-container">{fullName}</div>
+        <div className="name-container" title={fullName}>
+          {fullName}
+        </div>
       </div>
     </Link>
   );

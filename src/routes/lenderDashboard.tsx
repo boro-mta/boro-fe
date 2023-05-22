@@ -43,8 +43,7 @@ let rows: IReservationRow[] = [
     itemTitle: "Healthcare Erbology",
     itemImg:
       "https://material-kit-pro-react.devias.io/assets/products/product-1.png",
-    itemDescription:
-      "Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1",
+    itemDescription: "Description for Item 1",
     startDate: new Date("2023-05-01"),
     endDate: new Date("2023-05-03"),
     status: ReservationStatus.Canceled,

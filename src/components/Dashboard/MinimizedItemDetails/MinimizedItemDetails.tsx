@@ -22,7 +22,9 @@ const MinimizedItemDetails = ({
           <img className="img-data" src={itemImg} />
         </div>
         <div className="data-container">
-          <div className="item-name">{itemName}</div>
+          <div className="item-name" title={itemName}>
+            {itemName}
+          </div>
           <div className="item-categories" title={itemCategories.join(", ")}>
             {itemCategories.join(", ")}
           </div>
