@@ -6,17 +6,19 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Container } from "@mui/material";
+import { Chip, Container } from "@mui/material";
+import DateContainer from "../components/DateContainer/DateContainer";
+import MinimizedItemDetails from "../components/Dashboard/MinimizedItemDetails/MinimizedItemDetails";
 
 type Props = {};
 
 enum ReservationStatus {
-  Canceled = 0,
-  Returned,
-  Declined,
-  Pending,
-  Approved,
-  Borrowed,
+  Canceled = 10,
+  Returned = 20,
+  Declined = 30,
+  Pending = 40,
+  Approved = 50,
+  Borrowed = 60,
 }
 
 interface IReservationRow {
@@ -29,6 +31,7 @@ interface IReservationRow {
   status: ReservationStatus;
   partyName: string;
   partyImg: string;
+  partyId: string;
   requestTimestamp: Date;
   updateTimestamp: Date;
 }
@@ -41,9 +44,11 @@ let rows: IReservationRow[] = [
     itemDescription: "Description for Item 1",
     startDate: new Date("2023-05-01"),
     endDate: new Date("2023-05-03"),
-    status: ReservationStatus.Pending,
-    partyName: "Person 1",
-    partyImg: "path-to-person-1-image",
+    status: ReservationStatus.Canceled,
+    partyName: "Rita BePita",
+    partyId: "123",
+    partyImg:
+      "https://material-kit-pro-react.devias.io/assets/avatars/avatar-carson-darrin.png",
     requestTimestamp: new Date(),
     updateTimestamp: new Date(),
   },
@@ -55,14 +60,65 @@ let rows: IReservationRow[] = [
     startDate: new Date("2023-05-03"),
     endDate: new Date("2023-05-05"),
     status: ReservationStatus.Approved,
-    partyName: "Person 2",
-    partyImg: "path-to-person-2-image",
+    partyName: "Mor AlfMor",
+    partyImg:
+      "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png",
+    partyId: "456",
+    requestTimestamp: new Date(),
+    updateTimestamp: new Date(),
+  },
+  {
+    id: "reservation-3",
+    itemTitle: "Item 3",
+    itemImg: "path-to-item-2-image",
+    itemDescription: "Description for Item 2",
+    startDate: new Date("2023-05-07"),
+    endDate: new Date("2023-05-16"),
+    status: ReservationStatus.Pending,
+    partyName: "Alon DoWon",
+    partyImg:
+      "https://material-kit-pro-react.devias.io/assets/avatars/avatar-anika-visser.png",
+    partyId: "789",
+    requestTimestamp: new Date(),
+    updateTimestamp: new Date(),
+  },
+  {
+    id: "reservation-4",
+    itemTitle: "Item 2",
+    itemImg: "path-to-item-2-image",
+    itemDescription: "Description for Item 2",
+    startDate: new Date("2023-05-09"),
+    endDate: new Date("2023-05-11"),
+    status: ReservationStatus.Declined,
+    partyName: "Alon Mordovai",
+    partyImg:
+      "https://material-kit-pro-react.devias.io/assets/avatars/avatar-jie-yan-song.png",
+    partyId: "111",
     requestTimestamp: new Date(),
     updateTimestamp: new Date(),
   },
 ];
 
 const lenderDashboard = (props: Props) => {
+  const getStatusChipColor = (
+    status: ReservationStatus
+  ): "default" | "secondary" | "error" | "primary" | "success" => {
+    switch (status) {
+      case ReservationStatus.Canceled:
+        return "default";
+      case ReservationStatus.Returned:
+        return "secondary";
+      case ReservationStatus.Declined:
+        return "error";
+      case ReservationStatus.Pending:
+        return "primary";
+      case ReservationStatus.Approved:
+      case ReservationStatus.Borrowed:
+        return "success";
+      default:
+        return "default";
+    }
+  };
   return (
     <Container>
       <>
@@ -87,14 +143,26 @@ const lenderDashboard = (props: Props) => {
                   <TableCell component="th" scope="row">
                     {row.itemTitle}
                   </TableCell>
-                  <TableCell>{row.partyName}</TableCell>
                   <TableCell>
-                    {row.startDate.toLocaleDateString("en-GB")}
+                    <MinimizedItemDetails
+                      fullName={row.partyName}
+                      profileImg={row.partyImg}
+                      partyId={row.partyId}
+                    />
                   </TableCell>
                   <TableCell>
-                    {row.endDate.toLocaleDateString("en-GB")}
+                    <DateContainer date={row.startDate} />
                   </TableCell>
-                  <TableCell>{row.status}</TableCell>
+                  <TableCell>
+                    <DateContainer date={row.endDate} />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={ReservationStatus[row.status]}
+                      variant="outlined"
+                      color={getStatusChipColor(row.status)}
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
