@@ -10,16 +10,14 @@ type Props = {
 
 const MinimizedUserDetails = ({ profileImg, fullName, partyId }: Props) => {
   return (
-    <div className="minimized-item-container">
-      <div className="img-container">
-        <img className="img-data" src={profileImg} />
+    <Link className="link-styles" to={`/users/${partyId}`}>
+      <div className="minimized-user-container">
+        <div className="img-container">
+          <img className="img-data" src={profileImg} />
+        </div>
+        <div className="name-container">{fullName}</div>
       </div>
-      <div className="name-container">
-        <Link className="name-data" to={`/users/${partyId}`}>
-          {fullName}
-        </Link>
-      </div>
-    </div>
+    </Link>
   );
 };
 

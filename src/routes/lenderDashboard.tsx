@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 import { Chip, Container } from "@mui/material";
 import DateContainer from "../components/DateContainer/DateContainer";
 import MinimizedUserDetails from "../components/Dashboard/MinimizedUserDetails/MinimizedUserDetails";
+import MinimizedItemDetails from "../components/Dashboard/MinimizedItemDetails/MinimizedItemDetails";
 
 type Props = {};
 
@@ -39,9 +40,11 @@ interface IReservationRow {
 let rows: IReservationRow[] = [
   {
     id: "reservation-1",
-    itemTitle: "Item 1",
-    itemImg: "path-to-item-1-image",
-    itemDescription: "Description for Item 1",
+    itemTitle: "Healthcare Erbology",
+    itemImg:
+      "https://material-kit-pro-react.devias.io/assets/products/product-1.png",
+    itemDescription:
+      "Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1Description for Item 1",
     startDate: new Date("2023-05-01"),
     endDate: new Date("2023-05-03"),
     status: ReservationStatus.Canceled,
@@ -54,8 +57,9 @@ let rows: IReservationRow[] = [
   },
   {
     id: "reservation-2",
-    itemTitle: "Item 2",
-    itemImg: "path-to-item-2-image",
+    itemTitle: "Makeup Lancome Rouge",
+    itemImg:
+      "https://material-kit-pro-react.devias.io/assets/products/product-2.png",
     itemDescription: "Description for Item 2",
     startDate: new Date("2023-05-03"),
     endDate: new Date("2023-05-05"),
@@ -69,8 +73,9 @@ let rows: IReservationRow[] = [
   },
   {
     id: "reservation-3",
-    itemTitle: "Item 3",
-    itemImg: "path-to-item-2-image",
+    itemTitle: "Healthcare Erbology",
+    itemImg:
+      "https://material-kit-pro-react.devias.io/assets/products/product-1.png",
     itemDescription: "Description for Item 2",
     startDate: new Date("2023-05-07"),
     endDate: new Date("2023-05-16"),
@@ -84,8 +89,9 @@ let rows: IReservationRow[] = [
   },
   {
     id: "reservation-4",
-    itemTitle: "Item 2",
-    itemImg: "path-to-item-2-image",
+    itemTitle: "Skincare Soja CO",
+    itemImg:
+      "https://material-kit-pro-react.devias.io/assets/products/product-5.png",
     itemDescription: "Description for Item 2",
     startDate: new Date("2023-05-09"),
     endDate: new Date("2023-05-11"),
@@ -141,7 +147,12 @@ const lenderDashboard = (props: Props) => {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.itemTitle}
+                    <MinimizedItemDetails
+                      itemId="123"
+                      itemImg={row.itemImg}
+                      itemCategories={[row.itemDescription]}
+                      itemName={row.itemTitle}
+                    />
                   </TableCell>
                   <TableCell>
                     <MinimizedUserDetails
