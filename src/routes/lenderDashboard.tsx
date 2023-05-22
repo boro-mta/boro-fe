@@ -10,6 +10,8 @@ import { Chip, Container } from "@mui/material";
 import DateContainer from "../components/DateContainer/DateContainer";
 import MinimizedUserDetails from "../components/Dashboard/MinimizedUserDetails/MinimizedUserDetails";
 import MinimizedItemDetails from "../components/Dashboard/MinimizedItemDetails/MinimizedItemDetails";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { useNavigate } from "react-router";
 
 type Props = {};
 
@@ -105,6 +107,8 @@ let rows: IReservationRow[] = [
 ];
 
 const lenderDashboard = (props: Props) => {
+  const navigate = useNavigate();
+
   const getStatusChipColor = (
     status: ReservationStatus
   ): "default" | "secondary" | "error" | "primary" | "success" => {
@@ -126,59 +130,64 @@ const lenderDashboard = (props: Props) => {
   };
   return (
     <Container>
-      <>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Item</TableCell>
-                <TableCell>Party</TableCell>
-                <TableCell>Start Date</TableCell>
-                <TableCell>End Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Item</TableCell>
+              <TableCell>Party</TableCell>
+              <TableCell>Start Date</TableCell>
+              <TableCell>End Date</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow
+                key={row.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  <MinimizedItemDetails
+                    itemId="123"
+                    itemImg={row.itemImg}
+                    itemCategories={[row.itemDescription]}
+                    itemName={row.itemTitle}
+                  />
+                </TableCell>
+                <TableCell>
+                  <MinimizedUserDetails
+                    fullName={row.partyName}
+                    profileImg={row.partyImg}
+                    partyId={row.partyId}
+                  />
+                </TableCell>
+                <TableCell>
+                  <DateContainer date={row.startDate} />
+                </TableCell>
+                <TableCell>
+                  <DateContainer date={row.endDate} />
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    label={ReservationStatus[row.status]}
+                    variant="outlined"
+                    color={getStatusChipColor(row.status)}
+                  />
+                </TableCell>
+                <TableCell>
+                  <ArrowForwardIcon
+                    fontSize="large"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate(`reservation/${row.id}`)}
+                  />
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    <MinimizedItemDetails
-                      itemId="123"
-                      itemImg={row.itemImg}
-                      itemCategories={[row.itemDescription]}
-                      itemName={row.itemTitle}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <MinimizedUserDetails
-                      fullName={row.partyName}
-                      profileImg={row.partyImg}
-                      partyId={row.partyId}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <DateContainer date={row.startDate} />
-                  </TableCell>
-                  <TableCell>
-                    <DateContainer date={row.endDate} />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={ReservationStatus[row.status]}
-                      variant="outlined"
-                      color={getStatusChipColor(row.status)}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Container>
   );
 };
