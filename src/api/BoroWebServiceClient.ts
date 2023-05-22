@@ -3,7 +3,8 @@ import IUserLoginResults from "./Models/IUserLoginResults";
 import ITokenInfo from "./Models/ITokenInfo";
 import {
   getCurrentToken,
-  getCurrentTokenExpiration,
+  isLoggedIn,
+  isTokenExpiringIn,
   setAuthToken,
 } from "../utils/authUtils";
 
@@ -16,12 +17,10 @@ export enum HttpOperation {
 
 class BoroWebServiceClient {
   private readonly webServiceUrl: string;
-  private readonly AuthTokenKey: string;
   private readonly defaultHeaders: object;
 
   constructor() {
     this.webServiceUrl = apiConfig.SERVER_URL + ":" + apiConfig.SERVER_PORT;
-    this.AuthTokenKey = apiConfig.AUTH_TOKEN_KEY;
     this.defaultHeaders = apiConfig.HEADERS;
 
     // Check token expiration every 5 minutes
@@ -33,26 +32,16 @@ class BoroWebServiceClient {
   private async refreshTokenIfExpiresIn(
     seconds: number = 300
   ): Promise<string | null> {
-    const expirationTime = getCurrentTokenExpiration();
-    if (expirationTime == null) {
-      console.log("no expiration info");
-      return null;
+    if (isLoggedIn()) {
+      if (isTokenExpiringIn(seconds)) {
+        console.log(
+          `Token will expire in the next ${seconds}seconds. Refreshing token.`
+        );
+        await this.refreshToken();
+      }
+      return getCurrentToken();
     }
-
-    const time = expirationTime.getTime();
-    const now = Date.now();
-    console.log(
-      `expiration time is: ${new Date(time)}UTC. Which is ${(time - now) /
-        1000}seconds from now.`
-    );
-
-    if (now < time && now + seconds * 1000 >= time) {
-      console.log(
-        `Token will expire in the next ${seconds}seconds. Refreshing token.`
-      );
-      await this.refreshToken();
-    }
-    return getCurrentToken();
+    return null;
   }
 
   private async refreshToken(): Promise<void> {
@@ -123,6 +112,7 @@ class BoroWebServiceClient {
       console.log(err);
     }
   }
+
   public async loginWithFacebook(
     accessToken: string,
     facebookId: string
@@ -139,13 +129,11 @@ class BoroWebServiceClient {
       console.log(fetchConfig);
 
       const response = await fetch(endpoint, fetchConfig);
-      const loginResponse: IUserLoginResults = await response.json();
-      const tokenDetails: ITokenInfo = {
-        ...loginResponse.tokenDetails,
-      };
-      setAuthToken(tokenDetails.token);
+      const loginResponse = (await response.json()) as IUserLoginResults;
 
-      return { ...loginResponse, tokenDetails: tokenDetails };
+      setAuthToken(loginResponse.tokenDetails.token);
+
+      return loginResponse;
     } catch (error) {
       console.log(
         `LoginWithFacebook failed. endpoint: ${endpoint}, headers: ${headers}`
