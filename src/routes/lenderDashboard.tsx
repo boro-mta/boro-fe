@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Chip, Container } from "@mui/material";
 import DateContainer from "../components/DateContainer/DateContainer";
-import MinimizedItemDetails from "../components/Dashboard/MinimizedItemDetails/MinimizedItemDetails";
+import MinimizedUserDetails from "../components/Dashboard/MinimizedUserDetails/MinimizedUserDetails";
 
 type Props = {};
 
@@ -144,7 +144,7 @@ const lenderDashboard = (props: Props) => {
                     {row.itemTitle}
                   </TableCell>
                   <TableCell>
-                    <MinimizedItemDetails
+                    <MinimizedUserDetails
                       fullName={row.partyName}
                       profileImg={row.partyImg}
                       partyId={row.partyId}
