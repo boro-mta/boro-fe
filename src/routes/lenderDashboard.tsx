@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Chip, Container } from "@mui/material";
+import { Chip, Container, Typography } from "@mui/material";
 import DateContainer from "../components/DateContainer/DateContainer";
 import MinimizedUserDetails from "../components/Dashboard/MinimizedUserDetails/MinimizedUserDetails";
 import MinimizedItemDetails from "../components/Dashboard/MinimizedItemDetails/MinimizedItemDetails";
@@ -106,7 +106,12 @@ let rows: IReservationRow[] = [
   },
 ];
 
-const lenderDashboard = (props: Props) => {
+interface IReusableTableProps {
+  sectionTitle: string;
+  rows: IReservationRow[];
+}
+
+const ReusableTableSection = ({ sectionTitle, rows }: IReusableTableProps) => {
   const navigate = useNavigate();
 
   const getStatusChipColor = (
@@ -128,66 +133,96 @@ const lenderDashboard = (props: Props) => {
         return "default";
     }
   };
+
+  return (
+    <div style={{ marginBottom: "10px" }}>
+      <Typography variant="h6" gutterBottom style={{ margin: "10px 0px" }}>
+        {sectionTitle} ({rows.length})
+      </Typography>
+
+      {rows.length > 0 && (
+        <TableContainer component={Paper} sx={{ borderRadius: "16px" }}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Item</TableCell>
+                <TableCell>Party</TableCell>
+                <TableCell>Start Date</TableCell>
+                <TableCell>End Date</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    <MinimizedItemDetails
+                      itemId="123"
+                      itemImg={row.itemImg}
+                      itemCategories={[row.itemDescription]}
+                      itemName={row.itemTitle}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <MinimizedUserDetails
+                      fullName={row.partyName}
+                      profileImg={row.partyImg}
+                      partyId={row.partyId}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <DateContainer date={row.startDate} />
+                  </TableCell>
+                  <TableCell>
+                    <DateContainer date={row.endDate} />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={ReservationStatus[row.status]}
+                      variant="outlined"
+                      color={getStatusChipColor(row.status)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <ArrowForwardIcon
+                      fontSize="large"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => navigate(`reservation/${row.id}`)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </div>
+  );
+};
+
+const lenderDashboard = (props: Props) => {
+  const completedRows = rows.filter(
+    (row) =>
+      row.endDate < new Date() && row.status !== ReservationStatus.Canceled
+  );
+  const pendingRows = rows.filter(
+    (row) => row.status === ReservationStatus.Pending
+  );
+  const ongoingRows = rows.filter(
+    (row) => row.startDate <= new Date() && row.endDate >= new Date()
+  );
+  const upcomingRows = rows.filter((row) => row.startDate > new Date());
+
   return (
     <Container>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Item</TableCell>
-              <TableCell>Party</TableCell>
-              <TableCell>Start Date</TableCell>
-              <TableCell>End Date</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  <MinimizedItemDetails
-                    itemId="123"
-                    itemImg={row.itemImg}
-                    itemCategories={[row.itemDescription]}
-                    itemName={row.itemTitle}
-                  />
-                </TableCell>
-                <TableCell>
-                  <MinimizedUserDetails
-                    fullName={row.partyName}
-                    profileImg={row.partyImg}
-                    partyId={row.partyId}
-                  />
-                </TableCell>
-                <TableCell>
-                  <DateContainer date={row.startDate} />
-                </TableCell>
-                <TableCell>
-                  <DateContainer date={row.endDate} />
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={ReservationStatus[row.status]}
-                    variant="outlined"
-                    color={getStatusChipColor(row.status)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <ArrowForwardIcon
-                    fontSize="large"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`reservation/${row.id}`)}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <ReusableTableSection rows={completedRows} sectionTitle={"Completed"} />
+      <ReusableTableSection rows={pendingRows} sectionTitle={"Pending"} />
+      <ReusableTableSection rows={ongoingRows} sectionTitle={"Ongoing"} />
+      <ReusableTableSection rows={upcomingRows} sectionTitle={"Upcoming"} />
     </Container>
   );
 };
