@@ -15,6 +15,7 @@ import {
   getFormattedDate,
 } from "../utils/calendarUtils";
 import { getItem } from "../api/ItemService";
+import { addReservationRequest } from "../api/ReservationService";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -102,6 +103,28 @@ const RequestToBookPage = (props: Props) => {
     setRequestEndDate(calendarEndDate);
     setOpen(false);
   };
+
+  const handleConfirmRequest = async () => {
+    debugger;
+    const forRequest = {
+      startDate: requestStartDate,
+      endDate: requestEndDate,
+      itemId
+    }
+
+    sendReservationRequest(forRequest);
+  };
+
+  const sendReservationRequest = async (reqBody: any) => {
+    try {
+      console.log(reqBody);
+      const reservationId = await addReservationRequest(reqBody);
+      console.log(reservationId);
+      navigate(`/reservationDetailsPage/${reservationId}`);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   const [serverRequestError, setServerRequestError] = useState<any>();
 
@@ -237,7 +260,7 @@ const RequestToBookPage = (props: Props) => {
                 datesToExclude={excludedDates}
               />
               {calendarStartDate && (
-                <p>start date: {calendarStartDate.toDateString()}</p> //todo: change <p>
+                <p>start date: {calendarStartDate.toDateString()}</p>
               )}
               {calendarEndDate && (
                 <p>end date: {calendarEndDate.toDateString()}</p>
@@ -262,15 +285,7 @@ const RequestToBookPage = (props: Props) => {
         <Button
           variant="contained"
           sx={{ mt: 1, mr: 1 }}
-          onClick={() =>
-            navigate(`/bookingCompletedPage/${itemId}`, {
-              state: {
-                selectedStartDate: requestStartDate,
-                selectedEndDate: requestEndDate,
-                excludedDates,
-              },
-            })
-          }
+          onClick={handleConfirmRequest}
         >
           Confirm
         </Button>

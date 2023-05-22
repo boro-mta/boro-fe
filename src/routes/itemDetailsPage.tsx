@@ -101,8 +101,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -130,7 +130,6 @@ const itemDetailsPage = (props: Props) => {
   useEffect(() => {
     const getFullDetails = async () => {
       let fullDetails: IFullItemDetailsNew;
-      debugger;
       if (itemId !== undefined && itemId.length > 5) {
         fullDetails = (await getItem(itemId)) as IFullItemDetailsNew;
         if (fullDetails.images != undefined) {
