@@ -16,11 +16,11 @@ function App() {
       updateUser({
         name: userLocalInfo.name,
         email: userLocalInfo.email,
-        id: userLocalInfo.id,
+        facebookId: userLocalInfo.facebookId,
         accessToken: userLocalInfo.accessToken,
         picture: userLocalInfo.picture,
         address: { latitude: 0, longitude: 0 },
-        guid: userLocalInfo.guid,
+        userId: userLocalInfo.guid,
       })
     );
 

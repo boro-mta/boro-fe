@@ -16,12 +16,13 @@ import { useNavigate } from "react-router";
 import {
   selectPicture,
   selectUserName,
-  selectGuid,
+  selectUserId,
   updateUser,
   initialState,
 } from "../../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import Divider from '@mui/material/Divider';
 
 function ResponsiveAppBar() {
 
@@ -43,32 +44,35 @@ function ResponsiveAppBar() {
       updateUser({
         name: userLocalInfo.name || "",
         email: userLocalInfo.email || "",
-        id: userLocalInfo.id,
+        facebookId: userLocalInfo.facebookId,
         accessToken: userLocalInfo.accessToken,
         picture: userLocalInfo.picture || "",
         address: { latitude: 0, longitude: 0 },
-        guid: userLocalInfo.guid
+        userId: userLocalInfo.guid
       }))
   }
 
   //Get the user's profile picture to show in avatar
   const profilePicture = useAppSelector(selectPicture);
 
-  const pages = ["Home", "Borrowers around me"];
+  const pages = ["Home"];
   const settings = ["Log In"];
   const userName = useAppSelector(selectUserName);
-  const userGuid = useAppSelector(selectGuid);
+  const userGuid = useAppSelector(selectUserId);
 
   //In case the user is logged in and in redux is not represented as Guest
   //Change the options in the app bar menu
   if (userName != "Guest") {
     settings.pop();
-    settings.push("Profile");
+
     settings.push("Chats");
+    settings.push("Reservations");
+    settings.push("divider")
+    settings.push("Add Item");
+    settings.push("Dashboard");
+    settings.push("divider")
+    settings.push("Profile");
     settings.push("Log Out");
-    pages.push("Create New Borrow");
-    pages.push("My Items");
-    pages.push("My Borrows");
   }
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -121,7 +125,13 @@ function ResponsiveAppBar() {
     }
 
     if (setting === "Log Out") {
+      //Return the redux to its initial state
       dispatch(updateUser(initialState));
+
+      //Clear every saved data including token and user information
+      localStorage.clear();
+
+      //Change the app bar options Guest options
       pages.pop();
       settings.pop();
       settings.pop();
@@ -250,14 +260,19 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem
-                  key={setting}
-                  onClick={() => handleSettingButtonClick(setting)}
-                >
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              {settings.map((setting) => {
+                if (setting === "divider") {
+                  return <Divider key={setting} />;
+                }
+                return (
+                  <MenuItem
+                    key={setting}
+                    onClick={() => handleSettingButtonClick(setting)}
+                  >
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                )
+              })}
             </Menu>
           </Box>
         </Toolbar>

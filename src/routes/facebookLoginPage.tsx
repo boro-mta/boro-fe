@@ -33,11 +33,11 @@ const FacebookLoginPage = () => {
       updateUser({
         name: userLocalInfo.name || "",
         email: userLocalInfo.email || "",
-        id: userLocalInfo.id,
+        facebookId: userLocalInfo.facebookId,
         accessToken: userLocalInfo.accessToken,
         picture: userLocalInfo.picture || "",
         address: { latitude: 0, longitude: 0 },
-        guid: userLocalInfo.guid || ""
+        userId: userLocalInfo.guid || ""
       }))
   }
 
@@ -54,11 +54,11 @@ const FacebookLoginPage = () => {
       updateUser({
         name: response.name || "",
         email: response.email || "",
-        id: response.id,
+        facebookId: response.id,
         accessToken: response.accessToken,
         picture: pictureUrl || "",
         address: { latitude: 0, longitude: 0 },
-        guid: "",
+        userId: "",
       })
     );
 
@@ -82,7 +82,7 @@ const FacebookLoginPage = () => {
       dispatch(
         updatePartialUser({
           picture: pictureUrl || "",
-          guid: backendResponse.userId,
+          userId: backendResponse.userId,
         })
       );
       console.log(backendResponse);
@@ -92,7 +92,7 @@ const FacebookLoginPage = () => {
       const savedUser = {
         name: response.name || "",
         email: response.email || "",
-        id: response.id,
+        facebookId: response.id,
         accessToken: response.accessToken,
         picture: pictureUrl || "",
         guid: backendResponse.userId

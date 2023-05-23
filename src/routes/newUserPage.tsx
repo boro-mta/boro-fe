@@ -9,7 +9,7 @@ import {
   selectEmail,
   selectUserName,
   selectPicture,
-  selectGuid
+  selectUserId
 } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { updateUser as apiUpdateUser } from "../api/UserService"
@@ -38,7 +38,7 @@ const NewUserPage = (props: Props) => {
   const userFullName = useAppSelector(selectUserName);
   const userProfilePicture = useAppSelector(selectPicture);
   const [firstName, lastName] = userFullName.split(" ");
-  const userGuid = useAppSelector(selectGuid);
+  const userId = useAppSelector(selectUserId);
 
   const formik = useFormik({
     initialValues: {
@@ -78,14 +78,14 @@ const NewUserPage = (props: Props) => {
         updateUser({
           ...initialState,
           name: firstName + " " + lastName,
-          guid: userGuid,
+          userId: userId,
           picture: userProfilePicture,
           email: formik.values.email,
         })
       );
 
       //Navigate to the new user's page
-      navigate("/Users/" + userGuid);
+      navigate("/Users/" + userId);
     } catch (error) {
       console.error("Failed to create user:", error);
     }
@@ -115,6 +115,7 @@ const NewUserPage = (props: Props) => {
           id="email"
           name="email"
           label="Email"
+          required={true}
           multiline
           margin="normal"
           value={formik.values.email}

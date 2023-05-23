@@ -7,9 +7,10 @@ import { allUserDetails } from "../mocks/userDetails";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
 import { items } from "../mocks/items";
 import Button from "@mui/material/Button";
-import { selectGuid, selectPicture } from "../features/UserSlice";
+import { selectUserId, selectPicture } from "../features/UserSlice";
 import { useAppSelector } from "../app/hooks";
 import { getUserProfile } from "../api/UserService";
+import { getCurrentUserId } from "../utils/authUtils";
 
 type Props = {};
 
@@ -19,8 +20,8 @@ const userPage = (props: Props) => {
     );
 
 
-    //Gets the user's Id
-    const userCurrentId = useAppSelector(selectGuid);
+    //Gets the user's Id, Consider deleting
+    const userCurrentId = getCurrentUserId();
 
     //A boolean object defining wether the user owns the current profile
     const [isOwner, setIsOwner] = useState(false);
