@@ -19,8 +19,6 @@ let rows: IReservationRow[] = [
     partyId: "123",
     partyImg:
       "https://material-kit-pro-react.devias.io/assets/avatars/avatar-carson-darrin.png",
-    requestTimestamp: new Date(),
-    updateTimestamp: new Date(),
   },
   {
     id: "reservation-2",
@@ -36,8 +34,6 @@ let rows: IReservationRow[] = [
     partyImg:
       "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png",
     partyId: "456",
-    requestTimestamp: new Date(),
-    updateTimestamp: new Date(),
   },
   {
     id: "reservation-3",
@@ -53,8 +49,6 @@ let rows: IReservationRow[] = [
     partyImg:
       "https://material-kit-pro-react.devias.io/assets/avatars/avatar-anika-visser.png",
     partyId: "789",
-    requestTimestamp: new Date(),
-    updateTimestamp: new Date(),
   },
   {
     id: "reservation-4",
@@ -70,8 +64,6 @@ let rows: IReservationRow[] = [
     partyImg:
       "https://material-kit-pro-react.devias.io/assets/avatars/avatar-jie-yan-song.png",
     partyId: "111",
-    requestTimestamp: new Date(),
-    updateTimestamp: new Date(),
   },
 ];
 

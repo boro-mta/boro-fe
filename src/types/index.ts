@@ -83,6 +83,4 @@ export interface IReservationRow {
   partyName: string;
   partyImg: string;
   partyId: string;
-  requestTimestamp: Date;
-  updateTimestamp: Date;
 }
