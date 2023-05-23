@@ -13,6 +13,7 @@ import { getReservation } from "../api/ReservationService";
 import { getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
 import { getCurrentUserId } from "../utils/authUtils";
+import IUserProfile from "../api/Models/IUserProfile";
 
 type IReservationDetailsParams = {
     reservationId: string;
@@ -41,11 +42,17 @@ const ReservationDetailsPage = (props: Props) => {
         excludedDates: [],
     });
 
-    const [relevantPersonDetails, setRelevantPersonDetails] = useState<IUserDetails>({
+    const [relevantPersonDetails, setRelevantPersonDetails] = useState<IUserProfile>({
         firstName: "",
         lastName: "",
+        facebookId: "",
         userId: "",
-        profileImage: "",
+        email: "",
+        image:
+        {
+            base64ImageData: "",
+            base64ImageMetaData: ""
+        },
         dateJoined: "",
         longitude: 0,
         latitude: 0,

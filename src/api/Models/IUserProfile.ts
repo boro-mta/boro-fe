@@ -1,3 +1,6 @@
+import { IInputImage } from "../../types";
+
+
 export default interface IUserProfile {
   userId: string;
   facebookId: string;
@@ -8,4 +11,10 @@ export default interface IUserProfile {
   email: string;
   latitude: number;
   longitude: number;
+  // image: {
+  //   imageId: string,
+  //   base64ImageMetaData: string,
+  //   base64ImageData: string
+  // };
+  image: IInputImage
 }
