@@ -12,6 +12,7 @@ import Grid from '@mui/material/Grid';
 import { getReservation } from "../api/ReservationService";
 import { getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
+import { getCurrentUserId } from "../utils/authUtils";
 
 type IReservationDetailsParams = {
     reservationId: string;
@@ -55,9 +56,12 @@ const ReservationDetailsPage = (props: Props) => {
 
     const [serverRequestError, setServerRequestError] = useState<any>();
     const [otherPerson, setOtherPerson] = useState<boolean>();
+    const [userId, serUserId] = useState<string>();
+    const [isLender, setIsLender] = useState<boolean>();
 
     let itemServerDetails: IFullItemDetailsNew;
-    let relevantPersonServerDetails: any;
+    let personServerDetails: any;
+    let serverUserId: string | null;
 
     useEffect(() => {
         const getReservationDetails = async () => {
@@ -71,8 +75,24 @@ const ReservationDetailsPage = (props: Props) => {
                     itemServerDetails = (await getItem(reservationItemId)) as IFullItemDetailsNew;
                     setItemDetails(itemServerDetails);
 
-                    relevantPersonServerDetails = await getUserProfile(reservationDetails.lenderId);
-                    setRelevantPersonDetails(relevantPersonServerDetails);
+                    serverUserId = await getCurrentUserId();
+
+                    if (serverUserId === reservationDetails.lenderId) {
+                        //this is lender
+                        console.log("Lender");
+                        setIsLender(true);
+                        personServerDetails = await getUserProfile(reservationDetails.borrowerId);
+                    }
+                    else {
+                        //this is borrower
+                        console.log("borrower");
+                        setIsLender(false);
+                        personServerDetails = await getUserProfile(reservationDetails.lenderId);
+                    }
+
+                    if (personServerDetails) {
+                        setRelevantPersonDetails(personServerDetails);
+                    }
                 }
                 catch (err) {
                     console.log("Error while loading reservation");
@@ -103,12 +123,10 @@ const ReservationDetailsPage = (props: Props) => {
                 Reservation Details Page
             </Typography>
 
-
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12}>
+                    {!isLender && <Grid item xs={12}>
                         <Item>
-                            {/* todo: shoe that only in case this this the borrower */}
                             <Typography component={"span"} variant="h6">
                                 Veriffication Pending
                             </Typography>
@@ -117,7 +135,8 @@ const ReservationDetailsPage = (props: Props) => {
                             </Typography>
                         </Item>
                     </Grid>
-                    <Grid item xs={12}>
+                    }
+                    {isLender && <Grid item xs={12}>
                         <Item>
                             <div style={{
                                 display: "flex",
@@ -132,13 +151,15 @@ const ReservationDetailsPage = (props: Props) => {
                             </div>
                         </Item>
                     </Grid>
-                    <Grid item xs={12}>
+                    }
+                    {!isLender && <Grid item xs={12}>
                         <Item>
                             <Button variant="outlined" color="error" onClick={() => { }}>
                                 Cancel
                             </Button>
                         </Item>
                     </Grid>
+                    }
                     <Grid item xs={12}>
                         <Item>
                             <div
@@ -216,27 +237,29 @@ const ReservationDetailsPage = (props: Props) => {
                                     alignItems: "center",
                                 }}
                             >
-                                <Typography variant="h6" sx={{ marginRight: "10px" }}>
+                                {!isLender && <Typography variant="h6" sx={{ marginRight: "10px" }}>
                                     About the lender:{" "}
                                 </Typography>
-                                {/* <Typography variant="h6" sx={{ marginRight: "10px" }}>
+                                }
+                                {isLender && <Typography variant="h6" sx={{ marginRight: "10px" }}>
                                     About the borrower:{" "}
-                                </Typography> */}
-                                {/* todo: change to relevant title */}
+                                </Typography>
+                                }
                                 <Typography variant="body1">{relevantPersonDetails.about}</Typography>
-                                {/* todo: change to status not by number */}
                             </div>
                         </Item>
                     </Grid>
 
                     <Grid item xs={5}>
                         <Item>
-                            {/* <Typography variant="h6">
-                                {reservationDetails.startDate}
-                            </Typography> */}
-                            <DateContainer date={new Date(reservationDetails.startDate)} />
-
-
+                            <div style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                            }}>
+                                <Typography variant="body1">Start Date</Typography>
+                                <DateContainer date={new Date(reservationDetails.startDate)} />
+                            </div>
                         </Item>
                     </Grid>
                     <Grid item xs={2}>
@@ -248,9 +271,14 @@ const ReservationDetailsPage = (props: Props) => {
                     </Grid>
                     <Grid item xs={5}>
                         <Item>
-                            <Typography variant="h6">
-                                {reservationDetails.endDate}
-                            </Typography>
+                            <div style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                            }}>
+                                <Typography variant="body1">End Date</Typography>
+                                <DateContainer date={new Date(reservationDetails.endDate)} />
+                            </div>
                         </Item>
                     </Grid>
                 </Grid>
