@@ -11,6 +11,7 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { getReservation } from "../api/ReservationService";
 import { getUserProfile } from "../api/UserService";
+import DateContainer from "../components/DateContainer/DateContainer";
 
 type IReservationDetailsParams = {
     reservationId: string;
@@ -118,6 +119,28 @@ const ReservationDetailsPage = (props: Props) => {
                     </Grid>
                     <Grid item xs={12}>
                         <Item>
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                            }}>
+                                <Button variant="contained" color="success" onClick={() => { }}>
+                                    Approve
+                                </Button>
+                                <Button variant="outlined" color="error">
+                                    Reject
+                                </Button>
+                            </div>
+                        </Item>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Item>
+                            <Button variant="outlined" color="error" onClick={() => { }}>
+                                Cancel
+                            </Button>
+                        </Item>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Item>
                             <div
                                 style={{
                                     display: "flex",
@@ -196,6 +219,10 @@ const ReservationDetailsPage = (props: Props) => {
                                 <Typography variant="h6" sx={{ marginRight: "10px" }}>
                                     About the lender:{" "}
                                 </Typography>
+                                {/* <Typography variant="h6" sx={{ marginRight: "10px" }}>
+                                    About the borrower:{" "}
+                                </Typography> */}
+                                {/* todo: change to relevant title */}
                                 <Typography variant="body1">{relevantPersonDetails.about}</Typography>
                                 {/* todo: change to status not by number */}
                             </div>
@@ -204,9 +231,12 @@ const ReservationDetailsPage = (props: Props) => {
 
                     <Grid item xs={5}>
                         <Item>
-                            <Typography variant="h6">
+                            {/* <Typography variant="h6">
                                 {reservationDetails.startDate}
-                            </Typography>
+                            </Typography> */}
+                            <DateContainer date={new Date(reservationDetails.startDate)} />
+
+
                         </Item>
                     </Grid>
                     <Grid item xs={2}>
