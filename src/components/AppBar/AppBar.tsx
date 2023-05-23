@@ -102,16 +102,6 @@ function ResponsiveAppBar() {
     if (page === "Home") {
       navigate("/");
     }
-
-    if (page === "Create New Borrow") {
-      navigate("/addItem");
-    }
-    if (page === "My Items") {
-      navigate("/myItems");
-    }
-    if (page === "Lending Dashboard") {
-      navigate("/lenderDashboard");
-    }
   };
 
   const handleSettingButtonClick = (setting: any) => {
@@ -132,13 +122,21 @@ function ResponsiveAppBar() {
       localStorage.clear();
 
       //Change the app bar options Guest options
-      pages.pop();
-      settings.pop();
-      settings.pop();
-      settings.pop();
+      //First, pop every thing
+      for (let i = 0; i < settings.length; i++) {
+        settings.pop();
+      }
+
+      //Then, add log in
       settings.push("Log In");
+
+      //navigate back to home page
       navigate("/");
       window.location.reload();
+    }
+
+    if (setting === "Add Item") {
+      navigate("/addItem");
     }
   };
 
