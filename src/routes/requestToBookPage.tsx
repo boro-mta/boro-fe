@@ -16,44 +16,13 @@ import {
 } from "../utils/calendarUtils";
 import { getItem } from "../api/ItemService";
 import { addReservationRequest } from "../api/ReservationService";
+import { Row } from "../components/ItemDetailsTable/ItemDetailsTable";
 
 type IFullItemDetailsParams = {
   itemId: string;
 };
 
 type Props = {};
-
-interface IRowData {
-  key: string;
-  value: string;
-}
-
-interface ITableData {
-  tableData: IRowData[];
-}
-
-const Row = ({ tableData }: ITableData) => {
-  return (
-    <div>
-      {tableData.map((row, i) => (
-        <div key={i}>
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <Typography
-              variant="body1"
-              sx={{ flexBasis: "50%", color: "darkgray" }}
-            >
-              {row.key}
-            </Typography>
-            <Typography variant="body1" sx={{ flexBasis: "50%" }}>
-              {row.value}
-            </Typography>
-          </div>
-          {i < tableData.length - 1 && <Divider sx={{ margin: "5px" }} />}
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const RequestToBookPage = (props: Props) => {
   const location = useLocation();
@@ -120,7 +89,7 @@ const RequestToBookPage = (props: Props) => {
       console.log(reqBody);
       const reservationId = await addReservationRequest(reqBody);
       console.log(reservationId);
-      navigate(`/reservationDetailsPage/${reservationId}`);
+      navigate(`/reservationDetails/${reservationId}`);
     } catch (e) {
       console.log(e);
     }

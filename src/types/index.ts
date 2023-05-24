@@ -71,3 +71,13 @@ export interface IReservationDetails {
   endDate: string;
   status: number;
 }
+
+export interface IRowData {
+  key: string;
+  value: string;
+}
+
+export interface ITableData {
+  tableData: IRowData[];
+}
+

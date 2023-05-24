@@ -248,7 +248,7 @@ const itemDetailsPage = (props: Props) => {
             width: "96%",
           }}
           onClick={() => {
-            navigate(`/requestToBookPage/${itemId}`, {
+            navigate(`/requestToBook/${itemId}`, {
               state: {
                 selectedStartDate: startDate,
                 selectedEndDate: endDate,

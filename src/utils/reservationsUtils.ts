@@ -1,7 +1,4 @@
-import { IReservationDetails } from "../types";
-
-export enum ReservationStatus
-{
+export enum ReservationStatus {
     Canceled = 0,
     Returned = 10,
     Declined = 20,

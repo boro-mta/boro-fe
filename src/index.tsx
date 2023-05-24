@@ -81,11 +81,11 @@ const router = [
     element: <EditItemPage />,
   },
   {
-    path: "/requestToBookPage/:itemId",
+    path: "/requestToBook/:itemId",
     element: <RequestToBookPage />,
   },
   {
-    path: "/reservationDetailsPage/:reservationId",
+    path: "/reservationDetails/:reservationId",
     element: <ReservationDetailsPage />,
   },
   {

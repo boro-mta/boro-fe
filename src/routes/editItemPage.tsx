@@ -32,7 +32,6 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
 import { IFullItemDetailsNew } from "../types";
-import { debug } from "console";
 import { useAppSelector } from "../app/hooks";
 import { selectAddress } from "../features/UserSlice";
 import { editItem, getItem } from "../api/ItemService";
