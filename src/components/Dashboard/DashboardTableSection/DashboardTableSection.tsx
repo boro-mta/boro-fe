@@ -1,5 +1,6 @@
 import React from "react";
-import { IReservationRow, ReservationStatus } from "../../../types";
+import { IReservationRow } from "../../../types";
+ReservationStatus;
 import { useNavigate } from "react-router";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -13,6 +14,7 @@ import DateContainer from "../../../components/DateContainer/DateContainer";
 import MinimizedUserDetails from "../MinimizedUserDetails/MinimizedUserDetails";
 import MinimizedItemDetails from "../MinimizedItemDetails/MinimizedItemDetails";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { ReservationStatus } from "../../../utils/reservationsUtils";
 
 type Props = {
   sectionTitle: string;

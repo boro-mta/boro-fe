@@ -1,4 +1,5 @@
-import { IReservationRow, ReservationStatus } from "../types";
+import { IReservationRow } from "../types";
+import { ReservationStatus } from "../utils/reservationsUtils";
 
 export const rows: IReservationRow[] = [
   {

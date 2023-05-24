@@ -1,3 +1,5 @@
+import { ReservationStatus } from "../utils/reservationsUtils";
+
 export interface IItem {
   itemId: string;
   title: string;
@@ -95,4 +97,18 @@ export interface IReservation {
   startDate: string;
   endDate: Date;
   status: number;
+}
+
+export interface IReservationRow {
+  reservationId: string;
+  itemTitle: string;
+  itemId: string;
+  itemImg: string;
+  itemDescription: string;
+  startDate: Date;
+  endDate: Date;
+  status: ReservationStatus;
+  partyName: string;
+  partyImg: string;
+  partyId: string;
 }

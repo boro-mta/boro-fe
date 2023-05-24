@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Container } from "@mui/material";
-import { IReservationRow, ReservationStatus } from "../types";
+import { IReservationRow } from "../types";
 import DashboardTableSection from "../components/Dashboard/DashboardTableSection/DashboardTableSection";
 import { getAllReservationsDataOfLender } from "../api/ReservationService";
+import { ReservationStatus } from "../utils/reservationsUtils";
 
 type Props = {};
 
