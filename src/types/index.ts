@@ -26,6 +26,12 @@ export interface IFullItemDetailsNew {
   excludedDates: Date[];
 }
 
+export interface IUserItem {
+  id: string;
+  title: string;
+  imageIds: string[];
+}
+
 export interface ICoordinate {
   latitude: number;
   longitude: number;

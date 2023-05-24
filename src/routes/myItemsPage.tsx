@@ -3,7 +3,7 @@ import { getItemsByUser } from "../api/ItemService";
 import { useAppSelector } from "../app/hooks";
 import { selectGuid } from "../features/UserSlice";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
-import { IItem } from "../types";
+import { IItem, IUserItem } from "../types";
 import { getImgById } from "../api/ImageService";
 
 type Props = {};
@@ -14,16 +14,14 @@ const myItemsPage = (props: Props) => {
 
   useEffect(() => {
     const getMyItems = async () => {
-      const items = (await getItemsByUser(userGuid)) as IItem[];
+      const items = (await getItemsByUser(userGuid)) as IUserItem[];
       if (Array.isArray(items) && items.length > 0) {
         let itemsWithImagesPromises = items.map(async (item, i) => {
           let currObj: IItem = {
-            itemId: item.itemId, // We also have a bug the server returns item.id instead of item.itemId
+            itemId: item.id,
             title: item.title,
           };
-          // TODO When BE returns also imageId or image:
-          //   let itemImg = await getImgById(item.itemId);
-          //   currObj.img = itemImg;
+          currObj.img = await getImgById(item.imageIds[0]);
 
           return currObj;
         });
