@@ -192,24 +192,6 @@ const EditItemPage = (props: Props) => {
     return imagesForBody;
   };
 
-  const checkIfCategoryExist = (category: string): boolean => {
-    for (let i = 0; i < categoryArr.length; i++) {
-      const categoryFromUserLowerCase: string = category.toLowerCase();
-      const categoryFromArr: String = categoryArr[i].text;
-      const categoryFromArrLowerCase: String = categoryFromArr.toLowerCase();
-
-      if (categoryFromArrLowerCase === categoryFromUserLowerCase) {
-        return true;
-      }
-    }
-
-    return false;
-  };
-
-  const addCategoryToArr = (category: any) => {
-    setCategoryArr((current: any) => [...current, category]);
-  };
-
   const address = useAppSelector(selectAddress);
 
   const onEditItem = () => {
@@ -273,7 +255,7 @@ const EditItemPage = (props: Props) => {
 
   const getConditionFronItemDetails = (conditionFromServer: any): any => {
     let contiditionToReturn: any = "";
-    conditionArr.forEach(function(value) {
+    conditionArr.forEach(function (value) {
       if (value.text === conditionFromServer) {
         contiditionToReturn = value;
       }
@@ -284,16 +266,16 @@ const EditItemPage = (props: Props) => {
 
   return (
     <Container>
-      <Typography component={"span"} variant="h3">
+      <Typography variant="h3">
         Edit Item
       </Typography>
-      <Box sx={{ maxWidth: 400 }}>
+      <Box>
         <Stepper activeStep={activeStep} orientation="vertical">
           {/* step 1 */}
           <Step key={"Fill Item Information"}>
             <StepLabel>{"Fill Item Information"}</StepLabel>
             <StepContent>
-              <Box sx={{ height: "100%" }}>
+              <Box>
                 <Typography component={"span"}>
                   <fieldset
                     disabled={formik.isSubmitting}
@@ -301,7 +283,6 @@ const EditItemPage = (props: Props) => {
                   >
                     <form onSubmit={formik.handleSubmit}>
                       <TextField
-                        fullWidth
                         required
                         id="title"
                         name="title"
@@ -315,7 +296,6 @@ const EditItemPage = (props: Props) => {
                         helperText={formik.touched.title && formik.errors.title}
                       />
                       <TextField
-                        fullWidth
                         required
                         id="description"
                         name="description"
@@ -334,7 +314,7 @@ const EditItemPage = (props: Props) => {
                         }
                       />
 
-                      <Autocomplete
+                      {itemDetails.condition != "" && <Autocomplete
                         id="condition"
                         options={conditionArr}
                         value={getConditionFronItemDetails(
@@ -352,18 +332,20 @@ const EditItemPage = (props: Props) => {
                           <TextField
                             {...params}
                             label="Condition"
+                            margin="normal"
                             placeholder="Choose your item condition"
                           />
                         )}
                       />
+                      }
 
                       {/* categories - Autocomplete */}
-                      <Stack spacing={3} sx={{ width: 500 }}>
-                        {itemDetails.categories.length && (
+                      <Stack spacing={3}>
+                        {itemDetails.categories.length > 0 && (
                           <Autocomplete
                             defaultValue={itemDetails.categories}
                             multiple
-                            id="tags-outlined"
+                            id="editCategories"
                             options={categoryArr}
                             getOptionLabel={(option: any) => option}
                             filterSelectedOptions
@@ -374,6 +356,7 @@ const EditItemPage = (props: Props) => {
                               <TextField
                                 {...params}
                                 label="Categories"
+                                margin="normal"
                                 placeholder="Choose categories for your item"
                               />
                             )}
@@ -401,7 +384,6 @@ const EditItemPage = (props: Props) => {
                     <Alert
                       onClose={() => setOpen(false)}
                       severity={isAddSuccess ? "success" : "error"}
-                      sx={{ width: "100%" }}
                     >
                       {isAddSuccess
                         ? "The item was added successfully!"
@@ -410,7 +392,7 @@ const EditItemPage = (props: Props) => {
                   </Snackbar>
                 </Typography>
 
-                <Box sx={{ mb: 2 }}>
+                <Box>
                   <div>
                     <Button
                       disabled={true}
