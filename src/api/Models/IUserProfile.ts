@@ -7,14 +7,9 @@ export default interface IUserProfile {
   firstName: string;
   lastName: string;
   about: string;
-  dateJoined: string; //should be date in the future
+  dateJoined: string;
   email: string;
   latitude: number;
   longitude: number;
-  // image: {
-  //   imageId: string,
-  //   base64ImageMetaData: string,
-  //   base64ImageData: string
-  // };
   image: IInputImage
 }

@@ -6,15 +6,12 @@ export const addReservationRequest = async (reservationDetails: any) => {
     const itemId = reservationDetails.itemId;
     console.log("addReservationRequest - entry with " + itemId);
     const endpoint = `Reservations/${itemId}/Request`;
-    debugger;
     const reservationIdObject: any = await BoroWSClient.request<IItemResponse>(
         HttpOperation.POST,
         endpoint,
         reservationDetails
     );
 
-    console.log(reservationIdObject);
-    console.log(reservationIdObject.reservationId);
     return reservationIdObject.reservationId;
 };
 
