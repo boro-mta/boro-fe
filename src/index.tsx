@@ -29,11 +29,13 @@ import AddItemPage from "./routes/addItemPage";
 import UserEditPage from "./routes/userEditPage";
 import NewUserPage from "./routes/newUserPage";
 import EditItemPage from "./routes/editItemPage";
+import RequestToBookPage from "./routes/requestToBookPage";
 import ResponsiveAppBar from "./components/AppBar/AppBar";
 import MyAddressesPage from "./routes/myAddressesPage";
 import MyItemsPage from "./routes/myItemsPage";
 import LenderDashboard from "./routes/lenderDashboard";
 import BorrowerDashboard from "./routes/borrowerDashboard";
+import ReservationDetailsPage from "./routes/resarvationDetailsPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -80,8 +82,16 @@ const router = [
     element: <NewUserPage />,
   },
   {
-    path: "editItem/:itemId",
+    path: "/editItem/:itemId",
     element: <EditItemPage />,
+  },
+  {
+    path: "/requestToBook/:itemId",
+    element: <RequestToBookPage />,
+  },
+  {
+    path: "/reservationDetails/:reservationId",
+    element: <ReservationDetailsPage />,
   },
   {
     path: "address",
