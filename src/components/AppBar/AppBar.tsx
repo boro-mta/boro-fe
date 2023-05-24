@@ -43,6 +43,7 @@ function ResponsiveAppBar() {
     pages.push("My Items");
     pages.push("Lender Dashboard");
     pages.push("Borrower Dashboard");
+    pages.push("My Addresses");
   }
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -84,6 +85,9 @@ function ResponsiveAppBar() {
     }
     if (page === "Borrower Dashboard") {
       navigate("/borrowerDashboard");
+    }
+    if (page === "My Addresses") {
+      navigate("/address");
     }
   };
 

@@ -32,7 +32,10 @@ const lenderDashboard = (props: Props) => {
     (row) => row.status === ReservationStatus.Pending
   );
   const ongoingRows = rows.filter(
-    (row) => row.startDate <= new Date() && row.endDate >= new Date()
+    (row) =>
+      row.startDate <= new Date() &&
+      row.endDate >= new Date() &&
+      row.status === ReservationStatus.Approved
   );
   const upcomingRows = rows.filter((row) => row.startDate > new Date());
 

@@ -72,7 +72,9 @@ export const getAllReservationsDataOfLender = async (
           let userData = (await getUserProfile(
             reservation.borrowerId
           )) as IUserProfile;
-          let partyImg = formatImagesOnRecieve([userData.image])[0];
+          let partyImg = userData.image
+            ? formatImagesOnRecieve([userData.image])[0]
+            : "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png";
 
           let x = {
             reservationId: reservation.reservationId,
