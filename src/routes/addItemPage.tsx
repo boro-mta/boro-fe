@@ -109,7 +109,7 @@ const addItemPage = (props: Props) => {
 
   const navigate = useNavigate();
 
-  const formik = useFormik({
+  const formik: any = useFormik({
     initialValues: {
       title: "",
       description: "",
@@ -258,16 +258,6 @@ const addItemPage = (props: Props) => {
     }
   };
 
-  const recalculateCharsFreeText = (event: any) => {
-    const charCount = event.target.value.length;
-    if (charCount === 250) {
-      setFreeTextChar(freeTextChar);
-    } else {
-      setFreeTextChar(event.target.value);
-    }
-    setFreeTextCount(event.target.value.length);
-  };
-
   // vertical stepper:
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -294,20 +284,16 @@ const addItemPage = (props: Props) => {
   };
   return (
     <Container>
-      <Typography component={"span"} variant="h3">
+      <Typography variant="h3">
         Add New Item
       </Typography>
-      <Box sx={{ maxWidth: 400 }}>
+      <Box>
         <Stepper activeStep={activeStep} orientation="vertical">
           {/* step 1 */}
           <Step key={"Fill Item Information"}>
             <StepLabel>{"Fill Item Information"}</StepLabel>
             <StepContent>
-              <Box
-                sx={{
-                  height: "100%",
-                }}
-              >
+              <Box>
                 <Typography component={"span"}>
                   <fieldset
                     disabled={formik.isSubmitting}
@@ -315,7 +301,7 @@ const addItemPage = (props: Props) => {
                   >
                     <form onSubmit={formik.handleSubmit}>
                       <TextField
-                        fullWidth
+                        //fullWidth
                         required
                         id="title"
                         name="title"
@@ -329,7 +315,7 @@ const addItemPage = (props: Props) => {
                         helperText={formik.touched.title && formik.errors.title}
                       />
                       <TextField
-                        fullWidth
+                        // fullWidth
                         required
                         id="description"
                         name="description"
@@ -359,13 +345,13 @@ const addItemPage = (props: Props) => {
                           <TextField
                             {...params}
                             label="Condition"
+                            margin="normal"
                             placeholder="Choose your item condition"
                           />
                         )}
                       />
 
-                      {/* categories - Autocomplete */}
-                      <Stack spacing={3} sx={{ width: 500 }}>
+                      <Stack spacing={3}>
                         <Autocomplete
                           multiple
                           id="tags-outlined"
@@ -379,6 +365,7 @@ const addItemPage = (props: Props) => {
                             <TextField
                               {...params}
                               label="Categories"
+                              margin="normal"
                               placeholder="Choose categories for your item"
                             />
                           )}
@@ -405,7 +392,6 @@ const addItemPage = (props: Props) => {
                     <Alert
                       onClose={() => setOpen(false)}
                       severity={isAddSuccess ? "success" : "error"}
-                      sx={{ width: "100%" }}
                     >
                       {isAddSuccess
                         ? "The item was added successfully!"
@@ -414,7 +400,7 @@ const addItemPage = (props: Props) => {
                   </Snackbar>
                 </Typography>
 
-                <Box sx={{ mb: 2 }}>
+                <Box>
                   <Button
                     disabled={true}
                     onClick={handleBack}
@@ -487,7 +473,7 @@ const addItemPage = (props: Props) => {
                 accept="image/*"
                 disabled={formik.isSubmitting}
               />
-              <Box sx={{ mb: 2 }}>
+              <Box>
                 <div>
                   <Button
                     variant="contained"
