@@ -9,10 +9,10 @@ import IUserProfile from "./Models/IUserProfile";
 import { getUserProfile } from "./UserService";
 
 export const getReservationsByLender = async (
-  startDate: Date,
-  endDate: Date
+  startDate: string,
+  endDate: string
 ) => {
-  const endpoint = `/Reservations/Dashboard/Lender?from=${startDate}&to=${endDate}`;
+  const endpoint = `Reservations/Dashboard/Lender?from=${startDate}&to=${endDate}`;
   const reservations = await BoroWSClient.request<IReservation[]>(
     HttpOperation.GET,
     endpoint
@@ -22,9 +22,10 @@ export const getReservationsByLender = async (
 };
 
 export const getAllReservationsDataOfLender = async (
-  startDate: Date,
-  endDate: Date
+  startDate: string,
+  endDate: string
 ) => {
+  debugger;
   let allReservationsDetails: IReservationRow[] = [];
 
   let reservations = (await getReservationsByLender(
@@ -43,7 +44,7 @@ export const getAllReservationsDataOfLender = async (
           )) as IUserProfile;
           let partyImg = formatImagesOnRecieve([userData.image])[0];
 
-          return {
+          let x = {
             reservationId: reservation.reservationId,
             itemTitle: itemData.title,
             itemId: reservation.itemId,
@@ -56,6 +57,7 @@ export const getAllReservationsDataOfLender = async (
             partyName: `${userData.firstName} ${userData.lastName}`,
             status: reservation.status,
           };
+          return x;
         })
       : [];
 

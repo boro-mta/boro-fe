@@ -14,8 +14,8 @@ const lenderDashboard = (props: Props) => {
       toDate.setMonth(toDate.getMonth() + 3);
 
       const reservationsRows = await getAllReservationsDataOfLender(
-        new Date(),
-        toDate
+        new Date().toISOString(),
+        toDate.toISOString()
       );
       setRows(reservationsRows);
     };
