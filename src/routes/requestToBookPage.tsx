@@ -187,33 +187,38 @@ const RequestToBookPage = (props: Props) => {
         Request To Book
       </Typography>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          flexDirection: "row",
-        }}
-      >
-        <Card
-          sx={{ marginBottom: "10px", marginRight: "10px" }}
+      {itemDetails.title != "" && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            flexDirection: "row",
+          }}
         >
-          {itemDetails.images && (
-            <CardMedia
-              component="img"
-              style={{ height: "130px", width: "130px" }}
-              image={formatImagesOnRecieve(itemDetails.images)[0]}
-            ></CardMedia>
-          )}
-        </Card>
+          <Card
+            sx={{ marginBottom: "10px", marginRight: "10px" }}
+          >
+            {itemDetails.images && (
+              <CardMedia
+                component="img"
+                style={{ height: "130px", width: "130px" }}
+                image={formatImagesOnRecieve(itemDetails.images)[0]}
+              ></CardMedia>
+            )}
+          </Card>
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <Typography variant="h5">{itemDetails.title}</Typography>
-          <Typography variant="body1">{itemDetails.description}</Typography>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <Typography variant="h5">{itemDetails.title}</Typography>
+            <Typography variant="body1">{itemDetails.description}</Typography>
+          </div>
         </div>
-      </div>
-      <Typography component={"span"} variant="h6">
-        Chosen Dates:
-      </Typography>
+      )}
+
+      {itemDetails.title != "" && (
+        <Typography component={"span"} variant="h6">
+          Chosen Dates:
+        </Typography>
+      )}
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
       <Row

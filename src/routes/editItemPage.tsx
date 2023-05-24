@@ -197,7 +197,7 @@ const EditItemPage = (props: Props) => {
   const onEditItem = () => {
     const values: FormValues = formValuesEditItem;
     const forRequest: IInputItem = {
-      condition: condition,
+      condition,
       categories: selectedCategories,
       title: formik.values.title,
       description: formik.values.description,
