@@ -62,7 +62,7 @@ const DashboardTableSection = ({ sectionTitle, rows }: Props) => {
             <TableBody>
               {rows.map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row.reservationId}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
@@ -97,7 +97,9 @@ const DashboardTableSection = ({ sectionTitle, rows }: Props) => {
                     <ArrowForwardIcon
                       fontSize="large"
                       style={{ cursor: "pointer" }}
-                      onClick={() => navigate(`reservation/${row.id}`)}
+                      onClick={() =>
+                        navigate(`reservation/${row.reservationId}`)
+                      }
                     />
                   </TableCell>
                 </TableRow>

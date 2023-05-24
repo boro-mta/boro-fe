@@ -72,7 +72,7 @@ export enum ReservationStatus {
 }
 
 export interface IReservationRow {
-  id: string;
+  reservationId: string;
   itemTitle: string;
   itemId: string;
   itemImg: string;
@@ -83,4 +83,14 @@ export interface IReservationRow {
   partyName: string;
   partyImg: string;
   partyId: string;
+}
+
+export interface IReservation {
+  reservationId: string;
+  itemId: string;
+  borrowerId: string;
+  lenderId: string;
+  startDate: string;
+  endDate: Date;
+  status: number;
 }
