@@ -32,7 +32,6 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
 import { IFullItemDetailsNew } from "../types";
-import { debug } from "console";
 import { useAppSelector } from "../app/hooks";
 import { selectAddress } from "../features/UserSlice";
 import { editItem, getItem } from "../api/ItemService";
@@ -192,30 +191,12 @@ const EditItemPage = (props: Props) => {
     return imagesForBody;
   };
 
-  const checkIfCategoryExist = (category: string): boolean => {
-    for (let i = 0; i < categoryArr.length; i++) {
-      const categoryFromUserLowerCase: string = category.toLowerCase();
-      const categoryFromArr: String = categoryArr[i].text;
-      const categoryFromArrLowerCase: String = categoryFromArr.toLowerCase();
-
-      if (categoryFromArrLowerCase === categoryFromUserLowerCase) {
-        return true;
-      }
-    }
-
-    return false;
-  };
-
-  const addCategoryToArr = (category: any) => {
-    setCategoryArr((current: any) => [...current, category]);
-  };
-
   const address = useAppSelector(selectAddress);
 
   const onEditItem = () => {
     const values: FormValues = formValuesEditItem;
     const forRequest: IInputItem = {
-      condition: condition,
+      condition,
       categories: selectedCategories,
       title: formik.values.title,
       description: formik.values.description,
@@ -273,7 +254,7 @@ const EditItemPage = (props: Props) => {
 
   const getConditionFronItemDetails = (conditionFromServer: any): any => {
     let contiditionToReturn: any = "";
-    conditionArr.forEach(function(value) {
+    conditionArr.forEach(function (value) {
       if (value.text === conditionFromServer) {
         contiditionToReturn = value;
       }
@@ -284,22 +265,23 @@ const EditItemPage = (props: Props) => {
 
   return (
     <Container>
-      <Typography variant="h3">Edit Item</Typography>
-      <Box sx={{ maxWidth: 400 }}>
+      <Typography variant="h3">
+        Edit Item
+      </Typography>
+      <Box>
         <Stepper activeStep={activeStep} orientation="vertical">
           {/* step 1 */}
           <Step key={"Fill Item Information"}>
             <StepLabel>{"Fill Item Information"}</StepLabel>
             <StepContent>
-              <Box sx={{ height: "100%" }}>
-                <Typography>
+              <Box>
+                <Typography component={"span"}>
                   <fieldset
                     disabled={formik.isSubmitting}
                     style={{ border: 0 }}
                   >
                     <form onSubmit={formik.handleSubmit}>
                       <TextField
-                        fullWidth
                         required
                         id="title"
                         name="title"
@@ -313,7 +295,6 @@ const EditItemPage = (props: Props) => {
                         helperText={formik.touched.title && formik.errors.title}
                       />
                       <TextField
-                        fullWidth
                         required
                         id="description"
                         name="description"
@@ -332,7 +313,7 @@ const EditItemPage = (props: Props) => {
                         }
                       />
 
-                      <Autocomplete
+                      {itemDetails.condition != "" && <Autocomplete
                         id="condition"
                         options={conditionArr}
                         value={getConditionFronItemDetails(
@@ -350,18 +331,20 @@ const EditItemPage = (props: Props) => {
                           <TextField
                             {...params}
                             label="Condition"
+                            margin="normal"
                             placeholder="Choose your item condition"
                           />
                         )}
                       />
+                      }
 
                       {/* categories - Autocomplete */}
-                      <Stack spacing={3} sx={{ width: 500 }}>
-                        {itemDetails.categories.length && (
+                      <Stack spacing={3}>
+                        {itemDetails.categories.length > 0 && (
                           <Autocomplete
                             defaultValue={itemDetails.categories}
                             multiple
-                            id="tags-outlined"
+                            id="editCategories"
                             options={categoryArr}
                             getOptionLabel={(option: any) => option}
                             filterSelectedOptions
@@ -372,6 +355,7 @@ const EditItemPage = (props: Props) => {
                               <TextField
                                 {...params}
                                 label="Categories"
+                                margin="normal"
                                 placeholder="Choose categories for your item"
                               />
                             )}
@@ -399,7 +383,6 @@ const EditItemPage = (props: Props) => {
                     <Alert
                       onClose={() => setOpen(false)}
                       severity={isAddSuccess ? "success" : "error"}
-                      sx={{ width: "100%" }}
                     >
                       {isAddSuccess
                         ? "The item was added successfully!"
@@ -408,7 +391,7 @@ const EditItemPage = (props: Props) => {
                   </Snackbar>
                 </Typography>
 
-                <Box sx={{ mb: 2 }}>
+                <Box>
                   <div>
                     <Button
                       disabled={true}
@@ -450,6 +433,7 @@ const EditItemPage = (props: Props) => {
               {imagesNames.length > 0 && (
                 <>
                   <Typography
+                    component={"span"}
                     variant="h6"
                     sx={{ fontWeight: "bold", marginTop: "10px" }}
                   >
@@ -524,7 +508,9 @@ const EditItemPage = (props: Props) => {
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
             {/* todo: change message */}
-            <Typography>All steps completed - you&apos;re finished</Typography>
+            <Typography component={"span"}>
+              All steps completed - you&apos;re finished
+            </Typography>
           </Paper>
         )}
       </Box>
