@@ -9,7 +9,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import { getReservation } from "../api/ReservationService";
+import { approveReservation, cancelReservation, declineReservation, getReservation } from "../api/ReservationService";
 import { getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
 import { getCurrentUserId } from "../utils/authUtils";
@@ -116,6 +116,24 @@ const ReservationDetailsPage = (props: Props) => {
 
     const navigate = useNavigate();
 
+    const handleApprove = async () => {
+        if (reservationId) {
+            await approveReservation(reservationId);
+        }
+    };
+
+    const handleDecline = async () => {
+        if (reservationId) {
+            await declineReservation(reservationId);
+        }
+    };
+
+    const handleCancel = async () => {
+        if (reservationId) {
+            await cancelReservation(reservationId);
+        }
+    };
+
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         ...theme.typography.body2,
@@ -149,11 +167,11 @@ const ReservationDetailsPage = (props: Props) => {
                                 display: "flex",
                                 justifyContent: "space-between",
                             }}>
-                                <Button variant="contained" color="success" onClick={() => { }}>
+                                <Button variant="contained" color="success" onClick={handleApprove}>
                                     Approve
                                 </Button>
-                                <Button variant="outlined" color="error">
-                                    Reject
+                                <Button variant="outlined" color="error" onClick={handleDecline}>
+                                    Decline
                                 </Button>
                             </div>
                         </Item>
@@ -161,7 +179,7 @@ const ReservationDetailsPage = (props: Props) => {
                     }
                     {!isLender && <Grid item xs={12}>
                         <Item>
-                            <Button variant="outlined" color="error" onClick={() => { }}>
+                            <Button variant="outlined" color="error" onClick={handleCancel}>
                                 Cancel
                             </Button>
                         </Item>

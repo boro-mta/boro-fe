@@ -25,3 +25,30 @@ export const getReservation = async (reservationId: string) => {
 
     return { ...reservation };
 };
+
+export const approveReservation = async (reservationId: string) => {
+    console.log("approveReservation - entry with " + reservationId);
+    const endpoint = `Reservations/${reservationId}/Approve`;
+    const reservation = await BoroWSClient.request<IItemResponse>(
+        HttpOperation.POST,
+        endpoint
+    );
+};
+
+export const cancelReservation = async (reservationId: string) => {
+    console.log("cancelReservation - entry with " + reservationId);
+    const endpoint = `Reservations/${reservationId}/Cancel`;
+    const reservation = await BoroWSClient.request<IItemResponse>(
+        HttpOperation.POST,
+        endpoint
+    );
+};
+
+export const declineReservation = async (reservationId: string) => {
+    console.log("declinelReservation - entry with " + reservationId);
+    const endpoint = `Reservations/${reservationId}/Decline`;
+    const reservation = await BoroWSClient.request<IItemResponse>(
+        HttpOperation.POST,
+        endpoint
+    );
+};

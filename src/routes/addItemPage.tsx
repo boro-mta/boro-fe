@@ -301,7 +301,7 @@ const addItemPage = (props: Props) => {
                   >
                     <form onSubmit={formik.handleSubmit}>
                       <TextField
-                        //fullWidth
+                        fullWidth
                         required
                         id="title"
                         name="title"
@@ -315,7 +315,7 @@ const addItemPage = (props: Props) => {
                         helperText={formik.touched.title && formik.errors.title}
                       />
                       <TextField
-                        // fullWidth
+                         fullWidth
                         required
                         id="description"
                         name="description"

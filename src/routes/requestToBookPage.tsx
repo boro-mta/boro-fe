@@ -16,7 +16,14 @@ import {
 } from "../utils/calendarUtils";
 import { getItem } from "../api/ItemService";
 import { addReservationRequest } from "../api/ReservationService";
-import { Row } from "../components/ItemDetailsTable/ItemDetailsTable";
+import { styled } from '@mui/material/styles';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -150,6 +157,40 @@ const RequestToBookPage = (props: Props) => {
     }
   };
 
+
+
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
+
+  function createData(
+    key: string,
+    value: string,
+  ) {
+    return { key, value };
+  }
+
+  const rows = [
+    createData('Start Date', requestStartDate.toDateString()),
+    createData('End Date', requestEndDate.toDateString()),
+  ];
+
   return (
     <Container>
       <Typography component={"span"} variant="h3">
@@ -184,19 +225,21 @@ const RequestToBookPage = (props: Props) => {
       )}
 
       {itemDetails.title != "" && (
-        <Typography component={"span"} variant="h6">
-          Chosen Dates:
-        </Typography>
+        <TableContainer component={Paper} sx={{ marginTop: "20px", marginBottom: "20px" }}>
+          <Table aria-label="customized table">
+            <TableBody>
+              {rows.map((row) => (
+                <StyledTableRow key={row.key}>
+                  <StyledTableCell component="th" scope="row">
+                    {row.key}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">{row.value}</StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
-
-      <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-      <Row
-        tableData={[
-          { key: "Start Date:", value: requestStartDate.toDateString() },
-          { key: "End Date:", value: requestEndDate.toDateString() },
-        ]}
-      />
-      <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
       <div
         style={{
