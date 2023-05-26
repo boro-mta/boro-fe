@@ -100,7 +100,7 @@ const DashboardTableSection = ({ sectionTitle, rows }: Props) => {
                       fontSize="large"
                       style={{ cursor: "pointer" }}
                       onClick={() =>
-                        navigate(`reservation/${row.reservationId}`)
+                        navigate(`/reservationDetails/${row.reservationId}`)
                       }
                     />
                   </TableCell>
