@@ -16,28 +16,75 @@ import { useNavigate } from "react-router";
 import {
   selectPicture,
   selectUserName,
-  selectGuid,
+  selectUserId,
   updateUser,
   initialState,
 } from "../../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import Divider from "@mui/material/Divider";
+import { ICoordinate } from "../../types";
 
 function ResponsiveAppBar() {
+  //Use local storage for user info
+  const [userInfo, setUser] = useLocalStorage("user", "");
+
+  //Navigation tool
   const navigate = useNavigate();
 
+  //Redux dispatcher
   const dispatch = useAppDispatch();
 
+  //If user has info in local storage, retrive it
+  React.useEffect(() => {
+    if (userInfo != "") {
+      const userLocalInfo = JSON.parse(userInfo);
+      console.log("Parsed info ", userLocalInfo);
+      let location: ICoordinate = { latitude: 0, longitude: 0 };
+      if (userLocalInfo.address && userLocalInfo.address.latitude) {
+        location.latitude = userLocalInfo.address.latitude;
+      }
+      if (userLocalInfo.address && userLocalInfo.address.longitude) {
+        location.longitude = userLocalInfo.address.longitude;
+      }
+
+      dispatch(
+        updateUser({
+          name: userLocalInfo.name,
+          email: userLocalInfo.email,
+          facebookId: userLocalInfo.facebookId,
+          accessToken: userLocalInfo.accessToken,
+          picture: userLocalInfo.picture,
+          address: {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          },
+          userId: userLocalInfo.guid,
+        })
+      );
+    }
+  }, []);
+
+  //Get the user's profile picture to show in avatar
   const profilePicture = useAppSelector(selectPicture);
 
-  const pages = ["Home", "Borrowers around me"];
+  const pages = ["Home"];
   const settings = ["Log In"];
   const userName = useAppSelector(selectUserName);
-  const userGuid = useAppSelector(selectGuid);
+  const userGuid = useAppSelector(selectUserId);
 
+  //In case the user is logged in and in redux is not represented as Guest
+  //Change the options in the app bar menu
   if (userName != "Guest") {
     settings.pop();
-    settings.push("Profile");
+
     settings.push("Chats");
+    settings.push("Reservations");
+    settings.push("divider");
+    settings.push("Add Item");
+    settings.push("Dashboard");
+    settings.push("divider");
+    settings.push("Profile");
     settings.push("Log Out");
     pages.push("Create New Borrow");
     pages.push("My Items");
@@ -73,25 +120,18 @@ function ResponsiveAppBar() {
     if (page === "Home") {
       navigate("/");
     }
-
-    if (page === "Create New Borrow") {
-      navigate("/addItem");
-    }
-    if (page === "My Items") {
-      navigate("/myItems");
-    }
-    if (page === "Lender Dashboard") {
-      navigate("/lenderDashboard");
-    }
     if (page === "Borrower Dashboard") {
       navigate("/borrowerDashboard");
     }
     if (page === "My Addresses") {
       navigate("/address");
     }
+
+    handleCloseNavMenu();
   };
 
   const handleSettingButtonClick = (setting: any) => {
+    debugger;
     console.log(`click ${setting}`);
     if (setting === "Log In") {
       navigate("/login");
@@ -102,15 +142,31 @@ function ResponsiveAppBar() {
     }
 
     if (setting === "Log Out") {
+      //Return the redux to its initial state
       dispatch(updateUser(initialState));
-      pages.pop();
-      settings.pop();
-      settings.pop();
-      settings.pop();
+
+      //Clear every saved data including token and user information
+      localStorage.clear();
+
+      //Change the app bar options Guest options
+      //First, pop every thing
+      for (let i = 0; i < settings.length; i++) {
+        settings.pop();
+      }
+
+      //Then, add log in
       settings.push("Log In");
+
+      //navigate back to home page
       navigate("/");
       window.location.reload();
     }
+
+    if (setting === "Add Item") {
+      navigate("/addItem");
+    }
+
+    handleCloseUserMenu();
   };
 
   return (
@@ -180,7 +236,7 @@ function ResponsiveAppBar() {
             variant="h5"
             noWrap
             component="a"
-            href=""
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -231,14 +287,19 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem
-                  key={setting}
-                  onClick={() => handleSettingButtonClick(setting)}
-                >
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              {settings.map((setting, i) => {
+                if (setting === "divider") {
+                  return <Divider key={i} />;
+                }
+                return (
+                  <MenuItem
+                    key={setting}
+                    onClick={() => handleSettingButtonClick(setting)}
+                  >
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                );
+              })}
             </Menu>
           </Box>
         </Toolbar>
@@ -246,4 +307,4 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
-export default ResponsiveAppBar;
+export default React.memo(ResponsiveAppBar);

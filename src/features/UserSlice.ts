@@ -2,28 +2,28 @@ import { createSlice, PayloadAction, Reducer } from "@reduxjs/toolkit";
 import { RootState } from "../app/store";
 import { ICoordinate } from "../types";
 
-interface UserState {
+export interface UserState {
   name: string;
   email: string;
-  id: string;
+  facebookId: string;
   accessToken: string;
   picture: string;
-  guid: string;
+  userId: string;
   address: ICoordinate;
 }
 
 interface PartialUserState {
   picture: string;
-  guid: string;
+  userId: string;
 }
 
 export const initialState: UserState = {
   name: "Guest",
   email: "",
-  id: "",
+  facebookId: "",
   accessToken: "",
   picture: "",
-  guid: "",
+  userId: "",
   address: { latitude: 0, longitude: 0 },
 };
 
@@ -34,14 +34,15 @@ export const userSlice = createSlice({
     updateUser: (state, action: PayloadAction<UserState>) => {
       state.name = action.payload.name;
       state.email = action.payload.email;
-      state.id = action.payload.id;
+      state.facebookId = action.payload.facebookId;
       state.accessToken = action.payload.accessToken;
       state.picture = action.payload.picture;
-      state.guid = action.payload.guid;
+      state.userId = action.payload.userId;
+      state.address = action.payload.address;
     },
     updatePartialUser: (state, action: PayloadAction<PartialUserState>) => {
       state.picture = action.payload.picture;
-      state.guid = action.payload.guid;
+      state.userId = action.payload.userId;
     },
     updateAddress: (state, action: PayloadAction<ICoordinate>) => {
       state.address = action.payload;
@@ -61,7 +62,7 @@ export const {
 
 export const selectUserName = (state: RootState) => state.user.name;
 export const selectPicture = (state: RootState) => state.user.picture;
-export const selectGuid = (state: RootState) => state.user.guid;
+export const selectUserId = (state: RootState) => state.user.userId;
 export const selectEmail = (state: RootState) => state.user.email;
 export const selectAddress = (state: RootState) => state.user.address;
 
