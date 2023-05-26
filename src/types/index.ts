@@ -61,3 +61,23 @@ export interface IMarkerDetails extends ICoordinate {
   title: string;
   imageIds: string[];
 }
+
+export interface IReservationDetails {
+  reservationId: string;
+  itemId: string;
+  borrowerId: string;
+  lenderId: string;
+  startDate: string;
+  endDate: string;
+  status: number;
+}
+
+export interface IRowData {
+  key: string;
+  value: string;
+}
+
+export interface ITableData {
+  tableData: IRowData[];
+}
+

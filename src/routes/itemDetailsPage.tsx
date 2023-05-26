@@ -4,8 +4,13 @@ import {
   CardMedia,
   Container,
   Divider,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
   Modal,
   Typography,
+  styled,
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
@@ -91,12 +96,13 @@ const itemDetailsPage = (props: Props) => {
     if (selectedStartDate && selectedEndDate) {
       while (loop <= selectedEndDate) {
         if (
+          itemDetails.excludedDates !== undefined &&
           checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -115,10 +121,15 @@ const itemDetailsPage = (props: Props) => {
 
   const handleOpenModal = () => setOpen(true);
 
+  const Demo = styled("div")(({ theme }) => ({
+    backgroundColor: theme.palette.background.paper,
+  }));
+
+  const [dense, setDense] = React.useState(false);
+
   useEffect(() => {
     const getFullDetails = async () => {
       let fullDetails: IFullItemDetailsNew;
-      debugger;
       if (itemId !== undefined && itemId.length > 5) {
         fullDetails = (await getItem(itemId)) as IFullItemDetailsNew;
         if (fullDetails.images != undefined) {
@@ -151,7 +162,9 @@ const itemDetailsPage = (props: Props) => {
       <Typography variant="h5">{itemDetails.title}</Typography>
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
       <Typography variant="h6">About the product</Typography>
-      <Typography variant="body1">{itemDetails.description}</Typography>
+      <Typography component={"span"} variant="body1">
+        {itemDetails.description}
+      </Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
       <Row
@@ -180,23 +193,46 @@ const itemDetailsPage = (props: Props) => {
       >
         Edit Item
       </Button>
-      <Button
-        variant="contained"
-        sx={{ mt: 1, mr: 1 }}
-        onClick={() => navigate(`/`)}
-      >
-        Home
-      </Button>
+      <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+
       <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-        Find available dates
+        Find available dates:
       </Typography>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         <DateRangePicker
           startDate={startDate}
           endDate={endDate}
           onChange={handleChangeDates}
           datesToExclude={itemDetails.excludedDates}
         />
+
+        <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Demo>
+                <List dense={dense}>
+                  <ListItem>
+                    {startDate && (
+                      <ListItemText
+                        primary="Start Date:"
+                        secondary={startDate.toDateString()}
+                      />
+                    )}
+                  </ListItem>
+                  <ListItem>
+                    {endDate && (
+                      <ListItemText
+                        primary="End Date:"
+                        secondary={endDate.toDateString()}
+                      />
+                    )}
+                  </ListItem>
+                </List>
+              </Demo>
+            </Grid>
+          </Grid>
+        </Box>
       </div>
 
       {isValidDates === true && (
@@ -211,9 +247,17 @@ const itemDetailsPage = (props: Props) => {
             right: "2%",
             width: "96%",
           }}
-          onClick={() => navigate("/")}
+          onClick={() => {
+            navigate(`/requestToBook/${itemId}`, {
+              state: {
+                selectedStartDate: startDate,
+                selectedEndDate: endDate,
+                excludedDates: itemDetails.excludedDates,
+              },
+            });
+          }}
         >
-          Book now
+          Reserve
         </Button>
       )}
       {isValidDates === false && (
@@ -247,7 +291,9 @@ const itemDetailsPage = (props: Props) => {
             p: 4,
           }}
         >
-          <Typography variant="body1">{selectedDatesError}</Typography>
+          <Typography component={"span"} variant="body1">
+            {selectedDatesError}
+          </Typography>
         </Box>
       </Modal>
     </Container>

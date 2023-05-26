@@ -1,11 +1,15 @@
+import { IInputImage } from "../../types";
+
+
 export default interface IUserProfile {
   userId: string;
   facebookId: string;
   firstName: string;
   lastName: string;
   about: string;
-  dateJoined: string; //should be date in the future
+  dateJoined: string;
   email: string;
   latitude: number;
   longitude: number;
+  image: IInputImage
 }
