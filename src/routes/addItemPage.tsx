@@ -284,9 +284,7 @@ const addItemPage = (props: Props) => {
   };
   return (
     <Container>
-      <Typography variant="h3">
-        Add New Item
-      </Typography>
+      <Typography variant="h3">Add New Item</Typography>
       <Box>
         <Stepper activeStep={activeStep} orientation="vertical">
           {/* step 1 */}
@@ -315,7 +313,7 @@ const addItemPage = (props: Props) => {
                         helperText={formik.touched.title && formik.errors.title}
                       />
                       <TextField
-                         fullWidth
+                        fullWidth
                         required
                         id="description"
                         name="description"

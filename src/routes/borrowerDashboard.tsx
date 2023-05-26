@@ -7,7 +7,7 @@ import { ReservationStatus } from "../utils/reservationsUtils";
 
 type Props = {};
 
-const lenderDashboard = (props: Props) => {
+const borrowerDashboard = (props: Props) => {
   const [rows, setRows] = useState<IReservationRow[]>([]);
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -17,7 +17,7 @@ const lenderDashboard = (props: Props) => {
       const reservationsRows = await getAllReservationsData(
         new Date().toISOString(),
         toDate.toISOString(),
-        "Lender"
+        "Borrower"
       );
       setRows(reservationsRows);
     };
@@ -50,4 +50,4 @@ const lenderDashboard = (props: Props) => {
   );
 };
 
-export default lenderDashboard;
+export default borrowerDashboard;

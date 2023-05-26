@@ -1,5 +1,4 @@
-import { IInputImage } from "../../types";
-
+import { IItemImageResponse } from "./IItemImageResponse";
 
 export default interface IUserProfile {
   userId: string;
@@ -11,5 +10,5 @@ export default interface IUserProfile {
   email: string;
   latitude: number;
   longitude: number;
-  image: IInputImage
+  image: IItemImageResponse;
 }

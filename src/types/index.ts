@@ -1,3 +1,5 @@
+import { ReservationStatus } from "../utils/reservationsUtils";
+
 export interface IItem {
   itemId: string;
   title: string;
@@ -24,6 +26,12 @@ export interface IFullItemDetailsNew {
   description: string;
   images?: IInputImage[];
   excludedDates: Date[];
+}
+
+export interface IUserItem {
+  id: string;
+  title: string;
+  imageIds: string[];
 }
 
 export interface ICoordinate {
@@ -81,3 +89,26 @@ export interface ITableData {
   tableData: IRowData[];
 }
 
+export interface IReservation {
+  reservationId: string;
+  itemId: string;
+  borrowerId: string;
+  lenderId: string;
+  startDate: string;
+  endDate: Date;
+  status: number;
+}
+
+export interface IReservationRow {
+  reservationId: string;
+  itemTitle: string;
+  itemId: string;
+  itemImg: string;
+  itemDescription: string;
+  startDate: Date;
+  endDate: Date;
+  status: ReservationStatus;
+  partyName: string;
+  partyImg: string;
+  partyId: string;
+}
