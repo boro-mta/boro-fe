@@ -7,6 +7,7 @@ import { useAppDispatch } from "../app/hooks";
 import { updateAddress } from "../features/UserSlice";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useNavigate } from "react-router";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 type Props = {};
 const libs: (
@@ -21,6 +22,8 @@ const MyAddressesPage = (props: Props) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const autocompleteRef = useRef<google.maps.places.Autocomplete>();
+  const [userInfo, setUser] = useLocalStorage("user", "");
+
   const [address, setAddress] = useState<ICoordinate>({
     latitude: 0,
     longitude: 0,
@@ -65,9 +68,9 @@ const MyAddressesPage = (props: Props) => {
   };
 
   const handleSaveAddress = () => {
-    console.log("HEREEEEEEEEE");
+    const userLocalInfo = JSON.parse(userInfo);
     dispatch(updateAddress(address));
-    navigate("/addItem");
+    setUser(JSON.stringify({ ...userLocalInfo, address }));
   };
 
   return (

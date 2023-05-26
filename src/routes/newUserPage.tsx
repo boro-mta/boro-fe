@@ -9,21 +9,18 @@ import {
   selectEmail,
   selectUserName,
   selectPicture,
-  selectGuid
+  selectUserId
 } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { updateUser as apiUpdateUser } from "../api/UserService"
 import IUpdateUserData from "../api/Models/IUpdateUserData";
 
-type IUserDetailsParams = {
-  userId: string;
-};
-
 type Props = {};
 
+//A validation schema for the form
 const validationSchema = yup.object({
-  first_name: yup.string().max(30, "Must be 30 characters or less"),
-  last_name: yup.string().max(30, "Must be 30 characters or less"),
+  firstName: yup.string().max(30, "Must be 30 characters or less"),
+  lastName: yup.string().max(30, "Must be 30 characters or less"),
   about: yup.string().max(250, "Must be 250 characters or less"),
   email: yup
     .string()
@@ -32,20 +29,22 @@ const validationSchema = yup.object({
 });
 
 const NewUserPage = (props: Props) => {
+
+  //Dispatcher for redux
   const dispatch = useAppDispatch();
 
+  //Get all details retreived from the facebook login
   const userEmail = useAppSelector(selectEmail);
   const userFullName = useAppSelector(selectUserName);
   const userProfilePicture = useAppSelector(selectPicture);
   const [firstName, lastName] = userFullName.split(" ");
-  const userGuid = useAppSelector(selectGuid);
+  const userId = useAppSelector(selectUserId);
 
   const formik = useFormik({
     initialValues: {
       firstName: firstName,
       lastName: lastName,
       about: "",
-      profileImage: " ",
       userId: " ",
       dateJoined: " ",
       longitude: 0,
@@ -56,8 +55,11 @@ const NewUserPage = (props: Props) => {
     validationSchema: validationSchema,
     onSubmit: () => { },
   });
+
+  //Navigation tool
   const navigate = useNavigate();
 
+  //Create a new user on Boro's server
   const handleCreateNewUserClick = async () => {
     const userDetails = {
       about: formik.values.about,
@@ -67,19 +69,23 @@ const NewUserPage = (props: Props) => {
     } as IUpdateUserData;
 
     try {
+      //Send userDetails to the server and create the new user on Boro's server
       const response = await apiUpdateUser(userDetails);
       console.log("User created successfully!", response);
+
+      //After guid was retrived, update the redux with the new guid
       dispatch(
         updateUser({
           ...initialState,
           name: firstName + " " + lastName,
-          guid: userGuid,
+          userId: userId,
           picture: userProfilePicture,
           email: formik.values.email,
         })
       );
 
-      navigate("/Users/" + userGuid);
+      //Navigate to the new user's page
+      navigate("/Users/" + userId);
     } catch (error) {
       console.error("Failed to create user:", error);
     }
@@ -109,6 +115,7 @@ const NewUserPage = (props: Props) => {
           id="email"
           name="email"
           label="Email"
+          required={true}
           multiline
           margin="normal"
           value={formik.values.email}
