@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, Reducer } from "@reduxjs/toolkit";
 import { RootState } from "../app/store";
 import { ICoordinate } from "../types";
 
-interface UserState {
+export interface UserState {
   name: string;
   email: string;
   facebookId: string;
@@ -38,6 +38,7 @@ export const userSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.picture = action.payload.picture;
       state.userId = action.payload.userId;
+      state.address = action.payload.address;
     },
     updatePartialUser: (state, action: PayloadAction<PartialUserState>) => {
       state.picture = action.payload.picture;

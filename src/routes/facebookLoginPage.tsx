@@ -1,18 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FacebookLoginButton from "../components/FacebookLogin/FacebookLogin";
 import { Box } from "@mui/material";
 import { ReactFacebookLoginInfo } from "react-facebook-login";
 import { useNavigate } from "react-router-dom";
-import {
-  updatePartialUser,
-  updateUser
-} from "../features/UserSlice";
+import { updatePartialUser, updateUser } from "../features/UserSlice";
 import { useAppDispatch } from "../app/hooks";
 import BoroWSClient from "../api/BoroWebServiceClient";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { ICoordinate } from "../types";
 
 const FacebookLoginPage = () => {
-
   //Get redux dispatcher
   const dispatch = useAppDispatch();
 
@@ -23,23 +20,36 @@ const FacebookLoginPage = () => {
   const [userInfo, setUser] = useLocalStorage("user", "");
 
   //If a user exists in the local storage, load it
-  if (userInfo != "") {
-    //Parse info from local storage
-    const userLocalInfo = JSON.parse(userInfo);
-    console.log("Parsed info ", userLocalInfo);
+  useEffect(() => {
+    if (userInfo != "") {
+      //Parse info from local storage
+      const userLocalInfo = JSON.parse(userInfo);
+      console.log("Parsed info ", userLocalInfo);
 
-    //Send local storage to redux
-    dispatch(
-      updateUser({
-        name: userLocalInfo.name || "",
-        email: userLocalInfo.email || "",
-        facebookId: userLocalInfo.facebookId,
-        accessToken: userLocalInfo.accessToken,
-        picture: userLocalInfo.picture || "",
-        address: { latitude: 0, longitude: 0 },
-        userId: userLocalInfo.guid || ""
-      }))
-  }
+      let location: ICoordinate = { latitude: 0, longitude: 0 };
+      if (userLocalInfo.address && userLocalInfo.address.latitude) {
+        location.latitude = userLocalInfo.address.latitude;
+      }
+      if (userLocalInfo.address && userLocalInfo.address.longitude) {
+        location.longitude = userLocalInfo.address.longitude;
+      }
+
+      dispatch(
+        updateUser({
+          name: userLocalInfo.name,
+          email: userLocalInfo.email,
+          facebookId: userLocalInfo.facebookId,
+          accessToken: userLocalInfo.accessToken,
+          picture: userLocalInfo.picture,
+          address: {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          },
+          userId: userLocalInfo.guid,
+        })
+      );
+    }
+  }, []);
 
   //In case of a successfull login using facebook
   const handleLoginSuccess = (response: ReactFacebookLoginInfo) => {
@@ -95,12 +105,15 @@ const FacebookLoginPage = () => {
         facebookId: response.id,
         accessToken: response.accessToken,
         picture: pictureUrl || "",
-        guid: backendResponse.userId
-      }
+        guid: backendResponse.userId,
+        address: {
+          latitude: 0,
+          longitude: 0,
+        },
+      };
 
       //Save the user to local storage
       setUser(JSON.stringify(savedUser));
-
 
       if (backendResponse.firstLogin == true) {
         //In case of a first login
@@ -113,7 +126,6 @@ const FacebookLoginPage = () => {
 
     //Call the function to authenticate infront of Boro's server
     backendFacebookAuthentication(userFacebookLoginDetails);
-
   };
 
   return (

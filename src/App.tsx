@@ -1,31 +1,43 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ItemsMapListContainer from "./components/ItemsMapListContainer/ItemsMapListContainer";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { useAppDispatch } from "./app/hooks";
 import { updateUser } from "./features/UserSlice";
+import { ICoordinate } from "./types";
 
 function App() {
   const dispatch = useAppDispatch();
 
   const [userInfo, setUser] = useLocalStorage("user", "");
 
-  if (userInfo != "") {
-    const userLocalInfo = JSON.parse(userInfo);
-    console.log("User information from local storage: ", userLocalInfo);
-    dispatch(
-      updateUser({
-        name: userLocalInfo.name,
-        email: userLocalInfo.email,
-        facebookId: userLocalInfo.facebookId,
-        accessToken: userLocalInfo.accessToken,
-        picture: userLocalInfo.picture,
-        address: { latitude: 0, longitude: 0 },
-        userId: userLocalInfo.guid,
-      })
-    );
+  useEffect(() => {
+    if (userInfo != "") {
+      const userLocalInfo = JSON.parse(userInfo);
+      console.log("User information from local storage: ", userLocalInfo);
+      let location: ICoordinate = { latitude: 0, longitude: 0 };
+      if (userLocalInfo.address && userLocalInfo.address.latitude) {
+        location.latitude = userLocalInfo.address.latitude;
+      }
+      if (userLocalInfo.address && userLocalInfo.address.longitude) {
+        location.longitude = userLocalInfo.address.longitude;
+      }
 
-  }
-
+      dispatch(
+        updateUser({
+          name: userLocalInfo.name,
+          email: userLocalInfo.email,
+          facebookId: userLocalInfo.facebookId,
+          accessToken: userLocalInfo.accessToken,
+          picture: userLocalInfo.picture,
+          address: {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          },
+          userId: userLocalInfo.guid,
+        })
+      );
+    }
+  }, []);
 
   return (
     <>

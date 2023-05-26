@@ -22,10 +22,10 @@ import {
 } from "../../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import Divider from '@mui/material/Divider';
+import Divider from "@mui/material/Divider";
+import { ICoordinate } from "../../types";
 
 function ResponsiveAppBar() {
-
   //Use local storage for user info
   const [userInfo, setUser] = useLocalStorage("user", "");
 
@@ -36,21 +36,34 @@ function ResponsiveAppBar() {
   const dispatch = useAppDispatch();
 
   //If user has info in local storage, retrive it
-  if (userInfo != "") {
-    const userLocalInfo = JSON.parse(userInfo);
-    console.log("Parsed info ", userLocalInfo);
-    //Send user's local storage information to redux to keep in app state
-    dispatch(
-      updateUser({
-        name: userLocalInfo.name || "",
-        email: userLocalInfo.email || "",
-        facebookId: userLocalInfo.facebookId,
-        accessToken: userLocalInfo.accessToken,
-        picture: userLocalInfo.picture || "",
-        address: { latitude: 0, longitude: 0 },
-        userId: userLocalInfo.guid
-      }))
-  }
+  React.useEffect(() => {
+    if (userInfo != "") {
+      const userLocalInfo = JSON.parse(userInfo);
+      console.log("Parsed info ", userLocalInfo);
+      let location: ICoordinate = { latitude: 0, longitude: 0 };
+      if (userLocalInfo.address && userLocalInfo.address.latitude) {
+        location.latitude = userLocalInfo.address.latitude;
+      }
+      if (userLocalInfo.address && userLocalInfo.address.longitude) {
+        location.longitude = userLocalInfo.address.longitude;
+      }
+
+      dispatch(
+        updateUser({
+          name: userLocalInfo.name,
+          email: userLocalInfo.email,
+          facebookId: userLocalInfo.facebookId,
+          accessToken: userLocalInfo.accessToken,
+          picture: userLocalInfo.picture,
+          address: {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          },
+          userId: userLocalInfo.guid,
+        })
+      );
+    }
+  }, []);
 
   //Get the user's profile picture to show in avatar
   const profilePicture = useAppSelector(selectPicture);
@@ -67,10 +80,10 @@ function ResponsiveAppBar() {
 
     settings.push("Chats");
     settings.push("Reservations");
-    settings.push("divider")
+    settings.push("divider");
     settings.push("Add Item");
     settings.push("Dashboard");
-    settings.push("divider")
+    settings.push("divider");
     settings.push("Profile");
     settings.push("Log Out");
   }
@@ -101,10 +114,12 @@ function ResponsiveAppBar() {
     console.log(`click ${page}`);
     if (page === "Home") {
       navigate("/");
+      handleCloseNavMenu();
     }
   };
 
   const handleSettingButtonClick = (setting: any) => {
+    debugger;
     console.log(`click ${setting}`);
     if (setting === "Log In") {
       navigate("/login");
@@ -138,6 +153,8 @@ function ResponsiveAppBar() {
     if (setting === "Add Item") {
       navigate("/addItem");
     }
+
+    handleCloseUserMenu();
   };
 
   return (
@@ -207,7 +224,7 @@ function ResponsiveAppBar() {
             variant="h5"
             noWrap
             component="a"
-            href=""
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -258,9 +275,9 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => {
+              {settings.map((setting, i) => {
                 if (setting === "divider") {
-                  return <Divider key={setting} />;
+                  return <Divider key={i} />;
                 }
                 return (
                   <MenuItem
@@ -269,7 +286,7 @@ function ResponsiveAppBar() {
                   >
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
-                )
+                );
               })}
             </Menu>
           </Box>
@@ -278,4 +295,4 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
-export default ResponsiveAppBar;
+export default React.memo(ResponsiveAppBar);
