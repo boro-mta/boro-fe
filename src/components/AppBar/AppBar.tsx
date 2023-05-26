@@ -82,15 +82,11 @@ function ResponsiveAppBar() {
     settings.push("Reservations");
     settings.push("divider");
     settings.push("Add Item");
-    settings.push("Dashboard");
+    settings.push("Lender Dashboard");
+    settings.push("Borrower Dashboard");
     settings.push("divider");
     settings.push("Profile");
     settings.push("Log Out");
-    pages.push("Create New Borrow");
-    pages.push("My Items");
-    pages.push("Lender Dashboard");
-    pages.push("Borrower Dashboard");
-    pages.push("My Addresses");
   }
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -119,15 +115,8 @@ function ResponsiveAppBar() {
     console.log(`click ${page}`);
     if (page === "Home") {
       navigate("/");
+      handleCloseNavMenu();
     }
-    if (page === "Borrower Dashboard") {
-      navigate("/borrowerDashboard");
-    }
-    if (page === "My Addresses") {
-      navigate("/address");
-    }
-
-    handleCloseNavMenu();
   };
 
   const handleSettingButtonClick = (setting: any) => {
@@ -139,6 +128,14 @@ function ResponsiveAppBar() {
 
     if (setting === "Profile") {
       navigate(`/Users/${userGuid}`);
+    }
+
+    if (setting === "Borrower Dashboard") {
+      navigate("/borrowerDashboard");
+    }
+
+    if (setting === "Lender Dashboard") {
+      navigate("/lenderDashboard");
     }
 
     if (setting === "Log Out") {

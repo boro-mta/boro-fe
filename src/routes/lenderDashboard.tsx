@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container } from "@mui/material";
 import { IReservationRow } from "../types";
 import DashboardTableSection from "../components/Dashboard/DashboardTableSection/DashboardTableSection";
-import { getAllReservationsDataOfLender } from "../api/ReservationService";
+import { getAllReservationsData } from "../api/ReservationService";
 import { ReservationStatus } from "../utils/reservationsUtils";
 
 type Props = {};
@@ -14,9 +14,10 @@ const lenderDashboard = (props: Props) => {
       let toDate = new Date();
       toDate.setMonth(toDate.getMonth() + 3);
 
-      const reservationsRows = await getAllReservationsDataOfLender(
+      const reservationsRows = await getAllReservationsData(
         new Date().toISOString(),
-        toDate.toISOString()
+        toDate.toISOString(),
+        "Lender"
       );
       setRows(reservationsRows);
     };

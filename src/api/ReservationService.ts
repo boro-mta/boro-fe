@@ -38,11 +38,12 @@ export const getReservation = async (reservationId: string) => {
   return { ...reservation };
 };
 
-export const getReservationsByLender = async (
+export const getReservations = async (
   startDate: string,
-  endDate: string
+  endDate: string,
+  party: string
 ) => {
-  const endpoint = `Reservations/Dashboard/Lender?from=${startDate}&to=${endDate}`;
+  const endpoint = `Reservations/Dashboard/${party}?from=${startDate}&to=${endDate}`;
   const reservations = await BoroWSClient.request<IReservation[]>(
     HttpOperation.GET,
     endpoint
@@ -51,16 +52,18 @@ export const getReservationsByLender = async (
   return reservations;
 };
 
-export const getAllReservationsDataOfLender = async (
+export const getAllReservationsData = async (
   startDate: string,
-  endDate: string
+  endDate: string,
+  party: string
 ) => {
   debugger;
   let allReservationsDetails: IReservationRow[] = [];
 
-  let reservations = (await getReservationsByLender(
+  let reservations = (await getReservations(
     startDate,
-    endDate
+    endDate,
+    party
   )) as IReservation[];
 
   let allReservationDetailsPromises =
