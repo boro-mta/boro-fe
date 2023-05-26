@@ -82,7 +82,8 @@ function ResponsiveAppBar() {
     settings.push("Reservations");
     settings.push("divider");
     settings.push("Add Item");
-    settings.push("Dashboard");
+    settings.push("Lender Dashboard");
+    settings.push("Borrower Dashboard");
     settings.push("divider");
     settings.push("Profile");
     settings.push("Log Out");
@@ -127,6 +128,14 @@ function ResponsiveAppBar() {
 
     if (setting === "Profile") {
       navigate(`/Users/${userGuid}`);
+    }
+
+    if (setting === "Borrower Dashboard") {
+      navigate("/borrowerDashboard");
+    }
+
+    if (setting === "Lender Dashboard") {
+      navigate("/lenderDashboard");
     }
 
     if (setting === "Log Out") {
