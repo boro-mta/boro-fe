@@ -39,6 +39,7 @@ import ReservationDetailsPage from "./routes/resarvationDetailsPage";
 const container = document.getElementById("root")!;
 const root = createRoot(container);
 
+
 const router = [
   {
     path: "/",

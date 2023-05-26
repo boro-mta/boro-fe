@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "../../app/hooks";
 import {
-  selectGuid,
+  selectUserId,
   selectPicture,
   selectUserName,
 } from "../../features/UserSlice";
@@ -28,7 +28,7 @@ const ItemsMapListContainer = () => {
   );
   const userName = useAppSelector(selectUserName);
   const picture = useAppSelector(selectPicture);
-  const userGuid = useAppSelector(selectGuid);
+  const userGuid = useAppSelector(selectUserId);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(

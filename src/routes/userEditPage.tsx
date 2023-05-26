@@ -11,18 +11,18 @@ import { updateUser as apiUpdateUser, getUserProfile } from "../api/UserService"
 import { selectPicture } from "../features/UserSlice";
 import { useAppSelector } from "../app/hooks";
 
-
 type IUserDetailsParams = {
   userId: string;
 };
 
 type Props = {};
 
+//A validation schema for the form
 const validationSchema = yup.object({
-  About: yup.string().max(250, "Must be 250 characters or less"),
-  Email: yup.string().email(),
-  Latitude: yup.string().max(30, "Must be 30 characters or less"),
-  Longitude: yup.string().max(30, "Must be 30 characters or less"),
+  about: yup.string().max(250, "Must be 250 characters or less"),
+  email: yup.string().email("Invalid email address").max(50, "Must be 50 characters or less"),
+  latitude: yup.string().max(30, "Must be 30 characters or less"),
+  longitude: yup.string().max(30, "Must be 30 characters or less"),
 });
 
 const UserEditPage = (props: Props) => {
@@ -30,71 +30,80 @@ const UserEditPage = (props: Props) => {
     allUserDetails[3]
   );
 
+  //Get the current userId
   let { userId } = useParams<IUserDetailsParams>();
 
   const userProfilePicture = useAppSelector(selectPicture);
 
+  //A function used to get details of a user from the server
+  //Used to set the initial values of the form
+  const getUserDetails = async () => {
+    try {
+      //Get the current details of the user from the server
+      const userProfile = await getUserProfile(userId as string);
+      //Save the details inside userDetails
+      const userDetails: IUserDetails = {
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName,
+        userId: userProfile.facebookId,
+        profileImage: userProfilePicture,
+        dateJoined: userProfile.dateJoined,
+        longitude: 0,
+        latitude: 0,
+        about: userProfile.about,
+        email: userProfile.email
+      };
+      //Set the current user data to be the user retreived from the server
+      setUserDetails(userDetails);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
-
-    const getUserDetails = async () => {
-      try {
-        const userProfile = await getUserProfile(userId as string);
-        const userDetails: IUserDetails = {
-          firstName: userProfile.firstName,
-          lastName: userProfile.lastName,
-          userId: userProfile.facebookId,
-          profileImage: userProfilePicture,
-          dateJoined: userProfile.dateJoined,
-          longitude: 0,
-          latitude: 0,
-          about: userProfile.about,
-          email: userProfile.email
-        };
-        setUserDetails(userDetails);
-      } catch (error) {
-        console.error(error);
-      }
-
-    }
+    //Get the user's details to fill the form's initial values
     getUserDetails();
-
   }, [userId]);
 
+  //The form used in the page
   const formik = useFormik({
     initialValues: {
       about: userDetails.about,
       email: userDetails.email,
-      latitude: 0,
-      longitude: 0,
-      userId: userDetails.userId,
-      firstName: userDetails.firstName,
-      lastName: userDetails.lastName,
-      profileImage: userDetails.profileImage,
-      dateJoined: userDetails.dateJoined,
     },
     enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: () => { },
   });
 
+  //Navigation tool
   const navigate = useNavigate();
+
+  //In case of a cancel click, return to the user's page
   const handleCancelClick = () => {
     navigate(`/users/${userId}`);
   };
+
+
   const handleEditClick = async () => {
-    const userDetails = {
-      about: formik.values.about,
-      email: formik.values.email,
-      latitude: 0,
-      longitude: 0,
-    } as IUpdateUserData;
-    try {
-      const response = apiUpdateUser(userDetails);
-      console.log("User created successfully!", response);
+
+    await formik.validateForm();
+    if (formik.isValid) {
+      //Get the user's new details filled in the form
+      const userDetails = {
+        about: formik.values.about,
+        email: formik.values.email,
+        latitude: 0,
+        longitude: 0,
+      } as IUpdateUserData;
+      try {
+        //Send the new details to the server
+        const response = apiUpdateUser(userDetails);
+        console.log("User created successfully!", response);
+      } catch (error) {
+        console.error("Failed to update user:", error);
+      }
       navigate("/users/" + userId);
-    } catch (error) {
-      console.error("Failed to update user:", error);
     }
   };
 
