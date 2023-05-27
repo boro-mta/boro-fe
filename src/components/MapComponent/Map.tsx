@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useCallback, memo } from "react";
-import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
+import {
+  useJsApiLoader,
+  GoogleMap,
+  Marker,
+  MarkerF,
+} from "@react-google-maps/api";
 import { ICoordinate, IMarkerDetails } from "../../types";
 import {
   MarkerClusterer,
@@ -9,6 +14,7 @@ import CustomMarker from "./CustomMarker";
 import "./mapStyles.css";
 import { useNavigate } from "react-router";
 import { getImgById } from "../../api/ImageService";
+import { getItemsByRadius } from "../../api/ItemService";
 
 type Props = {
   myLocation: ICoordinate;
@@ -21,11 +27,19 @@ const libs: (
   | "geometry"
   | "localContext"
   | "visualization"
-)[] = ["places"];
+)[] = ["places", "geometry"];
 
 const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
   const navigate = useNavigate();
   const [map, setMap] = useState<google.maps.Map>();
+  const [center, setCenter] = useState<ICoordinate>(myLocation);
+  const [locationsAroundMeUpdated, setLocationsAroundMeUpdated] = useState<
+    IMarkerDetails[]
+  >(locationsAroundMe);
+  const [isShowSearchThisAreaButton, setIsShowSearchThisAreaButton] = useState<
+    boolean
+  >(false);
+  const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
@@ -61,13 +75,13 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
 
               infoWindow.setPosition({ lat: latitude, lng: longitude });
               infoWindow.setContent(`
-        <div class="info-window">
-          <h2 class="info-title">${title}</h2>
-          <img class="info-img" src="${imgData}" />
-          <hr class="divider"/>
-          <button class="info-button" onclick="onMarkerClick('${id}')">Go to item</button>
-        </div>
-      `);
+                <div class="info-window">
+                  <h2 class="info-title">${title}</h2>
+                  <img class="info-img" src="${imgData}" />
+                  <hr class="divider"/>
+                  <button class="info-button" onclick="onMarkerClick('${id}')">Go to item</button>
+                </div>
+              `);
               infoWindow.open(map);
             });
 
@@ -75,22 +89,33 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
           })
         : [];
     },
-    [locationsAroundMe]
+    [locationsAroundMeUpdated]
   );
 
   const addMarkers = useCallback(
     (map: google.maps.Map) => {
-      // TODO get array of markers from server instead of mock locations
-      const markers = renderMarkersByLocations(
+      const newMarkers = renderMarkersByLocations(
         map,
-        locationsAroundMe,
+        locationsAroundMeUpdated,
         handleMarkerClick
       );
 
       const algorithm = new SuperClusterAlgorithm({ radius: 200 });
-      if (markers) new MarkerClusterer({ markers, map, algorithm });
+      let clusterer;
+      if (newMarkers) {
+        clusterer = new MarkerClusterer({
+          markers: newMarkers,
+          map,
+          algorithm,
+        });
+        if (clusterer && typeof clusterer.draw === "function") clusterer.draw();
+      }
+      if (map && clusterer) {
+        map.set("clusterer", clusterer);
+      }
+      setMarkers(newMarkers); // Store the markers in state
     },
-    [locationsAroundMe]
+    [locationsAroundMeUpdated]
   );
 
   useEffect(() => {
@@ -99,8 +124,75 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
     }
   }, [addMarkers, map]);
 
+  useEffect(() => {
+    if (map && center && myLocation && center !== myLocation) {
+      setIsShowSearchThisAreaButton(true);
+    }
+  }, [map, center, myLocation]);
+
+  async function fetchMarkers() {
+    const response = await getItemsByRadius({
+      ...center,
+      radiusInMeters: 5000,
+    });
+    return response;
+  }
+
   if (!isLoaded) {
     return <div>Loading..</div>;
+  }
+
+  function handleChangeCenter() {
+    try {
+      let center: ICoordinate = { latitude: 0, longitude: 0 };
+      if (map && typeof map.getCenter === "function") {
+        const c = map.getCenter();
+
+        if (
+          map &&
+          c &&
+          typeof c.lat === "function" &&
+          typeof c.lng === "function"
+        ) {
+          center = { latitude: c.lat(), longitude: c.lng() };
+        }
+
+        setCenter(center);
+      }
+    } catch (error) {
+      console.error("Error handling center change:", error);
+      // Handle the error as needed, e.g., display an error message to the user
+    }
+  }
+
+  async function searchThisArea() {
+    try {
+      markers.forEach((marker) => {
+        marker.setMap(null); // Remove marker from the map
+        marker.unbindAll(); // Unbind event listeners to prevent memory leaks
+        marker.setVisible(false);
+      });
+      setMarkers([]); // Clear the markers array
+
+      const clusterer = map && map.get("clusterer");
+      if (clusterer) {
+        clusterer.clearMarkers();
+      }
+
+      const newMarkers = await fetchMarkers();
+      setLocationsAroundMeUpdated(newMarkers as any);
+
+      // Check if the cluster has zero markers and remove it
+      if (
+        clusterer &&
+        typeof clusterer.getMarkers === "function" &&
+        clusterer.getMarkers().length === 0
+      ) {
+        clusterer.removeCluster();
+      }
+    } catch (error) {
+      console.error("Error fetching markers:", error);
+    }
   }
 
   return (
@@ -115,7 +207,7 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
         }}
       >
         <GoogleMap
-          center={{ lat: myLocation.latitude, lng: myLocation.longitude }}
+          center={{ lat: center.latitude, lng: center.longitude }}
           zoom={15}
           mapContainerStyle={{ width: "100%", height: "100%" }}
           options={{
@@ -125,6 +217,7 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
             fullscreenControl: false,
           }}
           onLoad={(map) => setMap(map)}
+          onDragEnd={handleChangeCenter}
         >
           {myLocation && (
             <MarkerF
@@ -158,6 +251,17 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
         >
           Return to center
         </button>
+        {isShowSearchThisAreaButton && (
+          <button
+            onClick={searchThisArea}
+            style={{
+              height: "50%",
+              color: "red",
+            }}
+          >
+            Search this area
+          </button>
+        )}
       </div>
     </div>
   );

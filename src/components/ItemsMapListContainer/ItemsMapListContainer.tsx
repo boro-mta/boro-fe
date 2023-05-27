@@ -34,8 +34,8 @@ const ItemsMapListContainer = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const newCenter = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
+          latitude: 31.9798067,
+          longitude: 34.7642538,
         };
         setMyLocation(newCenter);
       },
