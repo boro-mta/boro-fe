@@ -1,6 +1,7 @@
 import IUserProfile from "./Models/IUserProfile";
 import IUpdateUserData from "./Models/IUpdateUserData";
 import BoroWSClient, { HttpOperation } from "./BoroWebServiceClient";
+import IUserImageInfo from "./Models/IUserImageInfo";
 
 export const getUserProfile = async (
   userId: string | "me"
@@ -20,3 +21,9 @@ export const updateUser = async (updateData: IUpdateUserData) => {
   const endpoint = `Users/Me/Update`;
   return await BoroWSClient.request<string>(HttpOperation.POST, endpoint, updateData) as string;
 };
+
+export const updateUserImage = async (updateImage: IUserImageInfo) => {
+  console.log("updateImage - entry");
+  const endpoint = `Users/Me/Update/Image`;
+  return await BoroWSClient.request<string>(HttpOperation.POST, endpoint, updateImage) as string;
+}
