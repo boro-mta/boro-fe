@@ -17,7 +17,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemDetailsNew } from "../mocks/fullItemsDetails";
-import { IFullItemDetailsNew } from "../types";
+import { IFullItemDetailsNew, IUserDetails } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
 import {
@@ -27,6 +27,8 @@ import {
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { getItem } from "../api/ItemService";
+import { getUserProfile } from "../api/UserService";
+
 type IFullItemDetailsParams = {
   itemId: string;
 };
@@ -126,10 +128,13 @@ const itemDetailsPage = (props: Props) => {
   }));
 
   const [dense, setDense] = React.useState(false);
+  const [lenderDetails, setLenderDetails] = useState<IUserDetails>();
+  const [lenderFullName, setLenderFullName] = useState<string>("");
 
   useEffect(() => {
     const getFullDetails = async () => {
       let fullDetails: IFullItemDetailsNew;
+      let serverLenderDetails: any;
       if (itemId !== undefined && itemId.length > 5) {
         fullDetails = (await getItem(itemId)) as IFullItemDetailsNew;
         if (fullDetails.images != undefined) {
@@ -142,7 +147,15 @@ const itemDetailsPage = (props: Props) => {
       }
       if (fullDetails && Object.keys(fullDetails).length > 0) {
         setItemDetails(fullDetails);
+        if (fullDetails.ownerId)
+          serverLenderDetails = await getUserProfile(fullDetails.ownerId);
+        setLenderDetails(serverLenderDetails);
+        if (serverLenderDetails && serverLenderDetails.firstName && serverLenderDetails.lastName) {
+          let fullLenderName: string = serverLenderDetails.firstName.concat(" " + serverLenderDetails.lastName);
+          setLenderFullName(fullLenderName);
+        }
       }
+
     };
 
     getFullDetails();
@@ -169,6 +182,21 @@ const itemDetailsPage = (props: Props) => {
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
       <Row
         tableData={[
+          {
+            key: "Lender Name",
+            value:
+              lenderDetails && lenderFullName
+                ?
+                lenderFullName
+                : "No info about the lender!",
+          },
+          {
+            key: "About the lender",
+            value:
+              lenderDetails && lenderDetails.about
+                ? lenderDetails.about
+                : "No info about the lender!",
+          },
           {
             key: "Condition",
             value: itemDetails.condition

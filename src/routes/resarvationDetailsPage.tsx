@@ -5,7 +5,6 @@ import { useLocation, useNavigate, useParams } from "react-router";
 import {
   IFullItemDetailsNew,
   IReservationDetails,
-  IUserDetails,
 } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import { getItem } from "../api/ItemService";
@@ -23,6 +22,7 @@ import { getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
 import { getCurrentUserId } from "../utils/authUtils";
 import IUserProfile from "../api/Models/IUserProfile";
+import { IBodyStatus, getBodyByStatus } from "../utils/reservationsUtils";
 
 type IReservationDetailsParams = {
   reservationId: string;
@@ -77,11 +77,29 @@ const ReservationDetailsPage = (props: Props) => {
   const [serverRequestError, setServerRequestError] = useState<any>();
   const [otherPerson, setOtherPerson] = useState<boolean>();
   const [userId, serUserId] = useState<string>();
-  const [isLender, setIsLender] = useState<boolean>();
+  const [isLender, setIsLender] = useState<boolean>(false);
 
   let itemServerDetails: IFullItemDetailsNew;
   let personServerDetails: any;
   let serverUserId: string | null;
+
+  const navigate = useNavigate();
+
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: "left",
+    color: theme.palette.text.secondary,
+  }));
+
+  const [relevantComponentDetails, setRelevantComponentDetails] = useState<IBodyStatus>(
+    {
+      title: "",
+      descroption: "",
+      components: [],
+    }
+  );
 
   useEffect(() => {
     const getReservationDetails = async () => {
@@ -120,6 +138,8 @@ const ReservationDetailsPage = (props: Props) => {
           if (personServerDetails) {
             setRelevantPersonDetails(personServerDetails);
           }
+
+          setRelevantComponentDetails(getBodyByStatus(reservationDetails.status, isLender));
         } catch (err) {
           console.log("Error while loading reservation");
           setServerRequestError(err);
@@ -133,34 +153,6 @@ const ReservationDetailsPage = (props: Props) => {
 
   console.log(reservationDetails);
 
-  const navigate = useNavigate();
-
-  const handleApprove = async () => {
-    if (reservationId) {
-      await approveReservation(reservationId);
-    }
-  };
-
-  const handleDecline = async () => {
-    if (reservationId) {
-      await declineReservation(reservationId);
-    }
-  };
-
-  const handleCancel = async () => {
-    if (reservationId) {
-      await cancelReservation(reservationId);
-    }
-  };
-
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: "left",
-    color: theme.palette.text.secondary,
-  }));
-
   return (
     <Container>
       <Typography component={"span"} variant="h3">
@@ -169,55 +161,54 @@ const ReservationDetailsPage = (props: Props) => {
 
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
-          {!isLender && (
+
+          <Grid item xs={12}>
+            <Item>
+              <Typography component={"span"} variant="h6">
+                {relevantComponentDetails.title}
+              </Typography>
+              <Typography variant="body1">
+                {relevantComponentDetails.descroption}
+              </Typography>
+            </Item>
+          </Grid>
+
+          {relevantComponentDetails.components.length > 0 &&
             <Grid item xs={12}>
               <Item>
-                <Typography component={"span"} variant="h6">
-                  Veriffication Pending
-                </Typography>
-                <Typography variant="body1">
-                  The lender will review your booking request, come back later
-                  for updates!
-                </Typography>
+                {relevantComponentDetails.components.map((Component, i) => <Component key="component" reservationId={reservationId} />)}
               </Item>
             </Grid>
-          )}
-          {isLender && (
+          }
+          {/* {!isLender && (
             <Grid item xs={12}>
               <Item>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
+                <Dialog
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="Are-you-sure-title"
+                  aria-describedby="Are-you-sure-description"
                 >
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={handleApprove}
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={handleDecline}
-                  >
-                    Decline
-                  </Button>
-                </div>
+                  <DialogTitle id="alert-dialog-title">
+                    {"Are you sure you want to cancel this reservation?"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="Are-you-sure-description">
+                      Choosing Yes will delete this reservation from your reservation list forever.
+                      Delete the reservation?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose}>No</Button>
+                    <Button onClick={handleClose} autoFocus>
+                      Yes
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </Item>
             </Grid>
-          )}
-          {!isLender && (
-            <Grid item xs={12}>
-              <Item>
-                <Button variant="outlined" color="error" onClick={handleCancel}>
-                  Cancel
-                </Button>
-              </Item>
-            </Grid>
-          )}
+          )} */}
+
           <Grid item xs={12}>
             <Item>
               <div
@@ -357,7 +348,7 @@ const ReservationDetailsPage = (props: Props) => {
       <Button
         variant="contained"
         sx={{ mt: 1, mr: 1 }}
-        // onClick={() => navigate(`/item/${itemId}`)} //todo: change back to all items?
+      // onClick={() => navigate(`/item/${itemId}`)} //todo: change back to all items?
       >
         Back
       </Button>
