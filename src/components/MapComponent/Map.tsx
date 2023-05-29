@@ -49,6 +49,7 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
   const returnToCenter = () => {
     if (map) {
       map.panTo({ lat: myLocation.latitude, lng: myLocation.longitude });
+      setCenter(myLocation);
     }
   };
 
