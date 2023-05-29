@@ -31,18 +31,23 @@ const ItemsMapListContainer = () => {
   const userGuid = useAppSelector(selectUserId);
 
   useEffect(() => {
+    let center = {
+      latitude: 32.08602761576923,
+      longitude: 34.774667,
+    };
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const newCenter = {
-          latitude: 31.9798067,
-          longitude: 34.7642538,
+        center = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
         };
-        setMyLocation(newCenter);
       },
       () => {
         console.log("Failed to get the user's location");
       }
     );
+
+    setMyLocation(center);
   }, []);
 
   useEffect(() => {
