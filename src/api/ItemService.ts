@@ -54,3 +54,17 @@ export const getItemsByUser = async (userId: string) => {
 
   return itemsOfUser;
 };
+
+export const updateItemLocation = async (
+  itemId: string,
+  latitude: number,
+  longitude: number
+) => {
+  const endpoint = `Items/${itemId}/Update/Location?latitude=${latitude}&longitude=${longitude}`;
+  const response = await BoroWSClient.request<string>(
+    HttpOperation.POST,
+    endpoint
+  );
+
+  return response;
+};
