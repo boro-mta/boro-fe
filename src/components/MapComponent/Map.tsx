@@ -15,6 +15,9 @@ import "./mapStyles.css";
 import { useNavigate } from "react-router";
 import { getImgById } from "../../api/ImageService";
 import { getItemsByRadius } from "../../api/ItemService";
+import ToggleButton from "../ItemsMapListContainer/ToggleButton";
+import SearchIcon from "@mui/icons-material/Search";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
 
 type Props = {
   myLocation: ICoordinate;
@@ -47,7 +50,13 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
   });
 
   const returnToCenter = () => {
-    if (map) {
+    if (
+      map &&
+      myLocation.latitude !== 0 &&
+      myLocation.longitude !== 0 &&
+      myLocation.latitude !== 0 &&
+      myLocation.longitude !== 0
+    ) {
       map.panTo({ lat: myLocation.latitude, lng: myLocation.longitude });
       setCenter(myLocation);
     }
@@ -126,7 +135,14 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
   }, [addMarkers, map]);
 
   useEffect(() => {
-    if (map && center && myLocation && center !== myLocation) {
+    if (
+      map &&
+      center &&
+      center.latitude !== 0 &&
+      center.longitude !== 0 &&
+      myLocation &&
+      center !== myLocation
+    ) {
       setIsShowSearchThisAreaButton(true);
     }
   }, [map, center, myLocation]);
@@ -167,6 +183,7 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
   }
 
   async function searchThisArea() {
+    setIsShowSearchThisAreaButton(false);
     try {
       markers.forEach((marker) => {
         marker.setMap(null); // Remove marker from the map
@@ -212,10 +229,13 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
           zoom={15}
           mapContainerStyle={{ width: "100%", height: "100%" }}
           options={{
-            zoomControl: false,
             streetViewControl: false,
             mapTypeControl: false,
             fullscreenControl: false,
+            clickableIcons: false,
+            zoomControlOptions: {
+              position: google.maps.ControlPosition.RIGHT_BOTTOM, // Position the zoom control in the bottom right corner
+            },
           }}
           onLoad={(map) => setMap(map)}
           onDragEnd={handleChangeCenter}
@@ -225,45 +245,37 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
               position={{ lat: myLocation.latitude, lng: myLocation.longitude }}
             />
           )}
+          {map && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: "115px",
+                right: "15px",
+                backgroundColor: "#ffffff",
+                borderRadius: "50%",
+                height: "24px",
+                padding: "3px",
+                zIndex: 1,
+                boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
+                cursor: "pointer",
+              }}
+              onClick={returnToCenter}
+            >
+              <MyLocationIcon style={{ color: "#666666" }} />
+            </div>
+          )}
         </GoogleMap>
       </div>
-      <div
-        style={{
-          position: "absolute",
-          display: "flex",
-          flexDirection: "column",
-          right: 0,
-          left: 0,
-          marginRight: "auto",
-          marginLeft: "auto",
-          width: "40%",
-          height: "20%",
-          border: "4px dashed black",
-          borderRadius: "12px",
-          justifyContent: "center",
-        }}
-      >
-        <button
-          onClick={returnToCenter}
-          style={{
-            height: "50%",
-            color: "red",
-          }}
+
+      {isShowSearchThisAreaButton && (
+        <ToggleButton
+          endIcon={<SearchIcon />}
+          onClick={searchThisArea}
+          position="top"
         >
-          Return to center
-        </button>
-        {isShowSearchThisAreaButton && (
-          <button
-            onClick={searchThisArea}
-            style={{
-              height: "50%",
-              color: "red",
-            }}
-          >
-            Search this area
-          </button>
-        )}
-      </div>
+          Search this area
+        </ToggleButton>
+      )}
     </div>
   );
 });
