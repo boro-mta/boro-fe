@@ -22,7 +22,7 @@ import { getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
 import { getCurrentUserId } from "../utils/authUtils";
 import IUserProfile from "../api/Models/IUserProfile";
-import { IBodyStatus, getBodyByStatus } from "../utils/reservationsUtils";
+import { IBodyStatus, getBodyByStatus, statusFromNumToString } from "../utils/reservationsUtils";
 
 type IReservationDetailsParams = {
   reservationId: string;
@@ -175,7 +175,7 @@ const ReservationDetailsPage = (props: Props) => {
           {relevantComponentDetails.components.length > 0 &&
             <Grid item xs={12}>
               <Item>
-                {relevantComponentDetails.components.map((Component, i) => <Component key="component" reservationId={reservationId} />)}
+                {relevantComponentDetails.components.map((ActionComponent, i) => <ActionComponent key={i} reservationId={reservationId} />)}
               </Item>
             </Grid>
           }
@@ -246,9 +246,8 @@ const ReservationDetailsPage = (props: Props) => {
                   Request Status:{" "}
                 </Typography>
                 <Typography variant="body1">
-                  {reservationDetails.status}
+                  {statusFromNumToString(reservationDetails.status)}
                 </Typography>
-                {/* todo: change to status not by number */}
               </div>
             </Item>
           </Grid>

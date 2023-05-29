@@ -11,6 +11,32 @@ export enum ReservationStatus {
     Borrowed = 50,
 }
 
+export const statusFromNumToString = (statusNum: number): string => {
+    switch (statusNum) {
+        case 0:
+            return "Canceled";
+            break;
+        case 10:
+            return "Returned";
+            break;
+        case 20:
+            return "Declined";
+            break;
+        case 30:
+            return "Pending";
+            break;
+        case 40:
+            return "Approved";
+            break;
+        case 50:
+            return "Borrowed";
+            break;
+        default:
+            return "Status is not available";
+            break;
+    }
+}
+
 export interface IBodyStatus {
     title: string,
     descroption: string,
@@ -24,7 +50,7 @@ export const actionsByStatusAndOwnership = {
         components: [ApproveButton, RejectButton]
     },
     PendingNotOwner: {
-        title: "Veriffication Pending",
+        title: "Pending approval",
         descroption: "The lender will review your booking request, come back later for updates!",
         components: [CancelButton]
     },
