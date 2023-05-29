@@ -75,7 +75,7 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
       const infoWindow = new google.maps.InfoWindow();
       (window as any).onMarkerClick = onMarkerClick;
 
-      return locations.length > 0
+      return locations && locations.length > 0
         ? locations.map(({ id, imageIds, title, latitude, longitude }) => {
             const marker = CustomMarker({ latitude, longitude });
 
