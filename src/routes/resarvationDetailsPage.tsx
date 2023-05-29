@@ -75,7 +75,6 @@ const ReservationDetailsPage = (props: Props) => {
   let { reservationId } = useParams<IReservationDetailsParams>();
 
   const [serverRequestError, setServerRequestError] = useState<any>();
-  const [otherPerson, setOtherPerson] = useState<boolean>();
   const [userId, serUserId] = useState<string>();
   const [isLender, setIsLender] = useState<boolean>(false);
 
@@ -117,7 +116,7 @@ const ReservationDetailsPage = (props: Props) => {
           )) as IFullItemDetailsNew;
           setItemDetails(itemServerDetails);
 
-          serverUserId = await getCurrentUserId();
+          serverUserId = getCurrentUserId();
 
           if (serverUserId === reservationDetails.lenderId) {
             //this is lender

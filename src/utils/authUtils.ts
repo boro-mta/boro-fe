@@ -1,5 +1,6 @@
 import jwt_decode from "jwt-decode";
 import apiConfig from "../config/apiConfig";
+import { current } from "@reduxjs/toolkit";
 
 export const getCurrentToken = (): string | null => {
   const token = localStorage.getItem(apiConfig.AUTH_TOKEN_KEY);
@@ -52,4 +53,16 @@ export const getCurrentUserId = (): string | null => {
     }
   }
   return null;
+};
+
+export const isCurrentUser = (userId: string | null | undefined): boolean => {
+  if (userId === null || userId === undefined) {
+    return false;
+  }
+  const current = getCurrentUserId();
+
+  if (current) {
+    return current === userId;
+  }
+  return false;
 };
