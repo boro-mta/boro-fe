@@ -1,4 +1,4 @@
-import { IItemImageResponse } from "./IItemImageResponse";
+import { IUserImageResponse } from "./IUserImageResponse";
 
 export default interface IUserProfile {
   userId: string;
@@ -10,5 +10,5 @@ export default interface IUserProfile {
   email: string;
   latitude: number;
   longitude: number;
-  image: IItemImageResponse;
+  image?: IUserImageResponse | null;
 }
