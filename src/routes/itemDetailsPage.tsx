@@ -17,7 +17,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { allItemDetailsNew } from "../mocks/fullItemsDetails";
-import { IFullItemDetailsNew } from "../types";
+import { IFullItemDetailsNew, IUserDetails } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
 import {
@@ -27,6 +27,9 @@ import {
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { getItem } from "../api/ItemService";
+import { getUserProfile } from "../api/UserService";
+import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
+
 type IFullItemDetailsParams = {
   itemId: string;
 };
@@ -126,23 +129,36 @@ const itemDetailsPage = (props: Props) => {
   }));
 
   const [dense, setDense] = React.useState(false);
+  const [ownerDetails, setOwnerDetails] = useState<IUserDetails>();
+  const [ownerFullName, setOwnerFullName] = useState<string>("");
+  const [isOwner, setIsOwner] = useState<boolean>(false);
 
   useEffect(() => {
     const getFullDetails = async () => {
-      let fullDetails: IFullItemDetailsNew;
-      if (itemId !== undefined && itemId.length > 5) {
-        fullDetails = (await getItem(itemId)) as IFullItemDetailsNew;
-        if (fullDetails.images != undefined) {
-          setImagesAsString(formatImagesOnRecieve(fullDetails.images));
-        }
-      } else {
-        fullDetails =
-          allItemDetailsNew.find((item) => item.itemId === itemId) ||
-          allItemDetailsNew[0];
+      if (!itemId) {
+        return;
       }
+
+      const fullDetails: IFullItemDetailsNew = (await getItem(itemId)) as IFullItemDetailsNew;
+      let serverLenderDetails: any;
+
+      if (fullDetails.images != undefined) {
+        setImagesAsString(formatImagesOnRecieve(fullDetails.images));
+      }
+
+      setIsOwner(isCurrentUser(fullDetails.ownerId));
+
       if (fullDetails && Object.keys(fullDetails).length > 0) {
         setItemDetails(fullDetails);
+        if (fullDetails.ownerId)
+          serverLenderDetails = await getUserProfile(fullDetails.ownerId);
+        setOwnerDetails(serverLenderDetails);
+        if (serverLenderDetails && serverLenderDetails.firstName && serverLenderDetails.lastName) {
+          let fullLenderName: string = serverLenderDetails.firstName.concat(" " + serverLenderDetails.lastName);
+          setOwnerFullName(fullLenderName);
+        }
       }
+
     };
 
     getFullDetails();
@@ -170,6 +186,21 @@ const itemDetailsPage = (props: Props) => {
       <Row
         tableData={[
           {
+            key: "Lender Name",
+            value:
+              ownerDetails && ownerFullName
+                ?
+                ownerFullName
+                : "No info about the lender!",
+          },
+          {
+            key: "About the lender",
+            value:
+              ownerDetails && ownerDetails.about
+                ? ownerDetails.about
+                : "No info about the lender!",
+          },
+          {
             key: "Condition",
             value: itemDetails.condition
               ? itemDetails.condition
@@ -186,15 +217,17 @@ const itemDetailsPage = (props: Props) => {
       />
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
-      <Button
+      {isOwner && <> <Button
         variant="contained"
         sx={{ mt: 1, mr: 1 }}
         onClick={() => navigate(`/editItem/${itemId}`)}
       >
         Edit Item
       </Button>
-      <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
 
+        <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+      </>
+      }
       <Typography variant="h6" sx={{ marginBottom: "10px" }}>
         Find available dates:
       </Typography>

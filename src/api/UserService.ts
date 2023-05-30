@@ -4,6 +4,7 @@ import BoroWSClient, { HttpOperation } from "./BoroWebServiceClient";
 import IUserImageInfo from "./Models/IUserImageInfo";
 import ILocationDetails from "./Models/ILocationDetails";
 import { IUserImageResponse } from "./Models/IUserImageResponse";
+import { IInputImage } from "../types";
 
 export const getUserProfile = async (
   userId: string | "me"
@@ -21,7 +22,7 @@ export const getUserProfile = async (
 export const getUserLocation = async (
   userId: string | "me"
 ): Promise<ILocationDetails> => {
-  console.log("getUserProfile - entry with " + userId);
+  console.log("getUserLocation - entry with " + userId);
   const endpoint = `Users/${userId}/Location`;
   const location = (await BoroWSClient.request<ILocationDetails>(
     HttpOperation.GET,
@@ -33,13 +34,13 @@ export const getUserLocation = async (
 
 export const getUserPicture = async (
   userId: string | "me"
-): Promise<IUserImageResponse> => {
+): Promise<IInputImage> => {
   console.log("getUserProfile - entry with " + userId);
   const endpoint = `Users/${userId}/ProfilePicture`;
-  const picture = (await BoroWSClient.request<IUserImageResponse>(
+  const picture = (await BoroWSClient.request<IInputImage>(
     HttpOperation.GET,
     endpoint
-  )) as IUserImageResponse;
+  )) as IInputImage;
 
   return picture;
 };

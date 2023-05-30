@@ -38,7 +38,7 @@ const borrowerDashboard = (props: Props) => {
       row.endDate >= new Date() &&
       row.status === ReservationStatus.Approved
   );
-  const upcomingRows = rows.filter((row) => row.startDate > new Date());
+  const upcomingRows = rows.filter((row) => (row.startDate) > new Date() && (row.status != 0));
 
   return (
     <Container>

@@ -26,6 +26,7 @@ export interface IFullItemDetailsNew {
   description: string;
   images?: IInputImage[];
   excludedDates: Date[];
+  ownerId?: string;
 }
 
 export interface IUserItem {
