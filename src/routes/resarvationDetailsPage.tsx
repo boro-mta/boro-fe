@@ -4,6 +4,7 @@ import { Button, Typography, Divider, Card, CardMedia } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router";
 import {
   IFullItemDetailsNew,
+  IInputImage,
   IReservationDetails,
 } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
@@ -18,7 +19,7 @@ import {
   declineReservation,
   getReservation,
 } from "../api/ReservationService";
-import { getUserProfile } from "../api/UserService";
+import { getUserPicture, getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
 import { getCurrentUserId } from "../utils/authUtils";
 import IUserProfile from "../api/Models/IUserProfile";
@@ -100,6 +101,13 @@ const ReservationDetailsPage = (props: Props) => {
     }
   );
 
+  const [userProfilePicture, setUserProfilePicture] = useState<IInputImage>(
+    {
+      base64ImageData: "",
+      base64ImageMetaData: ""
+    }
+  );
+
   useEffect(() => {
     const getReservationDetails = async () => {
       let reservationDetails: IReservationDetails;
@@ -117,6 +125,12 @@ const ReservationDetailsPage = (props: Props) => {
           setItemDetails(itemServerDetails);
 
           serverUserId = getCurrentUserId();
+
+          if (serverUserId) {
+            const serverProfilePicture = await getUserPicture(serverUserId);
+            setUserProfilePicture(serverProfilePicture);
+            console.log(userProfilePicture);
+          }
 
           if (serverUserId === reservationDetails.lenderId) {
             //this is lender
@@ -252,58 +266,60 @@ const ReservationDetailsPage = (props: Props) => {
             </Item>
           </Grid>
 
-          <Grid item xs={12}>
-            <Item>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  flexDirection: "row",
-                }}
-              >
-                <Card sx={{ marginBottom: "10px", marginRight: "10px" }}>
-                  {itemDetails.images && (
-                    <CardMedia
-                      component="img"
-                      style={{ height: "130px", width: "130px" }}
-                      image={formatImagesOnRecieve(itemDetails.images)[0]} //todo: change to profile picture of borrower
-                    ></CardMedia>
-                  )}
-                </Card>
+          {userProfilePicture.base64ImageData !== "" &&
+            <Grid item xs={12}>
+              <Item>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Card sx={{ marginBottom: "10px", marginRight: "10px" }}>
+                    {itemDetails.images && (
+                      <CardMedia
+                        component="img"
+                        style={{ height: "130px", width: "130px" }}
+                        image={formatImagesOnRecieve([userProfilePicture])[0]} //todo: change to profile picture of borrower
+                      ></CardMedia>
+                    )}
+                  </Card>
 
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <Typography variant="h5">
-                    {relevantPersonDetails.firstName}
-                  </Typography>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <Typography variant="h5">
+                      {relevantPersonDetails.firstName}
+                    </Typography>
+                    <Typography variant="body1">
+                      {relevantPersonDetails.lastName}
+                    </Typography>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
+                >
+                  {!isLender && (
+                    <Typography variant="h6" sx={{ marginRight: "10px" }}>
+                      About the lender:{" "}
+                    </Typography>
+                  )}
+                  {isLender && (
+                    <Typography variant="h6" sx={{ marginRight: "10px" }}>
+                      About the borrower:{" "}
+                    </Typography>
+                  )}
                   <Typography variant="body1">
-                    {relevantPersonDetails.lastName}
+                    {relevantPersonDetails.about}
                   </Typography>
                 </div>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
-                {!isLender && (
-                  <Typography variant="h6" sx={{ marginRight: "10px" }}>
-                    About the lender:{" "}
-                  </Typography>
-                )}
-                {isLender && (
-                  <Typography variant="h6" sx={{ marginRight: "10px" }}>
-                    About the borrower:{" "}
-                  </Typography>
-                )}
-                <Typography variant="body1">
-                  {relevantPersonDetails.about}
-                </Typography>
-              </div>
-            </Item>
-          </Grid>
+              </Item>
+            </Grid>
+          }
 
           <Grid item xs={5}>
             <Item>
