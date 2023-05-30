@@ -14,9 +14,6 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import {
-  approveReservation,
-  cancelReservation,
-  declineReservation,
   getReservation,
 } from "../api/ReservationService";
 import { getUserPicture, getUserProfile } from "../api/UserService";
@@ -126,12 +123,6 @@ const ReservationDetailsPage = (props: Props) => {
 
           serverUserId = getCurrentUserId();
 
-          if (serverUserId) {
-            const serverProfilePicture = await getUserPicture(serverUserId);
-            setUserProfilePicture(serverProfilePicture);
-            console.log(userProfilePicture);
-          }
-
           if (serverUserId === reservationDetails.lenderId) {
             //this is lender
             console.log("Lender");
@@ -150,6 +141,9 @@ const ReservationDetailsPage = (props: Props) => {
 
           if (personServerDetails) {
             setRelevantPersonDetails(personServerDetails);
+
+            const serverProfilePicture = await getUserPicture(personServerDetails.userId);
+            setUserProfilePicture(serverProfilePicture);
           }
 
           setRelevantComponentDetails(getBodyByStatus(reservationDetails.status, isLender));
