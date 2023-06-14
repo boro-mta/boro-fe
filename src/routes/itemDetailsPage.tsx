@@ -101,6 +101,7 @@ const itemDetailsPage = (props: Props) => {
   const [imagesAsString, setImagesAsString] = useState<string[]>([]);
 
   const handleChangeDates = (dates: Date[]) => {
+    debugger;
     const [selectedStartDate, selectedEndDate] = dates;
     setStartDate(selectedStartDate);
     setEndDate(selectedEndDate);
@@ -160,6 +161,7 @@ const itemDetailsPage = (props: Props) => {
       console.log("no dates to block were chosen");
     }
 
+    window.location.reload();
   }
 
   const handleOpenModal = () => setOpen(true);
@@ -311,7 +313,7 @@ const itemDetailsPage = (props: Props) => {
               startDate={blockStartDate}
               endDate={blockEndDate}
               onChange={handleChangeBlockDates}
-              datesToExclude={[]} //todo: change to exclude dates arr
+              datesToExclude={excludedDates}
             />
             <Demo>
               <List dense={dense}>
@@ -342,7 +344,7 @@ const itemDetailsPage = (props: Props) => {
             </Button>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleChange}>Done</Button>
+            <Button onClick={handleClose}>Cancel</Button>
           </DialogActions>
         </Dialog>
 
