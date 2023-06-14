@@ -47,10 +47,10 @@ export const getItemsByRadius = async (coordinate: ICoordinateRadius) => {
 
 export const getItemsByUser = async (userId: string) => {
   const endpoint = `Items/OfUser/${userId}`;
-  const itemsOfUser = await BoroWSClient.request<IUserItem[]>(
+  const itemsOfUser = (await BoroWSClient.request<IUserItem[]>(
     HttpOperation.GET,
     endpoint
-  );
+  ));
 
   return itemsOfUser;
 };
@@ -67,4 +67,33 @@ export const updateItemLocation = async (
   );
 
   return response;
+};
+
+export const blockDate = async (datesToBlock: string[], itemId: string) => {
+  console.log("blockDate - entry with ", itemId, ",  ", datesToBlock);
+  const endpoint = `Reservations/${itemId}/BlockDates`;
+  await BoroWSClient.request<IItemResponse>(
+    HttpOperation.POST,
+    endpoint,
+    datesToBlock
+  );
+};
+
+export const getItemBlockedDates = async (itemId: string, from: string, to: string) => {
+  console.log("getBlockedkDates - entry with ", itemId, ", from: ", from, ", to: ", to);
+  const endpoint = `Reservations/${itemId}/BlockedDates?from=${from}&to=${to}`;
+  const response = await BoroWSClient.request<any>(
+    HttpOperation.GET,
+    endpoint
+  );
+
+  let blockedDates: Date[] = [];
+
+  if (response) {
+    response.forEach((element: any) => {
+      blockedDates.push(new Date(element));
+    });
+  }
+
+  return blockedDates;
 };

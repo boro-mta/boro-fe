@@ -3,6 +3,11 @@ import {
   Button,
   CardMedia,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Grid,
   List,
@@ -26,7 +31,7 @@ import {
 } from "../utils/calendarUtils";
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import { getItem } from "../api/ItemService";
+import { blockDate, getItem, getItemBlockedDates } from "../api/ItemService";
 import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
 
@@ -85,6 +90,11 @@ const itemDetailsPage = (props: Props) => {
 
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
+  const [blockStartDate, setBlockStartDate] = useState<Date>(new Date());
+  const [blockEndDate, setBlockEndDate] = useState<Date>(new Date());
+
+  const [excludedDates, setExcludedDates] = useState<Date[]>([]);
+
   const [selectedDatesError, setSelectedDatesError] = useState<string>("");
   const [isValidDates, setIsValidDates] = useState<boolean>();
   const [open, setOpen] = useState<boolean>(false);
@@ -122,7 +132,52 @@ const itemDetailsPage = (props: Props) => {
     }
   };
 
+  const handleChangeBlockDates = (dates: Date[]) => {
+    const [selectedBlockStartDate, selectedBlockEndDate] = dates;
+    setBlockStartDate(selectedBlockStartDate);
+    setBlockEndDate(selectedBlockEndDate);
+  }
+
+  const handleBlockDates = async () => {
+    if (blockStartDate && blockEndDate && itemId) {
+      let loop: Date = new Date(blockStartDate);
+      let datesToBlockArr: string[] = [];
+      while (loop <= blockEndDate) {
+        try {
+          console.log(loop);
+          datesToBlockArr.push(loop.toISOString());
+        } catch (e) {
+          console.log(e);
+        }
+        let newDate = loop.setDate(loop.getDate() + 1);
+        loop = new Date(newDate);
+      }
+
+      console.log(datesToBlockArr);
+      await blockDate(datesToBlockArr, itemId);
+    }
+    else {
+      console.log("no dates to block were chosen");
+    }
+
+  }
+
   const handleOpenModal = () => setOpen(true);
+
+  const [openDialog, setOpennDialog] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpennDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpennDialog(false);
+  };
+
+  const handleChange = () => {
+    setOpennDialog(false);
+  };
+
 
   const Demo = styled("div")(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -142,6 +197,20 @@ const itemDetailsPage = (props: Props) => {
       const fullDetails: IFullItemDetailsNew = (await getItem(itemId)) as IFullItemDetailsNew;
       let serverLenderDetails: any;
 
+      const today: Date = new Date();
+      let toDate = new Date();
+      toDate.setMonth(toDate.getMonth() + 3);
+
+      debugger;
+      const blockedDatesServer: Date[] = await getItemBlockedDates(
+        itemId,
+        new Date().toISOString(),
+        toDate.toISOString()
+      );
+      debugger;
+      setExcludedDates(blockedDatesServer);
+      debugger;
+
       if (fullDetails.images != undefined) {
         setImagesAsString(formatImagesOnRecieve(fullDetails.images));
       }
@@ -158,7 +227,6 @@ const itemDetailsPage = (props: Props) => {
           setOwnerFullName(fullLenderName);
         }
       }
-
     };
 
     getFullDetails();
@@ -225,6 +293,59 @@ const itemDetailsPage = (props: Props) => {
         Edit Item
       </Button>
 
+        <Button
+          variant="contained"
+          sx={{ mt: 1, mr: 1 }}
+          onClick={handleClickOpen}
+        >
+          Block Dates
+        </Button>
+
+        <Dialog open={openDialog} onClose={handleClose}>
+          <DialogTitle>Block Dates</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please choose the dates you would like to block from your item calendar:
+            </DialogContentText>
+            <DateRangePicker
+              startDate={blockStartDate}
+              endDate={blockEndDate}
+              onChange={handleChangeBlockDates}
+              datesToExclude={[]} //todo: change to exclude dates arr
+            />
+            <Demo>
+              <List dense={dense}>
+                <ListItem>
+                  {blockStartDate && (
+                    <ListItemText
+                      primary="Start Date:"
+                      secondary={blockStartDate.toDateString()}
+                    />
+                  )}
+                </ListItem>
+                <ListItem>
+                  {blockEndDate && (
+                    <ListItemText
+                      primary="End Date:"
+                      secondary={blockEndDate.toDateString()}
+                    />
+                  )}
+                </ListItem>
+              </List>
+            </Demo>
+            <Button
+              variant="contained"
+              sx={{ mt: 1, mr: 1 }}
+              onClick={handleBlockDates}
+            >
+              Block
+            </Button>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleChange}>Done</Button>
+          </DialogActions>
+        </Dialog>
+
         <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
       </>
       }
@@ -233,12 +354,13 @@ const itemDetailsPage = (props: Props) => {
       </Typography>
 
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <DateRangePicker
+        {excludedDates.length > 0 && <DateRangePicker
           startDate={startDate}
           endDate={endDate}
           onChange={handleChangeDates}
-          datesToExclude={itemDetails.excludedDates}
+          datesToExclude={excludedDates}
         />
+        }
 
         <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
           <Grid container spacing={2}>

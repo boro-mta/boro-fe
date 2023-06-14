@@ -77,12 +77,12 @@ export const actionsByStatusAndOwnership = {
     ApprovedOwner: {
         title: "Reservation is approved",
         descroption: "You have approved this reservation.",
-        components: []
+        components: [CancelButton]
     },
     ApprovedNotOwner: {
         title: "Reservation is approved",
         descroption: "The lender approved your reservation!",
-        components: []
+        components: [CancelButton]
     },
 }
 
