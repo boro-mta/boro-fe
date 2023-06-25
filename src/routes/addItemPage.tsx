@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import { FormikHelpers, useFormik } from "formik";
 import { Container } from "@mui/system";
@@ -31,7 +31,7 @@ import Paper from "@mui/material/Paper";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { IInputImage, IInputItem } from "../types";
+import { ICoordinate, IInputImage, IInputItem } from "../types";
 import { useAppSelector } from "../app/hooks";
 import { selectAddress } from "../features/UserSlice";
 import { addItem } from "../api/ItemService";
@@ -99,15 +99,17 @@ const addItemPage = (props: Props) => {
     []
   );
 
-  const [freeTextChar, setFreeTextChar] = React.useState<string>("");
-  const [freeTextCount, setFreeTextCount] = React.useState<number>(0);
-
   const [formValuesAddItem, setFormValusAddItem] = React.useState<FormValues>({
     title: "",
     description: "",
   });
 
   const navigate = useNavigate();
+
+  const [myLocation, setMyLocation] = useState<ICoordinate>({
+    latitude: 0,
+    longitude: 0,
+  });
 
   const formik: any = useFormik({
     initialValues: {
@@ -282,6 +284,25 @@ const addItemPage = (props: Props) => {
   const handleChangeCategories = (value: any) => {
     setSelectedCategories(value);
   };
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setMyLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      () => {
+        setMyLocation({
+          latitude: 32.08602761576923,
+          longitude: 34.774667,
+        });
+        console.log("Failed to get the user's location");
+      }
+    );
+  }, []);
+
   return (
     <Container>
       <Typography variant="h3">Add New Item</Typography>
@@ -331,6 +352,19 @@ const addItemPage = (props: Props) => {
                           formik.errors.description
                         }
                       />
+
+                      {myLocation.latitude != 0 && myLocation.longitude != 0 &&
+                        <TextField
+                          fullWidth
+                          id="location"
+                          name="location"
+                          label="Location"
+                          multiline
+                          margin="normal"
+                          value={myLocation.latitude}
+                          onChange={() => { }}
+                        />
+                      }
 
                       <Autocomplete
                         id="condition"

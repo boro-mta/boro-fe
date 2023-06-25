@@ -69,13 +69,23 @@ export const updateItemLocation = async (
   return response;
 };
 
-export const blockDate = async (datesToBlock: string[], itemId: string) => {
-  console.log("blockDate - entry with ", itemId, ",  ", datesToBlock);
+export const blockDates = async (datesToBlock: string[], itemId: string) => {
+  console.log("blockDates - entry with ", itemId, ",  ", datesToBlock);
   const endpoint = `Reservations/${itemId}/BlockDates`;
   await BoroWSClient.request<IItemResponse>(
     HttpOperation.POST,
     endpoint,
     datesToBlock
+  );
+};
+
+export const unBlockDates = async (datesToUnBlock: string[], itemId: string) => {
+  console.log("unblockDates - entry with ", itemId, ",  ", datesToUnBlock);
+  const endpoint = `Reservations/${itemId}/UnblockDates`;
+  await BoroWSClient.request<IItemResponse>(
+    HttpOperation.POST,
+    endpoint,
+    datesToUnBlock
   );
 };
 

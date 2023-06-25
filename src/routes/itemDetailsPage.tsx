@@ -31,7 +31,7 @@ import {
 } from "../utils/calendarUtils";
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import { blockDate, getItem, getItemBlockedDates } from "../api/ItemService";
+import { blockDates, getItem, getItemBlockedDates, unBlockDates } from "../api/ItemService";
 import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
 
@@ -90,8 +90,8 @@ const itemDetailsPage = (props: Props) => {
 
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
-  const [blockStartDate, setBlockStartDate] = useState<Date>(new Date());
-  const [blockEndDate, setBlockEndDate] = useState<Date>(new Date());
+  const [manageStartDate, setManageStartDate] = useState<Date>(new Date());
+  const [manageEndDate, setManageEndDate] = useState<Date>(new Date());
 
   const [excludedDates, setExcludedDates] = useState<Date[]>([]);
 
@@ -99,6 +99,7 @@ const itemDetailsPage = (props: Props) => {
   const [isValidDates, setIsValidDates] = useState<boolean>();
   const [open, setOpen] = useState<boolean>(false);
   const [imagesAsString, setImagesAsString] = useState<string[]>([]);
+  const [blockedDatesToHighlight, setBlockedDatesToHighlight] = useState<any>();
 
   const handleChangeDates = (dates: Date[]) => {
     debugger;
@@ -110,8 +111,8 @@ const itemDetailsPage = (props: Props) => {
     if (selectedStartDate && selectedEndDate) {
       while (loop <= selectedEndDate) {
         if (
-          itemDetails.excludedDates !== undefined &&
-          checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)
+          excludedDates !== undefined &&
+          checkExcludeDatesArrayContainsDate(loop, excludedDates)
         ) {
           setSelectedDatesError(
             "The date " +
@@ -135,33 +136,70 @@ const itemDetailsPage = (props: Props) => {
 
   const handleChangeBlockDates = (dates: Date[]) => {
     const [selectedBlockStartDate, selectedBlockEndDate] = dates;
-    setBlockStartDate(selectedBlockStartDate);
-    setBlockEndDate(selectedBlockEndDate);
+    setManageStartDate(selectedBlockStartDate);
+    setManageEndDate(selectedBlockEndDate);
   }
 
   const handleBlockDates = async () => {
-    if (blockStartDate && blockEndDate && itemId) {
-      let loop: Date = new Date(blockStartDate);
-      let datesToBlockArr: string[] = [];
-      while (loop <= blockEndDate) {
-        try {
-          console.log(loop);
-          datesToBlockArr.push(loop.toISOString());
-        } catch (e) {
-          console.log(e);
-        }
-        let newDate = loop.setDate(loop.getDate() + 1);
-        loop = new Date(newDate);
-      }
-
-      console.log(datesToBlockArr);
-      await blockDate(datesToBlockArr, itemId);
+    if (itemId) {
+      let datesToBlockStringFormat: string[] = getDatesInStringArr(manageStartDate, manageEndDate);
+      await blockDates(datesToBlockStringFormat, itemId);
     }
     else {
-      console.log("no dates to block were chosen");
+      console.log("there is no itemId");
     }
 
     window.location.reload();
+  }
+
+  const handleUnBlockDates = async () => {
+    if (itemId) {
+      let datesToUnBlock: string[] = getDatesInStringArr(manageStartDate, manageEndDate);
+      await unBlockDates(datesToUnBlock, itemId);
+    }
+    else {
+      console.log("there is no itemId");
+    }
+
+    window.location.reload();
+  }
+
+  const getDatesInStringArr = (startDate: Date, endDate: Date): string[] => {
+    let loop: Date = new Date(manageStartDate);
+    let datesInStringArr: string[] = [];
+
+    while (loop <= manageEndDate) {
+      try {
+        console.log(loop);
+        datesInStringArr.push(loop.toISOString());
+      } catch (e) {
+        console.log(e);
+      }
+
+      let newDate = loop.setDate(loop.getDate() + 1);
+      loop = new Date(newDate);
+    }
+
+    return datesInStringArr;
+  }
+
+  const getDatesInDateArr = (startDate: Date, endDate: Date): Date[] => {
+    let loop: Date = new Date(manageStartDate);
+    let datesInDateArr: Date[] = [];
+
+    while (loop <= manageEndDate) {
+      try {
+        console.log(loop);
+        datesInDateArr.push(loop);
+      } catch (e) {
+        console.log(e);
+      }
+
+      let newDate = loop.setDate(loop.getDate() + 1);
+      loop = new Date(newDate);
+    }
+
+    return datesInDateArr;
   }
 
   const handleOpenModal = () => setOpen(true);
@@ -211,6 +249,14 @@ const itemDetailsPage = (props: Props) => {
       );
       debugger;
       setExcludedDates(blockedDatesServer);
+      setBlockedDatesToHighlight(
+        [
+          {
+            "react-datepicker__day--highlighted-custom-1":
+              blockedDatesServer
+          },
+        ]
+      )
       debugger;
 
       if (fullDetails.images != undefined) {
@@ -300,48 +346,62 @@ const itemDetailsPage = (props: Props) => {
           sx={{ mt: 1, mr: 1 }}
           onClick={handleClickOpen}
         >
-          Block Dates
+          Manage Calendar
         </Button>
 
         <Dialog open={openDialog} onClose={handleClose}>
-          <DialogTitle>Block Dates</DialogTitle>
+          <DialogTitle>Manage Calendar</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Please choose the dates you would like to block from your item calendar:
+              Please choose the dates you would like to block/unblock from your item calendar
+              (pink dates are your blocked dates):
             </DialogContentText>
             <DateRangePicker
-              startDate={blockStartDate}
-              endDate={blockEndDate}
+              startDate={manageStartDate}
+              endDate={manageEndDate}
               onChange={handleChangeBlockDates}
-              datesToExclude={excludedDates}
+              datesToExclude={[]}
+              datesToHighlight={blockedDatesToHighlight}
             />
             <Demo>
               <List dense={dense}>
                 <ListItem>
-                  {blockStartDate && (
+                  {manageStartDate && (
                     <ListItemText
                       primary="Start Date:"
-                      secondary={blockStartDate.toDateString()}
+                      secondary={manageStartDate.toDateString()}
                     />
                   )}
                 </ListItem>
                 <ListItem>
-                  {blockEndDate && (
+                  {manageEndDate && (
                     <ListItemText
                       primary="End Date:"
-                      secondary={blockEndDate.toDateString()}
+                      secondary={manageEndDate.toDateString()}
                     />
                   )}
                 </ListItem>
               </List>
             </Demo>
-            <Button
+            {<> <Button
               variant="contained"
               sx={{ mt: 1, mr: 1 }}
               onClick={handleBlockDates}
+              disabled={!manageEndDate}
             >
               Block
             </Button>
+
+              <Button
+                variant="contained"
+                sx={{ mt: 1, mr: 1 }}
+                onClick={handleUnBlockDates}
+                disabled={!manageEndDate}
+              >
+                Unblock
+              </Button>
+            </>
+            }
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
@@ -356,13 +416,14 @@ const itemDetailsPage = (props: Props) => {
       </Typography>
 
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        {excludedDates.length > 0 && <DateRangePicker
+        <DateRangePicker
           startDate={startDate}
           endDate={endDate}
           onChange={handleChangeDates}
           datesToExclude={excludedDates}
+          datesToHighlight={[]}
         />
-        }
+
 
         <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
           <Grid container spacing={2}>

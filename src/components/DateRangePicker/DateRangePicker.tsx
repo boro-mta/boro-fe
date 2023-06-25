@@ -6,9 +6,10 @@ type Props = {
     endDate: Date;
     onChange: (dates: any) => void;
     datesToExclude: Date[];
+    datesToHighlight: Date[];
 };
 
-const DateRangePicker = ({ startDate, endDate, onChange, datesToExclude }: Props) => {
+const DateRangePicker = ({ startDate, endDate, onChange, datesToExclude, datesToHighlight }: Props) => {
 
     return (
         <DatePicker
@@ -21,6 +22,7 @@ const DateRangePicker = ({ startDate, endDate, onChange, datesToExclude }: Props
             isClearable={true}
             excludeDates={datesToExclude}
             minDate={new Date()}
+            highlightDates={datesToHighlight}
         />
     )
 }
