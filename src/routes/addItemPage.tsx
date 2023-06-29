@@ -192,7 +192,8 @@ const addItemPage = (props: Props) => {
   };
 
   const [address, setAddress] = useState<ICoordinate>(
-    useAppSelector(selectAddress) //to ask
+    useAppSelector(selectAddress) // current location
+    //todo: user location from server
   );
 
   const onAddItem = () => {

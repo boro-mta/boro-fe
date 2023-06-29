@@ -25,15 +25,13 @@ const AddressField = ({ onLoad, handlePlaceChanged }: Props) => {
     return (
         <>
             {isLoaded && (
-                <Container>
-                    <Autocomplete onLoad={onLoad} onPlaceChanged={handlePlaceChanged}>
-                        <input
-                            type="text"
-                            placeholder="Search for address"
-                            style={{ width: "100%", height: "100%" }}
-                        />
-                    </Autocomplete>
-                </Container>
+                <Autocomplete onLoad={onLoad} onPlaceChanged={handlePlaceChanged}>
+                    <input
+                        type="text"
+                        placeholder="Search for address"
+                        style={{ width: "100%", height: "100%" }}
+                    />
+                </Autocomplete>
             )
             }
         </>
