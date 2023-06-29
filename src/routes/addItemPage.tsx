@@ -80,15 +80,12 @@ const validationSchema = yup.object({
 });
 
 const addItemPage = (props: Props) => {
-  const theme = useTheme();
-
   const imagesInputRef = useRef<HTMLInputElement | null>(null);
   const [images, setImages] = useState<string[]>();
   const [imagesNames, setImagesNames] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
   const [condition, setCondition] = useState<string>("");
-  const [newCategory, setNewCategory] = useState<any>("");
 
   const [categoryArr, setCategoryArr] = React.useState<any[]>(
     categoriesOptions

@@ -33,44 +33,13 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { blockDates, getItem, getItemBlockedDates, unBlockDates } from "../api/ItemService";
 import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
+import { Row } from "../components/ItemDetailsTable/ItemDetailsTable";
 
 type IFullItemDetailsParams = {
   itemId: string;
 };
 
 type Props = {};
-
-interface IRowData {
-  key: string;
-  value: string;
-}
-
-interface ITableData {
-  tableData: IRowData[];
-}
-
-const Row = ({ tableData }: ITableData) => {
-  return (
-    <div>
-      {tableData.map((row, i) => (
-        <div key={i}>
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <Typography
-              variant="body1"
-              sx={{ flexBasis: "50%", color: "darkgray" }}
-            >
-              {row.key}
-            </Typography>
-            <Typography variant="body1" sx={{ flexBasis: "50%" }}>
-              {row.value}
-            </Typography>
-          </div>
-          {i < tableData.length - 1 && <Divider sx={{ margin: "5px" }} />}
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const itemDetailsPage = (props: Props) => {
   const navigate = useNavigate();
@@ -181,6 +150,7 @@ const itemDetailsPage = (props: Props) => {
     return datesInStringArr;
   }
 
+  //todo: put in another file
   const getDatesInDateArr = (startDate: Date, endDate: Date): Date[] => {
     let loop: Date = new Date(manageStartDate);
     let datesInDateArr: Date[] = [];
@@ -215,7 +185,6 @@ const itemDetailsPage = (props: Props) => {
   const handleChange = () => {
     setOpennDialog(false);
   };
-
 
   const Demo = styled("div")(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -407,47 +376,50 @@ const itemDetailsPage = (props: Props) => {
         <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
       </>
       }
-      <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-        Find available dates:
-      </Typography>
 
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <DateRangePicker
-          startDate={startDate}
-          endDate={endDate}
-          onChange={handleChangeDates}
-          datesToExclude={excludedDates}
-          datesToHighlight={[]}
-        />
+      {!isOwner && <>
+        <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+          Find available dates:
+        </Typography>
+
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <DateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            onChange={handleChangeDates}
+            datesToExclude={excludedDates}
+            datesToHighlight={[]}
+          />
 
 
-        <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Demo>
-                <List dense={dense}>
-                  <ListItem>
-                    {startDate && (
-                      <ListItemText
-                        primary="Start Date:"
-                        secondary={startDate.toDateString()}
-                      />
-                    )}
-                  </ListItem>
-                  <ListItem>
-                    {endDate && (
-                      <ListItemText
-                        primary="End Date:"
-                        secondary={endDate.toDateString()}
-                      />
-                    )}
-                  </ListItem>
-                </List>
-              </Demo>
+          <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Demo>
+                  <List dense={dense}>
+                    <ListItem>
+                      {startDate && (
+                        <ListItemText
+                          primary="Start Date:"
+                          secondary={startDate.toDateString()}
+                        />
+                      )}
+                    </ListItem>
+                    <ListItem>
+                      {endDate && (
+                        <ListItemText
+                          primary="End Date:"
+                          secondary={endDate.toDateString()}
+                        />
+                      )}
+                    </ListItem>
+                  </List>
+                </Demo>
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
-      </div>
+          </Box>
+        </div>
+      </>}
 
       {isValidDates === true && (
         <Button
