@@ -21,7 +21,6 @@ import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
-import { allItemDetailsNew } from "../mocks/fullItemsDetails";
 import { IFullItemDetailsNew, IUserDetails } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
@@ -102,7 +101,6 @@ const itemDetailsPage = (props: Props) => {
   const [blockedDatesToHighlight, setBlockedDatesToHighlight] = useState<any>();
 
   const handleChangeDates = (dates: Date[]) => {
-    debugger;
     const [selectedStartDate, selectedEndDate] = dates;
     setStartDate(selectedStartDate);
     setEndDate(selectedEndDate);
@@ -241,13 +239,12 @@ const itemDetailsPage = (props: Props) => {
       let toDate = new Date();
       toDate.setMonth(toDate.getMonth() + 3);
 
-      debugger;
       const blockedDatesServer: Date[] = await getItemBlockedDates(
         itemId,
         new Date().toISOString(),
         toDate.toISOString()
       );
-      debugger;
+
       setExcludedDates(blockedDatesServer);
       setBlockedDatesToHighlight(
         [
@@ -257,7 +254,6 @@ const itemDetailsPage = (props: Props) => {
           },
         ]
       )
-      debugger;
 
       if (fullDetails.images != undefined) {
         setImagesAsString(formatImagesOnRecieve(fullDetails.images));

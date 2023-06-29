@@ -22,7 +22,6 @@ import Stack from "@mui/material/Stack";
 import { categoriesOptions, conditionOptions } from "../mocks/items";
 import { Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { SelectChangeEvent } from "@mui/material/Select";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -32,9 +31,11 @@ import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ICoordinate, IInputImage, IInputItem } from "../types";
-import { useAppSelector } from "../app/hooks";
-import { selectAddress } from "../features/UserSlice";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { selectAddress, updateAddress } from "../features/UserSlice";
 import { addItem } from "../api/ItemService";
+import AddressField from "../components/AddressFieldComponent/AddressField";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 type Props = {};
 
@@ -193,42 +194,12 @@ const addItemPage = (props: Props) => {
     return imagesForBody;
   };
 
-  const handleChipCategoriesChange = (
-    event: SelectChangeEvent<typeof selectedCategories>
-  ) => {
-    const {
-      target: { value },
-    } = event;
-    setSelectedCategories(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
+  const [address, setAddress] = useState<ICoordinate>(
+    useAppSelector(selectAddress) //to ask
+  );
 
-  const handleNewCategory = (event: any): void => {
-    setNewCategory(event.target.value);
-  };
-
-  const checkIfCategoryExist = (category: string): boolean => {
-    for (let i = 0; i < categoryArr.length; i++) {
-      const categoryFromUserLowerCase: string = category.toLowerCase();
-      const categoryFromArr: String = categoryArr[i].text;
-      const categoryFromArrLowerCase: String = categoryFromArr.toLowerCase();
-
-      if (categoryFromArrLowerCase === categoryFromUserLowerCase) {
-        return true;
-      }
-    }
-
-    return false;
-  };
-
-  const addCategoryToArr = (category: any) => {
-    setCategoryArr((current: any) => [...current, category]);
-  };
-
-  const address = useAppSelector(selectAddress);
   const onAddItem = () => {
+    handleSaveAddress();
     const values: FormValues = formValuesAddItem;
     const forRequest: IInputItem = {
       condition: condition,
@@ -283,6 +254,51 @@ const addItemPage = (props: Props) => {
 
   const handleChangeCategories = (value: any) => {
     setSelectedCategories(value);
+  };
+
+  // item location
+  const [userInfo, setUser] = useLocalStorage("user", "");
+  const dispatch = useAppDispatch();
+
+  const autocompleteRef = useRef<google.maps.places.Autocomplete>();
+
+  const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const handlePlaceChanged = () => {
+    let place;
+
+    try {
+      // Check if autocompleteRef exists and has the getPlace() method
+      if (
+        autocompleteRef &&
+        autocompleteRef.current &&
+        typeof autocompleteRef.current.getPlace === "function"
+      ) {
+        place = autocompleteRef.current.getPlace();
+      }
+    } catch (error) {
+      console.error("Error getting place:", error);
+      return;
+    }
+
+    // Check if place and place.geometry exist and have the location property
+    if (place && place.geometry && place.geometry.location) {
+      const newAddress = {
+        latitude: place.geometry.location.lat(),
+        longitude: place.geometry.location.lng(),
+      };
+      setAddress(newAddress);
+    } else {
+      console.error("Invalid place object:", place);
+    }
+  };
+
+  const handleSaveAddress = () => {
+    const userLocalInfo = JSON.parse(userInfo);
+    dispatch(updateAddress(address));
+    setUser(JSON.stringify({ ...userLocalInfo, address }));
   };
 
   useEffect(() => {
@@ -353,18 +369,10 @@ const addItemPage = (props: Props) => {
                         }
                       />
 
-                      {myLocation.latitude != 0 && myLocation.longitude != 0 &&
-                        <TextField
-                          fullWidth
-                          id="location"
-                          name="location"
-                          label="Location"
-                          multiline
-                          margin="normal"
-                          value={myLocation.latitude}
-                          onChange={() => { }}
-                        />
-                      }
+                      <AddressField
+                        onLoad={onLoad}
+                        handlePlaceChanged={handlePlaceChanged}
+                      />
 
                       <Autocomplete
                         id="condition"
