@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
-import { initialState, updateUser } from "../features/UserSlice";
+import { initialState, updateAddress, updateUser } from "../features/UserSlice";
 import {
   selectEmail,
   selectUserName,
@@ -14,8 +14,14 @@ import {
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { updateUser as apiUpdateUser } from "../api/UserService"
 import IUpdateUserData from "../api/Models/IUpdateUserData";
+import useLocalStorage from "../hooks/useLocalStorage";
+import AddressField from "../components/AddressFieldComponent/AddressField";
 
 type Props = {};
+type address = {
+  longitude: number,
+  latitude: number
+}
 
 //A validation schema for the form
 const validationSchema = yup.object({
@@ -39,6 +45,12 @@ const NewUserPage = (props: Props) => {
   const userProfilePicture = useAppSelector(selectPicture);
   const [firstName, lastName] = userFullName.split(" ");
   const userId = useAppSelector(selectUserId);
+  const [userChosenAddress, setUserChosenAddress] = useState<address>(
+    {
+      longitude: 0,
+      latitude: 0
+    }
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -64,8 +76,8 @@ const NewUserPage = (props: Props) => {
     const userDetails = {
       about: formik.values.about,
       email: formik.values.email,
-      longitude: 0,
-      latitude: 0,
+      longitude: userChosenAddress.longitude,
+      latitude: userChosenAddress.latitude,
     } as IUpdateUserData;
 
     try {
@@ -89,6 +101,51 @@ const NewUserPage = (props: Props) => {
     } catch (error) {
       console.error("Failed to create user:", error);
     }
+  };
+
+  // item location
+  const [userInfo, setUser] = useLocalStorage("user", "");
+  //const dispatch = useAppDispatch();
+
+  const autocompleteRef = useRef<google.maps.places.Autocomplete>();
+
+  const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const handlePlaceChanged = () => {
+    let place;
+
+    try {
+      // Check if autocompleteRef exists and has the getPlace() method
+      if (
+        autocompleteRef &&
+        autocompleteRef.current &&
+        typeof autocompleteRef.current.getPlace === "function"
+      ) {
+        place = autocompleteRef.current.getPlace();
+      }
+    } catch (error) {
+      console.error("Error getting place:", error);
+      return;
+    }
+
+    // Check if place and place.geometry exist and have the location property
+    if (place && place.geometry && place.geometry.location) {
+      const newAddress = {
+        latitude: place.geometry.location.lat(),
+        longitude: place.geometry.location.lng(),
+      };
+      setUserChosenAddress(newAddress);
+    } else {
+      console.error("Invalid place object:", place);
+    }
+  };
+
+  const handleSaveAddress = () => {
+    const userLocalInfo = JSON.parse(userInfo);
+    dispatch(updateAddress(userChosenAddress));
+    setUser(JSON.stringify({ ...userLocalInfo, userChosenAddress }));
   };
 
   return (
@@ -122,6 +179,10 @@ const NewUserPage = (props: Props) => {
           onChange={formik.handleChange}
           error={formik.touched.email && Boolean(formik.errors.email)}
           helperText={formik.touched.email && formik.errors.email}
+        />
+        <AddressField
+          onLoad={onLoad}
+          handlePlaceChanged={handlePlaceChanged}
         />
         <Button
           variant="contained"
