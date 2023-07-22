@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import { FormikHelpers, useFormik } from "formik";
 import { Container } from "@mui/system";
@@ -22,7 +22,6 @@ import Stack from "@mui/material/Stack";
 import { categoriesOptions, conditionOptions } from "../mocks/items";
 import { Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { SelectChangeEvent } from "@mui/material/Select";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -31,10 +30,12 @@ import Paper from "@mui/material/Paper";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { IInputImage, IInputItem } from "../types";
-import { useAppSelector } from "../app/hooks";
-import { selectAddress } from "../features/UserSlice";
+import { ICoordinate, IInputImage, IInputItem } from "../types";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { selectCurrentAddress, updateServerAddress } from "../features/UserSlice";
 import { addItem } from "../api/ItemService";
+import AddressField from "../components/AddressFieldComponent/AddressField";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 type Props = {};
 
@@ -79,15 +80,12 @@ const validationSchema = yup.object({
 });
 
 const addItemPage = (props: Props) => {
-  const theme = useTheme();
-
   const imagesInputRef = useRef<HTMLInputElement | null>(null);
   const [images, setImages] = useState<string[]>();
   const [imagesNames, setImagesNames] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
   const [condition, setCondition] = useState<string>("");
-  const [newCategory, setNewCategory] = useState<any>("");
 
   const [categoryArr, setCategoryArr] = React.useState<any[]>(
     categoriesOptions
@@ -99,15 +97,17 @@ const addItemPage = (props: Props) => {
     []
   );
 
-  const [freeTextChar, setFreeTextChar] = React.useState<string>("");
-  const [freeTextCount, setFreeTextCount] = React.useState<number>(0);
-
   const [formValuesAddItem, setFormValusAddItem] = React.useState<FormValues>({
     title: "",
     description: "",
   });
 
   const navigate = useNavigate();
+
+  const [myLocation, setMyLocation] = useState<ICoordinate>({
+    latitude: 0,
+    longitude: 0,
+  });
 
   const formik: any = useFormik({
     initialValues: {
@@ -191,42 +191,13 @@ const addItemPage = (props: Props) => {
     return imagesForBody;
   };
 
-  const handleChipCategoriesChange = (
-    event: SelectChangeEvent<typeof selectedCategories>
-  ) => {
-    const {
-      target: { value },
-    } = event;
-    setSelectedCategories(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
+  const [address, setAddress] = useState<ICoordinate>(
+    useAppSelector(selectCurrentAddress) // current location
+    //todo: user location from server
+  );
 
-  const handleNewCategory = (event: any): void => {
-    setNewCategory(event.target.value);
-  };
-
-  const checkIfCategoryExist = (category: string): boolean => {
-    for (let i = 0; i < categoryArr.length; i++) {
-      const categoryFromUserLowerCase: string = category.toLowerCase();
-      const categoryFromArr: String = categoryArr[i].text;
-      const categoryFromArrLowerCase: String = categoryFromArr.toLowerCase();
-
-      if (categoryFromArrLowerCase === categoryFromUserLowerCase) {
-        return true;
-      }
-    }
-
-    return false;
-  };
-
-  const addCategoryToArr = (category: any) => {
-    setCategoryArr((current: any) => [...current, category]);
-  };
-
-  const address = useAppSelector(selectAddress);
   const onAddItem = () => {
+    handleSaveAddress();
     const values: FormValues = formValuesAddItem;
     const forRequest: IInputItem = {
       condition: condition,
@@ -282,6 +253,70 @@ const addItemPage = (props: Props) => {
   const handleChangeCategories = (value: any) => {
     setSelectedCategories(value);
   };
+
+  // item location
+  const [userInfo, setUser] = useLocalStorage("user", "");
+  const dispatch = useAppDispatch();
+
+  const autocompleteRef = useRef<google.maps.places.Autocomplete>();
+
+  const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const handlePlaceChanged = () => {
+    let place;
+
+    try {
+      // Check if autocompleteRef exists and has the getPlace() method
+      if (
+        autocompleteRef &&
+        autocompleteRef.current &&
+        typeof autocompleteRef.current.getPlace === "function"
+      ) {
+        place = autocompleteRef.current.getPlace();
+      }
+    } catch (error) {
+      console.error("Error getting place:", error);
+      return;
+    }
+
+    // Check if place and place.geometry exist and have the location property
+    if (place && place.geometry && place.geometry.location) {
+      const newAddress = {
+        latitude: place.geometry.location.lat(),
+        longitude: place.geometry.location.lng(),
+      };
+      setAddress(newAddress);
+    } else {
+      console.error("Invalid place object:", place);
+    }
+  };
+
+  const handleSaveAddress = () => {
+    const userLocalInfo = JSON.parse(userInfo);
+    dispatch(updateServerAddress(address));
+    setUser(JSON.stringify({ ...userLocalInfo, address }));
+  };
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setMyLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      () => {
+        setMyLocation({
+          latitude: 32.08602761576923,
+          longitude: 34.774667,
+        });
+        console.log("Failed to get the user's location");
+      }
+    );
+  }, []);
+
   return (
     <Container>
       <Typography variant="h3">Add New Item</Typography>
@@ -330,6 +365,11 @@ const addItemPage = (props: Props) => {
                           formik.touched.description &&
                           formik.errors.description
                         }
+                      />
+
+                      <AddressField
+                        onLoad={onLoad}
+                        handlePlaceChanged={handlePlaceChanged}
                       />
 
                       <Autocomplete

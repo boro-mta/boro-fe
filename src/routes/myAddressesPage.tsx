@@ -4,7 +4,7 @@ import { Autocomplete } from "@react-google-maps/api";
 import React, { useRef, useState } from "react";
 import { ICoordinate } from "../types";
 import { useAppDispatch } from "../app/hooks";
-import { updateAddress } from "../features/UserSlice";
+import { updateServerAddress } from "../features/UserSlice";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useNavigate } from "react-router";
 import useLocalStorage from "../hooks/useLocalStorage";
@@ -69,7 +69,7 @@ const MyAddressesPage = (props: Props) => {
 
   const handleSaveAddress = () => {
     const userLocalInfo = JSON.parse(userInfo);
-    dispatch(updateAddress(address));
+    dispatch(updateServerAddress(address));
     setUser(JSON.stringify({ ...userLocalInfo, address }));
   };
 

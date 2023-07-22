@@ -18,7 +18,7 @@ import {
 } from "../api/ReservationService";
 import { getUserPicture, getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
-import { getCurrentUserId } from "../utils/authUtils";
+import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
 import IUserProfile from "../api/Models/IUserProfile";
 import { IBodyStatus, getBodyByStatus, statusFromNumToString } from "../utils/reservationsUtils";
 
@@ -73,12 +73,9 @@ const ReservationDetailsPage = (props: Props) => {
   let { reservationId } = useParams<IReservationDetailsParams>();
 
   const [serverRequestError, setServerRequestError] = useState<any>();
-  const [userId, serUserId] = useState<string>();
   const [isLender, setIsLender] = useState<boolean>(false);
 
   let itemServerDetails: IFullItemDetailsNew;
-  let personServerDetails: any;
-  let serverUserId: string | null;
 
   const navigate = useNavigate();
 
@@ -105,6 +102,9 @@ const ReservationDetailsPage = (props: Props) => {
     }
   );
 
+  const [borrowerId, setBorrowerId] = useState<string>("");
+  const [lenderId, setLenderId] = useState<string>("");
+
   useEffect(() => {
     const getReservationDetails = async () => {
       let reservationDetails: IReservationDetails;
@@ -115,38 +115,15 @@ const ReservationDetailsPage = (props: Props) => {
           )) as IReservationDetails;
           setReservationDetails(reservationDetails);
           const reservationItemId = reservationDetails.itemId;
+          setLenderId(reservationDetails.lenderId);
+          setBorrowerId(reservationDetails.borrowerId);
 
           itemServerDetails = (await getItem(
             reservationItemId
           )) as IFullItemDetailsNew;
           setItemDetails(itemServerDetails);
 
-          serverUserId = getCurrentUserId();
 
-          if (serverUserId === reservationDetails.lenderId) {
-            //this is lender
-            console.log("Lender");
-            setIsLender(true);
-            personServerDetails = await getUserProfile(
-              reservationDetails.borrowerId
-            );
-          } else {
-            //this is borrower
-            console.log("borrower");
-            setIsLender(false);
-            personServerDetails = await getUserProfile(
-              reservationDetails.lenderId
-            );
-          }
-
-          if (personServerDetails) {
-            setRelevantPersonDetails(personServerDetails);
-
-            const serverProfilePicture = await getUserPicture(personServerDetails.userId);
-            setUserProfilePicture(serverProfilePicture);
-          }
-
-          setRelevantComponentDetails(getBodyByStatus(reservationDetails.status, isLender));
         } catch (err) {
           console.log("Error while loading reservation");
           setServerRequestError(err);
@@ -157,6 +134,28 @@ const ReservationDetailsPage = (props: Props) => {
 
     getReservationDetails();
   }, []);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (borrowerId.length > 0 && lenderId.length > 0) {
+        let x = isCurrentUser(lenderId)
+        setIsLender(x);
+        setRelevantComponentDetails(getBodyByStatus(reservationDetails.status, x));
+
+        const personServerDetails: IUserProfile = (await getUserProfile(
+          x ? borrowerId : lenderId
+        )) as IUserProfile;
+
+        if (personServerDetails) {
+          setRelevantPersonDetails(personServerDetails);
+
+          const serverProfilePicture = await getUserPicture(personServerDetails.userId);
+          setUserProfilePicture(serverProfilePicture);
+        }
+      }
+    }
+    fetchUserDetails();
+  }, [borrowerId, lenderId])
 
   console.log(reservationDetails);
 

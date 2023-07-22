@@ -29,9 +29,14 @@ function App() {
           facebookId: userLocalInfo.facebookId,
           accessToken: userLocalInfo.accessToken,
           picture: userLocalInfo.picture,
-          address: {
+          currentAddress: {
             latitude: location.latitude,
             longitude: location.longitude,
+          },
+          serverAddress: {
+            //todo: what to put here?
+            latitude: 0,
+            longitude: 0,
           },
           userId: userLocalInfo.guid,
         })

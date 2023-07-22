@@ -81,7 +81,6 @@ const RequestToBookPage = (props: Props) => {
   };
 
   const handleConfirmRequest = async () => {
-    debugger;
     const forRequest = {
       startDate: requestStartDate,
       endDate: requestEndDate,
@@ -254,6 +253,7 @@ const RequestToBookPage = (props: Props) => {
           endDate={requestEndDate}
           onChange={() => { }}
           datesToExclude={excludedDates}
+          datesToHighlight={[]}
         />
 
         <div>
@@ -275,6 +275,7 @@ const RequestToBookPage = (props: Props) => {
                 endDate={calendarEndDate}
                 onChange={handleChangeDates}
                 datesToExclude={excludedDates}
+                datesToHighlight={[]}
               />
               {calendarStartDate && (
                 <p>start date: {calendarStartDate.toDateString()}</p>

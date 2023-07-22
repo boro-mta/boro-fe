@@ -3,11 +3,12 @@ import FacebookLoginButton from "../components/FacebookLogin/FacebookLogin";
 import { Box } from "@mui/material";
 import { ReactFacebookLoginInfo } from "react-facebook-login";
 import { useNavigate } from "react-router-dom";
-import { updatePartialUser, updateUser } from "../features/UserSlice";
+import { updatePartialUser, updateServerAddress, updateUser } from "../features/UserSlice";
 import { useAppDispatch } from "../app/hooks";
 import BoroWSClient from "../api/BoroWebServiceClient";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { ICoordinate } from "../types";
+import { getUserLocation } from "../api/UserService";
 
 const FacebookLoginPage = () => {
   //Get redux dispatcher
@@ -26,12 +27,12 @@ const FacebookLoginPage = () => {
       const userLocalInfo = JSON.parse(userInfo);
       console.log("Parsed info ", userLocalInfo);
 
-      let location: ICoordinate = { latitude: 0, longitude: 0 };
+      let currentLocation: ICoordinate = { latitude: 0, longitude: 0 };
       if (userLocalInfo.address && userLocalInfo.address.latitude) {
-        location.latitude = userLocalInfo.address.latitude;
+        currentLocation.latitude = userLocalInfo.address.latitude;
       }
       if (userLocalInfo.address && userLocalInfo.address.longitude) {
-        location.longitude = userLocalInfo.address.longitude;
+        currentLocation.longitude = userLocalInfo.address.longitude;
       }
 
       dispatch(
@@ -41,9 +42,14 @@ const FacebookLoginPage = () => {
           facebookId: userLocalInfo.facebookId,
           accessToken: userLocalInfo.accessToken,
           picture: userLocalInfo.picture,
-          address: {
-            latitude: location.latitude,
-            longitude: location.longitude,
+          currentAddress: {
+            longitude: currentLocation.longitude,
+            latitude: currentLocation.latitude,
+          },
+          serverAddress: {
+            //server address is not chosen yet 
+            longitude: 0,
+            latitude: 0,
           },
           userId: userLocalInfo.guid,
         })
@@ -67,7 +73,8 @@ const FacebookLoginPage = () => {
         facebookId: response.id,
         accessToken: response.accessToken,
         picture: pictureUrl || "",
-        address: { latitude: 0, longitude: 0 },
+        serverAddress: { latitude: 0, longitude: 0 },
+        currentAddress: { latitude: 0, longitude: 0 },
         userId: "",
       })
     );
@@ -78,54 +85,74 @@ const FacebookLoginPage = () => {
       facebookId: response.userID,
     };
 
-    //A function used to authenticate infront of Boro's server
-    const backendFacebookAuthentication = async (
-      userFacebookLoginDetails: any
-    ) => {
-      //Create a user on Boro's server using facebook id and facebook access token
-      const backendResponse = await BoroWSClient.loginWithFacebook(
-        userFacebookLoginDetails.accessToken,
-        userFacebookLoginDetails.facebookId
-      );
+    //Call the function to authenticate infront of Boro's server
+    backendFacebookAuthentication(userFacebookLoginDetails, response, pictureUrl);
+  };
 
-      //Update the user's guid after the backend response
-      dispatch(
-        updatePartialUser({
-          picture: pictureUrl || "",
-          userId: backendResponse.userId,
-        })
-      );
-      console.log(backendResponse);
+  //A function used to authenticate infront of Boro's server
+  const backendFacebookAuthentication = async (userFacebookLoginDetails: any, response: ReactFacebookLoginInfo, pictureUrl: any) => {
+    //Create a user on Boro's server using facebook id and facebook access token
+    const backendResponse = await BoroWSClient.loginWithFacebook(
+      userFacebookLoginDetails.accessToken,
+      userFacebookLoginDetails.facebookId
+    );
 
-      //Create a user to save.
-      //Consider adding a type to the savedUser
-      const savedUser = {
-        name: response.name || "",
-        email: response.email || "",
-        facebookId: response.id,
-        accessToken: response.accessToken,
+    //Update the user's guid after the backend response
+    dispatch(
+      updatePartialUser({
         picture: pictureUrl || "",
-        guid: backendResponse.userId,
+        userId: backendResponse.userId,
+      })
+    );
+    console.log(backendResponse);
+
+    //Create a user to save.
+    //Consider adding a type to the savedUser
+    let savedUser = {
+      name: response.name || "",
+      email: response.email || "",
+      facebookId: response.id,
+      accessToken: response.accessToken,
+      picture: pictureUrl || "",
+      guid: backendResponse.userId,
+      address: {
+        latitude: 0,
+        longitude: 0,
+      },
+    };
+
+    //Save the user to local storage
+    setUser(JSON.stringify(savedUser));
+
+    if (backendResponse.firstLogin == true) {
+      //In case of a first login
+
+      //Save the user to local storage as is
+      setUser(JSON.stringify(savedUser));
+      navigate("/newUser");
+    } else {
+      //In case of a returning user:
+      //we save in the redux user's 'home' address
+
+      const userHomeLocation = await getUserLocation(backendResponse.userId);
+
+      //Save the user to local storage with it's 'home' address
+      savedUser = {
+        ...savedUser,
         address: {
-          latitude: 0,
-          longitude: 0,
+          latitude: userHomeLocation.latitude,
+          longitude: userHomeLocation.longitude,
         },
       };
 
-      //Save the user to local storage
       setUser(JSON.stringify(savedUser));
 
-      if (backendResponse.firstLogin == true) {
-        //In case of a first login
-        navigate("/newUser");
-      } else {
-        //In case of a returning user
-        navigate("/");
-      }
-    };
-
-    //Call the function to authenticate infront of Boro's server
-    backendFacebookAuthentication(userFacebookLoginDetails);
+      updateServerAddress({
+        latitude: userHomeLocation.latitude,
+        longitude: userHomeLocation.longitude,
+      })
+      navigate("/");
+    }
   };
 
   return (

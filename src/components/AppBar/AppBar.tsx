@@ -55,9 +55,14 @@ function ResponsiveAppBar() {
           facebookId: userLocalInfo.facebookId,
           accessToken: userLocalInfo.accessToken,
           picture: userLocalInfo.picture,
-          address: {
+          currentAddress: {
             latitude: location.latitude,
             longitude: location.longitude,
+          },
+          serverAddress: {
+            //todo: what to put here?
+            latitude: 0,
+            longitude: 0,
           },
           userId: userLocalInfo.guid,
         })
@@ -120,7 +125,6 @@ function ResponsiveAppBar() {
   };
 
   const handleSettingButtonClick = (setting: any) => {
-    debugger;
     console.log(`click ${setting}`);
     if (setting === "Log In") {
       navigate("/login");

@@ -3,6 +3,11 @@ import {
   Button,
   CardMedia,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Grid,
   List,
@@ -16,7 +21,6 @@ import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
-import { allItemDetailsNew } from "../mocks/fullItemsDetails";
 import { IFullItemDetailsNew, IUserDetails } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
@@ -26,47 +30,16 @@ import {
 } from "../utils/calendarUtils";
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import { getItem } from "../api/ItemService";
+import { blockDates, getItem, getItemBlockedDates, unBlockDates } from "../api/ItemService";
 import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
+import { Row } from "../components/ItemDetailsTable/ItemDetailsTable";
 
 type IFullItemDetailsParams = {
   itemId: string;
 };
 
 type Props = {};
-
-interface IRowData {
-  key: string;
-  value: string;
-}
-
-interface ITableData {
-  tableData: IRowData[];
-}
-
-const Row = ({ tableData }: ITableData) => {
-  return (
-    <div>
-      {tableData.map((row, i) => (
-        <div key={i}>
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <Typography
-              variant="body1"
-              sx={{ flexBasis: "50%", color: "darkgray" }}
-            >
-              {row.key}
-            </Typography>
-            <Typography variant="body1" sx={{ flexBasis: "50%" }}>
-              {row.value}
-            </Typography>
-          </div>
-          {i < tableData.length - 1 && <Divider sx={{ margin: "5px" }} />}
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const itemDetailsPage = (props: Props) => {
   const navigate = useNavigate();
@@ -85,10 +58,16 @@ const itemDetailsPage = (props: Props) => {
 
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
+  const [manageStartDate, setManageStartDate] = useState<Date>(new Date());
+  const [manageEndDate, setManageEndDate] = useState<Date>(new Date());
+
+  const [excludedDates, setExcludedDates] = useState<Date[]>([]);
+
   const [selectedDatesError, setSelectedDatesError] = useState<string>("");
   const [isValidDates, setIsValidDates] = useState<boolean>();
   const [open, setOpen] = useState<boolean>(false);
   const [imagesAsString, setImagesAsString] = useState<string[]>([]);
+  const [blockedDatesToHighlight, setBlockedDatesToHighlight] = useState<any>();
 
   const handleChangeDates = (dates: Date[]) => {
     const [selectedStartDate, selectedEndDate] = dates;
@@ -99,8 +78,8 @@ const itemDetailsPage = (props: Props) => {
     if (selectedStartDate && selectedEndDate) {
       while (loop <= selectedEndDate) {
         if (
-          itemDetails.excludedDates !== undefined &&
-          checkExcludeDatesArrayContainsDate(loop, itemDetails.excludedDates)
+          excludedDates !== undefined &&
+          checkExcludeDatesArrayContainsDate(loop, excludedDates)
         ) {
           setSelectedDatesError(
             "The date " +
@@ -122,7 +101,90 @@ const itemDetailsPage = (props: Props) => {
     }
   };
 
+  const handleChangeBlockDates = (dates: Date[]) => {
+    const [selectedBlockStartDate, selectedBlockEndDate] = dates;
+    setManageStartDate(selectedBlockStartDate);
+    setManageEndDate(selectedBlockEndDate);
+  }
+
+  const handleBlockDates = async () => {
+    if (itemId) {
+      let datesToBlockStringFormat: string[] = getDatesInStringArr(manageStartDate, manageEndDate);
+      await blockDates(datesToBlockStringFormat, itemId);
+    }
+    else {
+      console.log("there is no itemId");
+    }
+
+    window.location.reload();
+  }
+
+  const handleUnBlockDates = async () => {
+    if (itemId) {
+      let datesToUnBlock: string[] = getDatesInStringArr(manageStartDate, manageEndDate);
+      await unBlockDates(datesToUnBlock, itemId);
+    }
+    else {
+      console.log("there is no itemId");
+    }
+
+    window.location.reload();
+  }
+
+  const getDatesInStringArr = (startDate: Date, endDate: Date): string[] => {
+    let loop: Date = new Date(manageStartDate);
+    let datesInStringArr: string[] = [];
+
+    while (loop <= manageEndDate) {
+      try {
+        console.log(loop);
+        datesInStringArr.push(loop.toISOString());
+      } catch (e) {
+        console.log(e);
+      }
+
+      let newDate = loop.setDate(loop.getDate() + 1);
+      loop = new Date(newDate);
+    }
+
+    return datesInStringArr;
+  }
+
+  //todo: put in another file
+  const getDatesInDateArr = (startDate: Date, endDate: Date): Date[] => {
+    let loop: Date = new Date(manageStartDate);
+    let datesInDateArr: Date[] = [];
+
+    while (loop <= manageEndDate) {
+      try {
+        console.log(loop);
+        datesInDateArr.push(loop);
+      } catch (e) {
+        console.log(e);
+      }
+
+      let newDate = loop.setDate(loop.getDate() + 1);
+      loop = new Date(newDate);
+    }
+
+    return datesInDateArr;
+  }
+
   const handleOpenModal = () => setOpen(true);
+
+  const [openDialog, setOpennDialog] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpennDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpennDialog(false);
+  };
+
+  const handleChange = () => {
+    setOpennDialog(false);
+  };
 
   const Demo = styled("div")(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -142,6 +204,26 @@ const itemDetailsPage = (props: Props) => {
       const fullDetails: IFullItemDetailsNew = (await getItem(itemId)) as IFullItemDetailsNew;
       let serverLenderDetails: any;
 
+      const today: Date = new Date();
+      let toDate = new Date();
+      toDate.setMonth(toDate.getMonth() + 3);
+
+      const blockedDatesServer: Date[] = await getItemBlockedDates(
+        itemId,
+        new Date().toISOString(),
+        toDate.toISOString()
+      );
+
+      setExcludedDates(blockedDatesServer);
+      setBlockedDatesToHighlight(
+        [
+          {
+            "react-datepicker__day--highlighted-custom-1":
+              blockedDatesServer
+          },
+        ]
+      )
+
       if (fullDetails.images != undefined) {
         setImagesAsString(formatImagesOnRecieve(fullDetails.images));
       }
@@ -158,7 +240,6 @@ const itemDetailsPage = (props: Props) => {
           setOwnerFullName(fullLenderName);
         }
       }
-
     };
 
     getFullDetails();
@@ -225,48 +306,120 @@ const itemDetailsPage = (props: Props) => {
         Edit Item
       </Button>
 
+        <Button
+          variant="contained"
+          sx={{ mt: 1, mr: 1 }}
+          onClick={handleClickOpen}
+        >
+          Manage Calendar
+        </Button>
+
+        <Dialog open={openDialog} onClose={handleClose}>
+          <DialogTitle>Manage Calendar</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please choose the dates you would like to block/unblock from your item calendar
+              (pink dates are your blocked dates):
+            </DialogContentText>
+            <DateRangePicker
+              startDate={manageStartDate}
+              endDate={manageEndDate}
+              onChange={handleChangeBlockDates}
+              datesToExclude={[]}
+              datesToHighlight={blockedDatesToHighlight}
+            />
+            <Demo>
+              <List dense={dense}>
+                <ListItem>
+                  {manageStartDate && (
+                    <ListItemText
+                      primary="Start Date:"
+                      secondary={manageStartDate.toDateString()}
+                    />
+                  )}
+                </ListItem>
+                <ListItem>
+                  {manageEndDate && (
+                    <ListItemText
+                      primary="End Date:"
+                      secondary={manageEndDate.toDateString()}
+                    />
+                  )}
+                </ListItem>
+              </List>
+            </Demo>
+            {<> <Button
+              variant="contained"
+              sx={{ mt: 1, mr: 1 }}
+              onClick={handleBlockDates}
+              disabled={!manageEndDate}
+            >
+              Block
+            </Button>
+
+              <Button
+                variant="contained"
+                sx={{ mt: 1, mr: 1 }}
+                onClick={handleUnBlockDates}
+                disabled={!manageEndDate}
+              >
+                Unblock
+              </Button>
+            </>
+            }
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+
         <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
       </>
       }
-      <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-        Find available dates:
-      </Typography>
 
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <DateRangePicker
-          startDate={startDate}
-          endDate={endDate}
-          onChange={handleChangeDates}
-          datesToExclude={itemDetails.excludedDates}
-        />
+      {!isOwner && <>
+        <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+          Find available dates:
+        </Typography>
 
-        <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Demo>
-                <List dense={dense}>
-                  <ListItem>
-                    {startDate && (
-                      <ListItemText
-                        primary="Start Date:"
-                        secondary={startDate.toDateString()}
-                      />
-                    )}
-                  </ListItem>
-                  <ListItem>
-                    {endDate && (
-                      <ListItemText
-                        primary="End Date:"
-                        secondary={endDate.toDateString()}
-                      />
-                    )}
-                  </ListItem>
-                </List>
-              </Demo>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <DateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            onChange={handleChangeDates}
+            datesToExclude={excludedDates}
+            datesToHighlight={[]}
+          />
+
+
+          <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Demo>
+                  <List dense={dense}>
+                    <ListItem>
+                      {startDate && (
+                        <ListItemText
+                          primary="Start Date:"
+                          secondary={startDate.toDateString()}
+                        />
+                      )}
+                    </ListItem>
+                    <ListItem>
+                      {endDate && (
+                        <ListItemText
+                          primary="End Date:"
+                          secondary={endDate.toDateString()}
+                        />
+                      )}
+                    </ListItem>
+                  </List>
+                </Demo>
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
-      </div>
+          </Box>
+        </div>
+      </>}
 
       {isValidDates === true && (
         <Button

@@ -4,7 +4,6 @@ import { cancelReservation } from "../../api/ReservationService";
 
 const cancelReservationRequest = async (reservationId: any) => {
     if (reservationId.reservationId) {
-        debugger;
         await cancelReservation(reservationId.reservationId);
         window.location.reload();
     }
