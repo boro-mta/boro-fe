@@ -32,7 +32,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ICoordinate, IInputImage, IInputItem } from "../types";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { selectAddress, updateAddress } from "../features/UserSlice";
+import { selectCurrentAddress, updateServerAddress } from "../features/UserSlice";
 import { addItem } from "../api/ItemService";
 import AddressField from "../components/AddressFieldComponent/AddressField";
 import useLocalStorage from "../hooks/useLocalStorage";
@@ -192,7 +192,7 @@ const addItemPage = (props: Props) => {
   };
 
   const [address, setAddress] = useState<ICoordinate>(
-    useAppSelector(selectAddress) // current location
+    useAppSelector(selectCurrentAddress) // current location
     //todo: user location from server
   );
 
@@ -295,7 +295,7 @@ const addItemPage = (props: Props) => {
 
   const handleSaveAddress = () => {
     const userLocalInfo = JSON.parse(userInfo);
-    dispatch(updateAddress(address));
+    dispatch(updateServerAddress(address));
     setUser(JSON.stringify({ ...userLocalInfo, address }));
   };
 

@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
-import { initialState, updateAddress, updateUser } from "../features/UserSlice";
+import { initialState, updateServerAddress, updateUser } from "../features/UserSlice";
 import {
   selectEmail,
   selectUserName,
@@ -85,6 +85,9 @@ const NewUserPage = (props: Props) => {
       const response = await apiUpdateUser(userDetails);
       console.log("User created successfully!", response);
 
+      //Save selected address in redux as serverAddress
+      handleSaveAddress();
+
       //After guid was retrived, update the redux with the new guid
       dispatch(
         updateUser({
@@ -144,7 +147,7 @@ const NewUserPage = (props: Props) => {
 
   const handleSaveAddress = () => {
     const userLocalInfo = JSON.parse(userInfo);
-    dispatch(updateAddress(userChosenAddress));
+    dispatch(updateServerAddress(userChosenAddress));
     setUser(JSON.stringify({ ...userLocalInfo, userChosenAddress }));
   };
 
