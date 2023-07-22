@@ -137,11 +137,9 @@ const ReservationDetailsPage = (props: Props) => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      debugger;
       if (borrowerId.length > 0 && lenderId.length > 0) {
         let x = isCurrentUser(lenderId)
         setIsLender(x);
-        console.log(isLender);
         setRelevantComponentDetails(getBodyByStatus(reservationDetails.status, x));
 
         const personServerDetails: IUserProfile = (await getUserProfile(

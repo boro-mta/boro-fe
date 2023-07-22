@@ -125,7 +125,6 @@ function ResponsiveAppBar() {
   };
 
   const handleSettingButtonClick = (setting: any) => {
-    debugger;
     console.log(`click ${setting}`);
     if (setting === "Log In") {
       navigate("/login");

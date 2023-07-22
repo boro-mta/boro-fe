@@ -81,7 +81,6 @@ const RequestToBookPage = (props: Props) => {
   };
 
   const handleConfirmRequest = async () => {
-    debugger;
     const forRequest = {
       startDate: requestStartDate,
       endDate: requestEndDate,
