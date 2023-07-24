@@ -1,4 +1,4 @@
-import { ICoordinateRadius, IInputItem, IUserItem } from "../types";
+import { ICoordinateRadius, IInputImage, IInputItem, IUserItem } from "../types";
 import BoroWSClient, { HttpOperation } from "./BoroWebServiceClient";
 import { IItemResponse } from "./Models/IItemResponse";
 
@@ -107,3 +107,16 @@ export const getItemBlockedDates = async (itemId: string, from: string, to: stri
 
   return blockedDates;
 };
+
+export const editItemImages = async (itemId: string | undefined, images: IInputImage[]) => {
+  console.log("editItemImages - entry with ", itemId, ",  ", images);
+  const endpoint = `Items/${itemId}/Images/Add`;
+
+  images.map(async img => {
+    await BoroWSClient.request<IItemResponse>(
+      HttpOperation.POST,
+      endpoint,
+      img
+    );
+  });
+}
