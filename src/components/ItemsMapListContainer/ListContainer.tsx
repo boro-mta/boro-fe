@@ -68,32 +68,6 @@ export const ListContainer = ({
           items={itemsAroundMe}
         />
       </Box>
-      {userName === "Guest" ? (
-        <Button
-          variant="contained"
-          onClick={() => navigate("login")}
-          sx={buttonStyles}
-        >
-          Log in
-        </Button>
-      ) : (
-        <>
-          <Button
-            variant="contained"
-            onClick={() => navigate(`/Users/${userGuid}`)}
-            sx={buttonStyles}
-          >
-            My Profile
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => navigate("addItem")}
-            sx={buttonStyles}
-          >
-            Add new item
-          </Button>
-        </>
-      )}
     </>
   );
 };
