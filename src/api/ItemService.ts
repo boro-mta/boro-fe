@@ -108,8 +108,8 @@ export const getItemBlockedDates = async (itemId: string, from: string, to: stri
   return blockedDates;
 };
 
-export const editItemImages = async (itemId: string | undefined, images: IInputImage[]) => {
-  console.log("editItemImages - entry with ", itemId, ",  ", images);
+export const addItemImages = async (itemId: string | undefined, images: IInputImage[]) => {
+  console.log("addItemImages - entry with ", itemId, ",  ", images);
   const endpoint = `Items/${itemId}/Images/Add`;
 
   images.map(async img => {
@@ -120,3 +120,17 @@ export const editItemImages = async (itemId: string | undefined, images: IInputI
     );
   });
 }
+
+export const removeItemImages = async (imagesIDToRemove: string[]) => {
+  let endpoint = '';
+
+  imagesIDToRemove.map(async imgIDToRemove => {
+    console.log("removeItemImages - entry with ", imgIDToRemove);
+    endpoint = `Items/Images/${imgIDToRemove}`;
+    await BoroWSClient.request<IItemResponse>(
+      HttpOperation.DELETE,
+      endpoint,
+    );
+  });
+}
+
