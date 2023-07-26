@@ -6,12 +6,10 @@ import {
   Alert,
   Autocomplete,
   Button,
-  CircularProgress,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
   Paper,
   Snackbar,
   Step,
@@ -22,7 +20,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Container, Stack } from "@mui/system";
-import { IInputItem } from "../types";
+import { IFullImageDetails, IInputItem } from "../types";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
@@ -34,7 +32,7 @@ import { IInputImage } from "../types";
 import { IFullItemDetailsNew } from "../types";
 import { useAppSelector } from "../app/hooks";
 import { selectCurrentAddress } from "../features/UserSlice";
-import { editItem, editItemImages, getItem } from "../api/ItemService";
+import { addItemImages, editItem, getItem, removeItemImages } from "../api/ItemService";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 type IFullItemDetailsParams = {
@@ -61,8 +59,10 @@ const validationSchema = yup.object({
 
 const EditItemPage = (props: Props) => {
   const imagesInputRef = useRef<HTMLInputElement | null>(null);
+  const [imagesFromServer, setImagesFromServer] = useState<IFullImageDetails[]>([]);
   const [images, setImages] = useState<IInputImage[]>([]);
   const [imagesNames, setImagesNames] = useState<string[]>([]);
+  const [imagesIDToRemove, setImagesIDToRemove] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
   const [condition, setCondition] = useState<string>("");
@@ -165,7 +165,8 @@ const EditItemPage = (props: Props) => {
     try {
       console.log(reqBody);
       await editItem(reqBody);
-      await editItemImages(reqBody.itemId, images);
+      await addItemImages(reqBody.itemId, images);
+      await removeItemImages(imagesIDToRemove);
       setIsAddSuccess(true);
       navigate(`/item/${itemId}`);
     } catch (e) {
@@ -224,11 +225,8 @@ const EditItemPage = (props: Props) => {
       newImageNames.splice(index, 1);
       setImagesNames(newImageNames);
 
-      if (images) {
-        const newImages = [...images];
-        newImages.splice(index, 1);
-        setImages(newImages);
-      }
+      const newImgIDToRemove: string = imagesFromServer[index].imageId;
+      setImagesIDToRemove([...imagesIDToRemove, newImgIDToRemove]);
     }
   };
 
@@ -279,6 +277,7 @@ const EditItemPage = (props: Props) => {
           setCondition(itemServerDetails.condition);
           setSelectedCategories(itemServerDetails.categories);
           if (itemServerDetails.images) {
+            setImagesFromServer(itemServerDetails.images);
             setImagesNames(formatImagesOnRecieve(itemServerDetails.images));
           }
         }
