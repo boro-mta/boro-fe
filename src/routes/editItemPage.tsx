@@ -147,14 +147,14 @@ const EditItemPage = (props: Props) => {
         newImagesNamesInBase64Format
       );
 
-      newImagesNamesInStringFormat.map(function(fileName) {
+      newImagesNamesInStringFormat.map(function (fileName) {
         setImagesNames((oldArray) => [...oldArray, fileName]);
       });
 
       //images for server update:
       let newImagesInStringormat: string[] = [];
 
-      filesInBase64.map(function(file) {
+      filesInBase64.map(function (file) {
         newImagesInStringormat.push(file);
       });
 
@@ -241,8 +241,10 @@ const EditItemPage = (props: Props) => {
       newImageNames.splice(index, 1);
       setImagesNames(newImageNames);
 
-      const newImgIDToRemove: string = imagesFromServer[index].imageId;
-      setImagesIDToRemove([...imagesIDToRemove, newImgIDToRemove]);
+      if (imagesFromServer[index]) {
+        const newImgIDToRemove: string = imagesFromServer[index].imageId;
+        setImagesIDToRemove([...imagesIDToRemove, newImgIDToRemove]);
+      }
     }
   };
 
@@ -275,7 +277,7 @@ const EditItemPage = (props: Props) => {
 
   const getConditionFronItemDetails = (conditionFromServer: any): any => {
     let contiditionToReturn: any = "";
-    conditionArr.forEach(function(value) {
+    conditionArr.forEach(function (value) {
       if (value.text === conditionFromServer) {
         contiditionToReturn = value;
       }
