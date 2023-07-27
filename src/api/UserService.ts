@@ -1,9 +1,8 @@
 import IUserProfile from "./Models/IUserProfile";
 import IUpdateUserData from "./Models/IUpdateUserData";
-import BoroWSClient, { HttpOperation } from "./BoroWebServiceClient";
+import { HttpOperation, requestAsync } from "./BoroWebServiceClient";
 import IUserImageInfo from "./Models/IUserImageInfo";
 import ILocationDetails from "./Models/ILocationDetails";
-import { IUserImageResponse } from "./Models/IUserImageResponse";
 import { IInputImage } from "../types";
 
 export const getUserProfile = async (
@@ -11,7 +10,7 @@ export const getUserProfile = async (
 ): Promise<IUserProfile> => {
   console.log("getUserProfile - entry with " + userId);
   const endpoint = `Users/${userId}/Profile`;
-  const profile = (await BoroWSClient.request<IUserProfile>(
+  const profile = (await requestAsync<IUserProfile>(
     HttpOperation.GET,
     endpoint
   )) as IUserProfile;
@@ -24,7 +23,7 @@ export const getUserLocation = async (
 ): Promise<ILocationDetails> => {
   console.log("getUserLocation - entry with " + userId);
   const endpoint = `Users/${userId}/Location`;
-  const location = (await BoroWSClient.request<ILocationDetails>(
+  const location = (await requestAsync<ILocationDetails>(
     HttpOperation.GET,
     endpoint
   )) as ILocationDetails;
@@ -37,7 +36,7 @@ export const getUserPicture = async (
 ): Promise<IInputImage> => {
   console.log("getUserProfile - entry with " + userId);
   const endpoint = `Users/${userId}/ProfilePicture`;
-  const picture = (await BoroWSClient.request<IInputImage>(
+  const picture = (await requestAsync<IInputImage>(
     HttpOperation.GET,
     endpoint
   )) as IInputImage;
@@ -48,7 +47,7 @@ export const getUserPicture = async (
 export const updateUser = async (updateData: IUpdateUserData) => {
   console.log("updateUser - entry");
   const endpoint = `Users/Me/Update`;
-  return (await BoroWSClient.request<string>(
+  return (await requestAsync<string>(
     HttpOperation.POST,
     endpoint,
     updateData
@@ -58,7 +57,7 @@ export const updateUser = async (updateData: IUpdateUserData) => {
 export const updateUserImage = async (updateImage: IUserImageInfo) => {
   console.log("updateImage - entry");
   const endpoint = `Users/Me/Update/Image`;
-  return (await BoroWSClient.request<string>(
+  return (await requestAsync<string>(
     HttpOperation.POST,
     endpoint,
     updateImage
@@ -71,8 +70,5 @@ export const updateUserLocation = async (
 ) => {
   console.log("updateImage - entry");
   const endpoint = `Users/Me/Update/Location?latitude=${latitude}&longitude=${longitude}`;
-  return (await BoroWSClient.request<string>(
-    HttpOperation.POST,
-    endpoint
-  )) as string;
+  return (await requestAsync<string>(HttpOperation.POST, endpoint)) as string;
 };

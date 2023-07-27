@@ -74,22 +74,28 @@ class BoroWebServiceClient {
     endpointPath: string,
     body?: any
   ) {
-    const token = await this.refreshTokenIfExpiresIn();
-    const headers: HeadersInit = {
-      ...this.defaultHeaders,
-    };
-    if (token && token !== "") {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    const url = `${this.webServiceUrl}/${endpointPath}`;
-    const fetchConfig: RequestInit = {
-      method,
-      headers,
-      body: JSON.stringify(body),
-    };
     try {
-      const response: Response = await fetch(url, fetchConfig);
+      const token = await this.refreshTokenIfExpiresIn();
+      const headers: HeadersInit = {
+        ...this.defaultHeaders,
+      };
+      if (token && token !== "") {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      const url = `${this.webServiceUrl}/${endpointPath}`;
+
+      const fetchConfig: RequestInit = {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : null,
+      };
+
+      const response: Response = (await fetch(url, fetchConfig)) as Response;
+
+      console.log(
+        `request to ${url} returned with response status code: ${response.status}`
+      );
 
       if (response.status !== 200) {
         throw new Error(`Requeset failed. ${response}`);
@@ -107,7 +113,6 @@ class BoroWebServiceClient {
           throw error;
         }
       }
-      return response;
     } catch (err) {
       console.log(err);
     }
@@ -145,7 +150,15 @@ class BoroWebServiceClient {
 }
 
 const BoroWSClient = new BoroWebServiceClient();
-export default BoroWSClient;
+
+export const requestAsync = async <T>(
+  method: HttpOperation,
+  endpointPath: string,
+  body?: any
+) => {
+  return await BoroWSClient.request<T>(method, endpointPath, body);
+};
+
 export const LoginWithFacebook = async (
   accessToken: string,
   facebookId: string

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { getItemsByUser } from "../api/ItemService";
+import { getUserItems } from "../api/ItemService";
 import { useAppSelector } from "../app/hooks";
 import { selectUserId } from "../features/UserSlice";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
 import { IItem, IUserItem } from "../types";
-import { getImgById } from "../api/ImageService";
+import { getImage } from "../api/ImageService";
 
 type Props = {};
 
@@ -14,14 +14,14 @@ const myItemsPage = (props: Props) => {
 
   useEffect(() => {
     const getMyItems = async () => {
-      const items = (await getItemsByUser(userGuid)) as IUserItem[];
+      const items = (await getUserItems(userGuid)) as IUserItem[];
       if (Array.isArray(items) && items.length > 0) {
         let itemsWithImagesPromises = items.map(async (item, i) => {
           let currObj: IItem = {
             itemId: item.id,
             title: item.title,
           };
-          currObj.img = await getImgById(item.imageIds[0]);
+          currObj.img = await getImage(item.imageIds[0]);
 
           return currObj;
         });
