@@ -30,10 +30,11 @@ import {
 } from "../utils/calendarUtils";
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import { blockDates, getItem, getItemBlockedDates, unBlockDates } from "../api/ItemService";
-import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
 import { Row } from "../components/ItemDetailsTable/ItemDetailsTable";
+import { getItem } from "../api/ItemService";
+import { blockDates, unBlockDates, getItemBlockedDates } from "../api/ReservationService";
+import { getUserProfile } from "../api/UserService";
 
 type IFullItemDetailsParams = {
   itemId: string;

@@ -4,7 +4,7 @@ import ItemsContainer from "../ItemsContainer/ItemsContainer";
 import ImagesCarousel from "../ImagesCarousel/ImagesCarousel";
 import Avatar from "@mui/material/Avatar";
 import { ICoordinate, IItem, IMarkerDetails } from "../../types";
-import { getImgById } from "../../api/ImageService";
+import { getImage } from "../../api/ImageService";
 
 const buttonStyles = { width: "100%", margin: "10px 0" };
 
@@ -33,7 +33,7 @@ export const ListContainer = ({
           title: location.title,
         };
         try {
-          let itemImg = await getImgById(location.imageIds[0]);
+          let itemImg = await getImage(location.imageIds[0]);
           currObj.img = itemImg;
         } catch (err) {
           console.log(err);

@@ -36,6 +36,7 @@ import { selectCurrentAddress, updateServerAddress } from "../features/UserSlice
 import { addItem } from "../api/ItemService";
 import AddressField from "../components/AddressFieldComponent/AddressField";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 type Props = {};
 
@@ -136,15 +137,24 @@ const addItemPage = (props: Props) => {
 
   const convertToBase64 = async (evt: React.ChangeEvent<HTMLInputElement>) => {
     let filesPromises: Promise<string>[] = [];
-    let currImagesNames: string[] = [];
     if (evt.target.files && evt.target.files.length) {
       Array.from(evt.target.files).forEach((file) => {
         filesPromises.push(toBase64(file));
-        currImagesNames.push(file.name);
       });
       const filesInBase64 = await Promise.all(filesPromises);
       setImages(filesInBase64);
-      setImagesNames(currImagesNames);
+
+      //imagesNames for showing img preview:
+      const newImagesNamesInBase64Format = convertImagesTypeFromString(
+        filesInBase64
+      );
+      const newImagesNamesInStringFormat = formatImagesOnRecieve(
+        newImagesNamesInBase64Format
+      );
+
+      newImagesNamesInStringFormat.map(function (fileName) {
+        setImagesNames((oldArray) => [...oldArray, fileName]);
+      });
     }
   };
 
@@ -493,7 +503,7 @@ const addItemPage = (props: Props) => {
                         <ListItemIcon>
                           <ImageIcon sx={{ marginRight: "16px" }} />
                         </ListItemIcon>
-                        <ListItemText primary={name} />
+                        <img className="img-data" src={name} height={"30px"} />
                         <IconButton onClick={() => removeImage(name)}>
                           <DeleteForeverIcon />
                         </IconButton>

@@ -1,14 +1,17 @@
-import { ICoordinateRadius, IInputItem, IUserItem } from "../types";
-import BoroWSClient, { HttpOperation } from "./BoroWebServiceClient";
+import {
+  ICoordinateRadius,
+  IInputItem,
+  IUserItem,
+} from "../types";
+import { formatImagesOnRecieve } from "../utils/imagesUtils";
+import { HttpOperation, requestAsync } from "./BoroWebServiceClient";
+import { IItemImageResponse } from "./Models/IItemImageResponse";
 import { IItemResponse } from "./Models/IItemResponse";
 
 export const getItem = async (itemId: string) => {
   console.log("getItem - entry with " + itemId);
   const endpoint = `Items/${itemId}`;
-  const item = await BoroWSClient.request<IItemResponse>(
-    HttpOperation.GET,
-    endpoint
-  );
+  const item = await requestAsync<IItemResponse>(HttpOperation.GET, endpoint);
 
   return { ...item };
 };
@@ -16,7 +19,7 @@ export const getItem = async (itemId: string) => {
 export const addItem = async (itemDetails: IInputItem) => {
   console.log("addItem - entry with ", itemDetails);
   const endpoint = "Items/Add";
-  const itemId = await BoroWSClient.request<IItemResponse>(
+  const itemId = await requestAsync<IItemResponse>(
     HttpOperation.POST,
     endpoint,
     itemDetails
@@ -25,19 +28,9 @@ export const addItem = async (itemDetails: IInputItem) => {
   return itemId;
 };
 
-export const editItem = async (itemDetails: any) => {
-  console.log("editItem - entry with ", itemDetails);
-  const endpoint = `Items/${itemDetails.itemId}/Update`;
-  await BoroWSClient.request<IItemResponse>(
-    HttpOperation.POST,
-    endpoint,
-    itemDetails
-  );
-};
-
 export const getItemsByRadius = async (coordinate: ICoordinateRadius) => {
   const endpoint = `Items/ByRadius?latitude=${coordinate.latitude}&longitude=${coordinate.longitude}&radiusInMeters=${coordinate.radiusInMeters}`;
-  const itemsInRadius = await BoroWSClient.request<IItemResponse>(
+  const itemsInRadius = await requestAsync<IItemResponse>(
     HttpOperation.GET,
     endpoint
   );
@@ -45,65 +38,23 @@ export const getItemsByRadius = async (coordinate: ICoordinateRadius) => {
   return itemsInRadius;
 };
 
-export const getItemsByUser = async (userId: string) => {
+export const getUserItems = async (userId: string) => {
   const endpoint = `Items/OfUser/${userId}`;
-  const itemsOfUser = (await BoroWSClient.request<IUserItem[]>(
+  const itemsOfUser = await requestAsync<IUserItem[]>(
     HttpOperation.GET,
     endpoint
-  ));
+  );
 
   return itemsOfUser;
 };
 
-export const updateItemLocation = async (
-  itemId: string,
-  latitude: number,
-  longitude: number
-) => {
-  const endpoint = `Items/${itemId}/Update/Location?latitude=${latitude}&longitude=${longitude}`;
-  const response = await BoroWSClient.request<string>(
-    HttpOperation.POST,
-    endpoint
-  );
+export const getItemImages = async (itemId: string) => {
+  const endpoint = `Items/${itemId}/Images`;
 
-  return response;
-};
-
-export const blockDates = async (datesToBlock: string[], itemId: string) => {
-  console.log("blockDates - entry with ", itemId, ",  ", datesToBlock);
-  const endpoint = `Reservations/${itemId}/BlockDates`;
-  await BoroWSClient.request<IItemResponse>(
-    HttpOperation.POST,
-    endpoint,
-    datesToBlock
-  );
-};
-
-export const unBlockDates = async (datesToUnBlock: string[], itemId: string) => {
-  console.log("unblockDates - entry with ", itemId, ",  ", datesToUnBlock);
-  const endpoint = `Reservations/${itemId}/UnblockDates`;
-  await BoroWSClient.request<IItemResponse>(
-    HttpOperation.POST,
-    endpoint,
-    datesToUnBlock
-  );
-};
-
-export const getItemBlockedDates = async (itemId: string, from: string, to: string) => {
-  console.log("getBlockedkDates - entry with ", itemId, ", from: ", from, ", to: ", to);
-  const endpoint = `Reservations/${itemId}/BlockedDates?from=${from}&to=${to}`;
-  const response = await BoroWSClient.request<any>(
+  const images = (await requestAsync<IItemImageResponse[]>(
     HttpOperation.GET,
     endpoint
-  );
+  )) as IItemImageResponse[];
 
-  let blockedDates: Date[] = [];
-
-  if (response) {
-    response.forEach((element: any) => {
-      blockedDates.push(new Date(element));
-    });
-  }
-
-  return blockedDates;
+  return formatImagesOnRecieve(images);
 };

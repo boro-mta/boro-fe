@@ -24,7 +24,7 @@ export const categoriesOptions: string[] = ['Renovation', 'Gardening', 'Kitchen'
 export const conditionOptions = [
   {
     value: 0,
-    text: 'New in Package',
+    text: 'New',
   },
   {
     value: 1,
@@ -33,6 +33,18 @@ export const conditionOptions = [
   {
     value: 2,
     text: 'Ok',
+  },
+  {
+    value: 3,
+    text: 'Working well',
+  },
+  {
+    value: 4,
+    text: 'Used',
+  },
+  {
+    value: 5,
+    text: 'Well maintained',
   },
 ];
 
