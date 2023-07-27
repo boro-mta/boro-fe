@@ -1,14 +1,9 @@
 import {
   IReservationRow,
-  ICoordinateRadius,
-  IInputItem,
-  IItem,
 } from "../types";
 import { IReservation } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
-import { ReservationStatus } from "../utils/reservationsUtils";
-import BoroWSClient, { HttpOperation } from "./BoroWebServiceClient";
-import { getImgById } from "./ImageService";
+import { HttpOperation, requestAsync } from "./BoroWebServiceClient";
 import { getItem } from "./ItemService";
 import { IItemResponse } from "./Models/IItemResponse";
 import IUserProfile from "./Models/IUserProfile";
@@ -18,7 +13,7 @@ export const addReservationRequest = async (reservationDetails: any) => {
   const itemId = reservationDetails.itemId;
   console.log("addReservationRequest - entry with " + itemId);
   const endpoint = `Reservations/${itemId}/Request`;
-  const reservationIdObject: any = await BoroWSClient.request<IItemResponse>(
+  const reservationIdObject: any = await requestAsync<IItemResponse>(
     HttpOperation.POST,
     endpoint,
     reservationDetails
@@ -30,7 +25,7 @@ export const addReservationRequest = async (reservationDetails: any) => {
 export const getReservation = async (reservationId: string) => {
   console.log("getReservation - entry with " + reservationId);
   const endpoint = `Reservations/${reservationId}`;
-  const reservation = await BoroWSClient.request<IItemResponse>(
+  const reservation = await requestAsync<IItemResponse>(
     HttpOperation.GET,
     endpoint
   );
@@ -41,7 +36,7 @@ export const getReservation = async (reservationId: string) => {
 export const approveReservation = async (reservationId: string) => {
   console.log("approveReservation - entry with " + reservationId);
   const endpoint = `Reservations/${reservationId}/Approve`;
-  const reservation = await BoroWSClient.request<IItemResponse>(
+  const reservation = await requestAsync<IItemResponse>(
     HttpOperation.POST,
     endpoint
   );
@@ -50,7 +45,7 @@ export const approveReservation = async (reservationId: string) => {
 export const cancelReservation = async (reservationId: string) => {
   console.log("cancelReservation - entry with " + reservationId);
   const endpoint = `Reservations/${reservationId}/Cancel`;
-  const reservation = await BoroWSClient.request<IItemResponse>(
+  const reservation = await requestAsync<IItemResponse>(
     HttpOperation.POST,
     endpoint
   );
@@ -59,7 +54,7 @@ export const cancelReservation = async (reservationId: string) => {
 export const declineReservation = async (reservationId: string) => {
   console.log("declinelReservation - entry with " + reservationId);
   const endpoint = `Reservations/${reservationId}/Decline`;
-  const reservation = await BoroWSClient.request<IItemResponse>(
+  const reservation = await requestAsync<IItemResponse>(
     HttpOperation.POST,
     endpoint
   );
@@ -71,7 +66,7 @@ export const getReservations = async (
   party: string
 ) => {
   const endpoint = `Reservations/Dashboard/${party}?from=${startDate}&to=${endDate}`;
-  const reservations = await BoroWSClient.request<IReservation[]>(
+  const reservations = await requestAsync<IReservation[]>(
     HttpOperation.GET,
     endpoint
   );
@@ -95,34 +90,80 @@ export const getAllReservationsData = async (
   let allReservationDetailsPromises =
     reservations && reservations.length > 0
       ? reservations.map(async (reservation: IReservation) => {
-        let itemData = (await getItem(reservation.itemId)) as IItemResponse;
-        let itemImg = formatImagesOnRecieve(itemData.images)[0];
+          let itemData = (await getItem(reservation.itemId)) as IItemResponse;
+          let itemImg = formatImagesOnRecieve(itemData.images)[0];
 
-        let userData = (await getUserProfile(
-          reservation.borrowerId
-        )) as IUserProfile;
-        let partyImg = userData.image
-          ? formatImagesOnRecieve([userData.image])[0]
-          : "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png";
+          let userData = (await getUserProfile(
+            reservation.borrowerId
+          )) as IUserProfile;
+          let partyImg = userData.image
+            ? formatImagesOnRecieve([userData.image])[0]
+            : "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png";
 
-        let x = {
-          reservationId: reservation.reservationId,
-          itemTitle: itemData.title,
-          itemId: reservation.itemId,
-          itemImg: itemImg,
-          itemDescription: itemData.description || "",
-          startDate: new Date(reservation.startDate),
-          endDate: new Date(reservation.endDate),
-          partyId: reservation.borrowerId,
-          partyImg: partyImg,
-          partyName: `${userData.firstName} ${userData.lastName}`,
-          status: reservation.status,
-        };
-        return x;
-      })
+          let x = {
+            reservationId: reservation.reservationId,
+            itemTitle: itemData.title,
+            itemId: reservation.itemId,
+            itemImg: itemImg,
+            itemDescription: itemData.description || "",
+            startDate: new Date(reservation.startDate),
+            endDate: new Date(reservation.endDate),
+            partyId: reservation.borrowerId,
+            partyImg: partyImg,
+            partyName: `${userData.firstName} ${userData.lastName}`,
+            status: reservation.status,
+          };
+          return x;
+        })
       : [];
 
   allReservationsDetails = await Promise.all(allReservationDetailsPromises);
 
   return allReservationsDetails;
+};
+
+export const blockDates = async (datesToBlock: string[], itemId: string) => {
+  console.log("blockDates - entry with ", itemId, ",  ", datesToBlock);
+  const endpoint = `Reservations/${itemId}/BlockDates`;
+  await requestAsync<IItemResponse>(HttpOperation.POST, endpoint, datesToBlock);
+};
+
+export const unBlockDates = async (
+  datesToUnBlock: string[],
+  itemId: string
+) => {
+  console.log("unblockDates - entry with ", itemId, ",  ", datesToUnBlock);
+  const endpoint = `Reservations/${itemId}/UnblockDates`;
+  await requestAsync<IItemResponse>(
+    HttpOperation.POST,
+    endpoint,
+    datesToUnBlock
+  );
+};
+
+export const getItemBlockedDates = async (
+  itemId: string,
+  from: string,
+  to: string
+) => {
+  console.log(
+    "getBlockedkDates - entry with ",
+    itemId,
+    ", from: ",
+    from,
+    ", to: ",
+    to
+  );
+  const endpoint = `Reservations/${itemId}/BlockedDates?from=${from}&to=${to}`;
+  const response = await requestAsync<any>(HttpOperation.GET, endpoint);
+
+  let blockedDates: Date[] = [];
+
+  if (response) {
+    response.forEach((element: any) => {
+      blockedDates.push(new Date(element));
+    });
+  }
+
+  return blockedDates;
 };

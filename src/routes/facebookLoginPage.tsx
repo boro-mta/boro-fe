@@ -3,12 +3,16 @@ import FacebookLoginButton from "../components/FacebookLogin/FacebookLogin";
 import { Box } from "@mui/material";
 import { ReactFacebookLoginInfo } from "react-facebook-login";
 import { useNavigate } from "react-router-dom";
-import { updatePartialUser, updateServerAddress, updateUser } from "../features/UserSlice";
+import {
+  updatePartialUser,
+  updateServerAddress,
+  updateUser,
+} from "../features/UserSlice";
 import { useAppDispatch } from "../app/hooks";
-import BoroWSClient from "../api/BoroWebServiceClient";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { ICoordinate } from "../types";
 import { getUserLocation } from "../api/UserService";
+import { LoginWithFacebook } from "../api/BoroWebServiceClient";
 
 const FacebookLoginPage = () => {
   //Get redux dispatcher
@@ -47,7 +51,7 @@ const FacebookLoginPage = () => {
             latitude: currentLocation.latitude,
           },
           serverAddress: {
-            //server address is not chosen yet 
+            //server address is not chosen yet
             longitude: 0,
             latitude: 0,
           },
@@ -86,13 +90,21 @@ const FacebookLoginPage = () => {
     };
 
     //Call the function to authenticate infront of Boro's server
-    backendFacebookAuthentication(userFacebookLoginDetails, response, pictureUrl);
+    backendFacebookAuthentication(
+      userFacebookLoginDetails,
+      response,
+      pictureUrl
+    );
   };
 
   //A function used to authenticate infront of Boro's server
-  const backendFacebookAuthentication = async (userFacebookLoginDetails: any, response: ReactFacebookLoginInfo, pictureUrl: any) => {
+  const backendFacebookAuthentication = async (
+    userFacebookLoginDetails: any,
+    response: ReactFacebookLoginInfo,
+    pictureUrl: any
+  ) => {
     //Create a user on Boro's server using facebook id and facebook access token
-    const backendResponse = await BoroWSClient.loginWithFacebook(
+    const backendResponse = await LoginWithFacebook(
       userFacebookLoginDetails.accessToken,
       userFacebookLoginDetails.facebookId
     );
@@ -150,7 +162,7 @@ const FacebookLoginPage = () => {
       updateServerAddress({
         latitude: userHomeLocation.latitude,
         longitude: userHomeLocation.longitude,
-      })
+      });
       navigate("/");
     }
   };
