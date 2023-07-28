@@ -6,15 +6,31 @@ import {
   Typography,
   Card,
 } from "@mui/material";
-import React from "react";
-import { IItem } from "../../types";
+import React, { useEffect, useState } from "react";
 import "./Item.css";
+import { getImage } from "../../api/ImageService";
 
-interface IProps extends IItem {
+interface IProps {
+  itemId: string;
+  title: string;
+  imgID: string[];
   onClick: (itemId: string) => void;
 }
 
-const Item = ({ itemId, title, img, onClick }: IProps) => {
+const Item = ({ itemId, title, imgID, onClick }: IProps) => {
+  const [image, setImage] = useState<string>();
+
+  useEffect(() => {
+    const getItemImage = async () => {
+      if (imgID && imgID.length > 0) {
+        const imageFromServer = await getImage(imgID[0]);
+        setImage(imageFromServer);
+      }
+    };
+
+    getItemImage();
+  }, []);
+
   return (
     <Box
       style={{
@@ -32,7 +48,7 @@ const Item = ({ itemId, title, img, onClick }: IProps) => {
           <CardMedia
             component="img"
             height="140"
-            src={img}
+            src={image}
             sx={{ objectFit: "contain" }}
           />
           <CardContent>

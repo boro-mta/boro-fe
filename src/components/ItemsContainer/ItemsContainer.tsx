@@ -1,12 +1,12 @@
 import { Box, Container, Typography } from "@mui/material";
 import React from "react";
-import { IItem } from "../../types";
+import { IUserItem } from "../../types";
 import Item from "../Item/Item";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
   containerTitle: string;
-  items: IItem[];
+  items: IUserItem[];
 };
 
 const ItemsContainer = ({ containerTitle, items }: Props) => {
@@ -31,10 +31,10 @@ const ItemsContainer = ({ containerTitle, items }: Props) => {
           items.length > 0 &&
           items.map((item, i) => (
             <Item
-              key={i}
+              itemId={""} key={i}
+              imgID={(item.imageIds)}
               {...item}
-              onClick={() => navigate(`/item/${item.itemId}`)}
-            />
+              onClick={() => navigate(`/item/${item.id}`)} />
           ))}
       </Container>
     </Container>
