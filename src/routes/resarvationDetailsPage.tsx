@@ -202,16 +202,12 @@ const ReservationDetailsPage = (props: Props) => {
         }}
       >
 
-        <Grid item xs={12}>
-          <Item>
-            <Typography component={"span"} variant="h6">
-              {relevantComponentDetails.title}
-            </Typography>
-            <Typography variant="body1">
-              {relevantComponentDetails.descroption}
-            </Typography>
-          </Item>
-        </Grid>
+        <Typography component={"span"} variant="h6">
+          {relevantComponentDetails.title}
+        </Typography>
+        <Typography variant="body1">
+          {relevantComponentDetails.descroption}
+        </Typography>
       </Paper>
 
       <br></br>
