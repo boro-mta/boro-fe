@@ -2,15 +2,15 @@ import { Avatar, Box, Container, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
-import { IUserDetails } from "../types";
+import { IUserDetails, IUserItem } from "../types";
 import { allUserDetails } from "../mocks/userDetails";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
-import { items } from "../mocks/items";
 import Button from "@mui/material/Button";
-import { selectUserId, selectPicture } from "../features/UserSlice";
+import { selectPicture } from "../features/UserSlice";
 import { useAppSelector } from "../app/hooks";
 import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId } from "../utils/authUtils";
+import { getUserItems } from "../api/ItemService";
 
 type Props = {};
 
@@ -19,6 +19,7 @@ const userPage = (props: Props) => {
         allUserDetails[3]
     );
 
+    const [userItems, setUserItems] = useState<IUserItem[]>([]);
 
     //Gets the user's Id, Consider deleting
     const userCurrentId = getCurrentUserId();
@@ -70,6 +71,10 @@ const userPage = (props: Props) => {
                 latitude: 0,
                 about: userProfile.about,
             };
+
+            // Get user's items
+            const serverUserItems = (await getUserItems(userId)) as IUserItem[];
+            setUserItems(serverUserItems);
 
             //Check wether the profile currently watched is owned by the user.
             let isOwner = (userCurrentId == userId)
@@ -132,12 +137,8 @@ const userPage = (props: Props) => {
             <br />
             <Typography variant="h4">{userDetails.firstName + ' \'s items'}</Typography>
             <Box>
-                <ItemsContainer containerTitle="My Tool Kit 🏠" items={items} />
+                <ItemsContainer containerTitle="" items={userItems} />
             </Box>
-            <Box>
-                <ItemsContainer containerTitle="My other Tool Kit 🏠" items={items} />
-            </Box>
-
         </Container>
 
 
