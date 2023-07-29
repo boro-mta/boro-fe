@@ -4,20 +4,20 @@ import { IItemResponse } from "./Models/IItemResponse";
 import IUpdateItemInfoInput from "./Models/IUpdateItemInfoInput";
 
 export const updateItemInfo = async (
-    itemId: string | undefined,
-    updateItemInfoInput: IUpdateItemInfoInput
-  ) => {
-    console.log("updateItemInfo - entry with ", updateItemInfoInput);
-    const endpoint = `Items/${itemId}/Update`;
-    await requestAsync<IItemResponse>(
-      HttpOperation.POST,
-      endpoint,
-      updateItemInfoInput
-    );
-  };
+  itemId: string | undefined,
+  updateItemInfoInput: IUpdateItemInfoInput
+) => {
+  console.log("updateItemInfo - entry with ", updateItemInfoInput);
+  const endpoint = `Items/${itemId}/Update`;
+  await requestAsync<IItemResponse>(
+    HttpOperation.POST,
+    endpoint,
+    updateItemInfoInput
+  );
+};
 
 export const updateItemLocation = async (
-  itemId: string,
+  itemId: string | undefined,
   latitude: number,
   longitude: number
 ) => {

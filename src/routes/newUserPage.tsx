@@ -186,6 +186,7 @@ const NewUserPage = (props: Props) => {
         <AddressField
           onLoad={onLoad}
           handlePlaceChanged={handlePlaceChanged}
+          savedAddress=""
         />
         <Button
           variant="contained"

@@ -1,38 +1,35 @@
 import { Autocomplete } from "@react-google-maps/api";
 import React from "react";
-import { useJsApiLoader } from "@react-google-maps/api";
+import TextField from "@mui/material/TextField";
 
 type Props = {
     onLoad: (autocomplete: google.maps.places.Autocomplete) => void;
     handlePlaceChanged: () => void;
+    savedAddress: string | number;
 };
 
-const libs: (
-    | "places"
-    | "drawing"
-    | "geometry"
-    | "localContext"
-    | "visualization"
-)[] = ["places"];
-
-const AddressField = ({ onLoad, handlePlaceChanged }: Props) => {
-    const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
-        libraries: libs,
-    });
+const AddressField = ({ onLoad, handlePlaceChanged, savedAddress }: Props) => {
 
     return (
         <>
-            {isLoaded && (
-                <Autocomplete onLoad={onLoad} onPlaceChanged={handlePlaceChanged}>
-                    <input
-                        type="text"
-                        placeholder="Search for address"
-                        style={{ width: "100%", height: "100%" }}
-                    />
-                </Autocomplete>
-            )
-            }
+            <Autocomplete onLoad={onLoad} onPlaceChanged={handlePlaceChanged}>
+
+                <input
+                    defaultValue={savedAddress}
+                    type="text"
+                    placeholder="Search for address"
+                    style={{ width: "100%", height: "100%" }}
+                />
+
+
+                {/* <TextField
+                    //defaultValue={savedAddress}
+                    label="Address"
+                    value={savedAddress}
+                    placeholder="Search for address"
+                    style={{ width: "100%", height: "100%" }}
+                /> */}
+            </Autocomplete>
         </>
     );
 }
