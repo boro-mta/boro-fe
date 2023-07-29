@@ -34,7 +34,10 @@ import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
 import { Row } from "../components/ItemDetailsTable/ItemDetailsTable";
 import { getItem } from "../api/ItemService";
 import { blockDates, unBlockDates, getItemBlockedDates } from "../api/ReservationService";
-import { getUserProfile } from "../api/UserService";
+import { getUserLocation, getUserProfile } from "../api/UserService";
+import ILocationDetails from "../api/Models/ILocationDetails";
+import { libs } from "../utils/googleMapsUtils";
+import { useJsApiLoader } from "@react-google-maps/api";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -43,6 +46,11 @@ type IFullItemDetailsParams = {
 type Props = {};
 
 const itemDetailsPage = (props: Props) => {
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    libraries: libs,
+  });
+
   const navigate = useNavigate();
 
   const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
@@ -195,6 +203,7 @@ const itemDetailsPage = (props: Props) => {
   const [ownerDetails, setOwnerDetails] = useState<IUserDetails>();
   const [ownerFullName, setOwnerFullName] = useState<string>("");
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [itemLocation, setItemLocation] = useState<string>("");
 
   useEffect(() => {
     const getFullDetails = async () => {
@@ -246,6 +255,28 @@ const itemDetailsPage = (props: Props) => {
     getFullDetails();
   }, []);
 
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+    const getItemAddress = async () => {
+      let serverItemALocation: ILocationDetails = { latitude: 0, longitude: 0 };
+      if (itemDetails.ownerId) {
+        serverItemALocation = await getUserLocation(itemDetails.ownerId);
+      }
+
+      const geocoder = new google.maps.Geocoder();
+      if (serverItemALocation.latitude != 0 && serverItemALocation.longitude != 0) {
+        geocoder.geocode({ location: { lat: serverItemALocation.latitude, lng: serverItemALocation.longitude } })
+          .then((response) => {
+            setItemLocation(response.results[0].formatted_address);
+          })
+      };
+    };
+
+    getItemAddress();
+  }, [itemDetails.ownerId, isLoaded]);
+
   return (
     <Container>
       <Card sx={{ marginBottom: "10px" }}>
@@ -265,38 +296,47 @@ const itemDetailsPage = (props: Props) => {
       </Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-      <Row
-        tableData={[
-          {
-            key: "Lender Name",
-            value:
-              ownerDetails && ownerFullName
-                ?
-                ownerFullName
-                : "No info about the lender!",
-          },
-          {
-            key: "About the lender",
-            value:
-              ownerDetails && ownerDetails.about
-                ? ownerDetails.about
-                : "No info about the lender!",
-          },
-          {
-            key: "Condition",
-            value: itemDetails.condition
-              ? itemDetails.condition
-              : "No Condition Selected!",
-          },
-          {
-            key: "Category",
-            value:
-              itemDetails && itemDetails.categories.length > 0
-                ? itemDetails.categories.join(", ")
-                : "No Categories Selected!",
-          },
-        ]}
-      />
+      {itemLocation && itemLocation.length > 0 && (
+        <Row
+          tableData={[
+            {
+              key: "Lender Name",
+              value:
+                ownerDetails && ownerFullName
+                  ?
+                  ownerFullName
+                  : "No info about the lender!",
+            },
+            {
+              key: "About the lender",
+              value:
+                ownerDetails && ownerDetails.about
+                  ? ownerDetails.about
+                  : "No info about the lender!",
+            },
+            {
+              key: "Condition",
+              value: itemDetails.condition
+                ? itemDetails.condition
+                : "No Condition Selected!",
+            },
+            {
+              key: "Category",
+              value:
+                itemDetails && itemDetails.categories.length > 0
+                  ? itemDetails.categories.join(", ")
+                  : "No Categories Selected!",
+            },
+            {
+              key: "Location",
+              value:
+                itemLocation && itemLocation.length > 0
+                  ? itemLocation
+                  : "No Location Selected!",
+            },
+          ]}
+        />
+      )}
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
       {isOwner && <> <Button
