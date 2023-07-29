@@ -38,6 +38,7 @@ import { getUserLocation, getUserProfile } from "../api/UserService";
 import ILocationDetails from "../api/Models/ILocationDetails";
 import { libs } from "../utils/googleMapsUtils";
 import { useJsApiLoader } from "@react-google-maps/api";
+import { IItemResponse } from "../api/Models/IItemResponse";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -53,14 +54,16 @@ const itemDetailsPage = (props: Props) => {
 
   const navigate = useNavigate();
 
-  const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
+  const [itemDetails, setItemDetails] = useState<IItemResponse>({
+    id: "",
+    title: "",
+    description: "",
+    images: [],
+    ownerId: "",
     categories: [],
     condition: "",
-    itemId: "",
-    title: "",
-    images: [],
-    description: "",
-    excludedDates: [],
+    latitude: 0,
+    longitude: 0,
   });
 
   let { itemId } = useParams<IFullItemDetailsParams>();
@@ -211,7 +214,7 @@ const itemDetailsPage = (props: Props) => {
         return;
       }
 
-      const fullDetails: IFullItemDetailsNew = (await getItem(itemId)) as IFullItemDetailsNew;
+      const fullDetails: IItemResponse = (await getItem(itemId)) as IItemResponse;
       let serverLenderDetails: any;
 
       const today: Date = new Date();
@@ -260,10 +263,7 @@ const itemDetailsPage = (props: Props) => {
       return;
     }
     const getItemAddress = async () => {
-      let serverItemALocation: ILocationDetails = { latitude: 0, longitude: 0 };
-      if (itemDetails.ownerId) {
-        serverItemALocation = await getUserLocation(itemDetails.ownerId);
-      }
+      let serverItemALocation: ILocationDetails = { latitude: itemDetails.latitude, longitude: itemDetails.longitude };
 
       const geocoder = new google.maps.Geocoder();
       if (serverItemALocation.latitude != 0 && serverItemALocation.longitude != 0) {
@@ -479,7 +479,7 @@ const itemDetailsPage = (props: Props) => {
               state: {
                 selectedStartDate: startDate,
                 selectedEndDate: endDate,
-                excludedDates: itemDetails.excludedDates,
+                excludedDates: excludedDates,
               },
             });
           }}
