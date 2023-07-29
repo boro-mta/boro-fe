@@ -34,7 +34,7 @@ export const addItemImages = async (
   console.log(
     `addItemImages - entry with ${itemId} and ${images.length} images`
   );
-  const endpoint = `Items/${itemId}/Images/Add`;
+  const endpoint = `Items/${itemId}/Update/Images/AddImages`;
   const method = HttpOperation.POST;
 
   const response = (await requestAsync<string[]>(
@@ -55,7 +55,7 @@ export const addItemImage = async (
   image: IInputImage
 ) => {
   console.log(`addItemImage - entry with ${itemId}`);
-  const endpoint = `Items/${itemId}/Update/AddImage`;
+  const endpoint = `Items/${itemId}/Update/Images/AddImage`;
   const method = HttpOperation.POST;
 
   const response = (await requestAsync<string>(
