@@ -56,7 +56,9 @@ function ResponsiveAppBar() {
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
         userId: userProfile.facebookId,
-        profileImage: formatImagesOnRecieve([userProfile.image as IInputImage])[0],
+        profileImage: formatImagesOnRecieve([
+          userProfile.image as IInputImage,
+        ])[0],
         dateJoined: userProfile.dateJoined,
         longitude: 0,
         latitude: 0,
@@ -66,7 +68,7 @@ function ResponsiveAppBar() {
       setProfilePicture(userDetails.profileImage);
       //Check wether the profile currently watched is owned by the user.
       const userCurrentId = getCurrentUserId();
-      let isOwner = (userCurrentId == userId)
+      let isOwner = userCurrentId == userId;
 
       //Set the state of isOwner
       setIsOwner(!isOwner);
@@ -82,12 +84,9 @@ function ResponsiveAppBar() {
     }
   };
 
-
-
   //If user has info in local storage, retrive it
   React.useEffect(() => {
     getUserDetails();
-
   }, [userId]);
 
   //Get the user's profile picture to show in avatar
@@ -95,7 +94,6 @@ function ResponsiveAppBar() {
 
   const pages = ["Home"];
   const settings = ["Log In"];
-
 
   //In case the user is logged in and in redux is not represented as Guest
   //Change the options in the app bar menu
@@ -193,25 +191,28 @@ function ResponsiveAppBar() {
     <AppBar position="static" sx={{ marginBottom: "10px" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
+          <Box
+            onClick={() => navigate("/")}
+            sx={{ cursor: "pointer", display: "flex" }}
           >
-            BORO
-          </Typography>
-
+            <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              BORO
+            </Typography>
+          </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
