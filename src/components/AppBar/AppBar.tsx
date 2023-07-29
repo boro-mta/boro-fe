@@ -23,60 +23,79 @@ import {
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import Divider from "@mui/material/Divider";
-import { ICoordinate } from "../../types";
+import { ICoordinate, IInputImage, IUserDetails } from "../../types";
+import { getUserProfile } from "../../api/UserService";
+import { formatImagesOnRecieve } from "../../utils/imagesUtils";
+import { useState } from "react";
+import { getCurrentUserId } from "../../utils/authUtils";
+import { allUserDetails } from "../../mocks/userDetails";
 
 function ResponsiveAppBar() {
   //Use local storage for user info
   const [userInfo, setUser] = useLocalStorage("user", "");
-
+  const [isOwner, setIsOwner] = useState(false);
+  const [userName, setUserName] = useState("Guest");
+  const userGuid = useAppSelector(selectUserId);
   //Navigation tool
   const navigate = useNavigate();
 
   //Redux dispatcher
   const dispatch = useAppDispatch();
+  const userId = getCurrentUserId();
+  const getUserDetails = async () => {
+    try {
+      console.log("Getting user profile: ", userId, " from the server");
+
+      //Get a certain userProfile by userId
+      const userProfile = await getUserProfile(userId as string);
+      console.log("Got a user: ");
+      console.log(userProfile);
+
+      //Fit all the details into userDetails
+      let userDetails: IUserDetails = {
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName,
+        userId: userProfile.facebookId,
+        profileImage: formatImagesOnRecieve([userProfile.image as IInputImage])[0],
+        dateJoined: userProfile.dateJoined,
+        longitude: 0,
+        latitude: 0,
+        about: userProfile.about,
+      };
+      setUserName(userDetails.firstName);
+      setProfilePicture(userDetails.profileImage);
+      //Check wether the profile currently watched is owned by the user.
+      const userCurrentId = getCurrentUserId();
+      let isOwner = (userCurrentId == userId)
+
+      //Set the state of isOwner
+      setIsOwner(!isOwner);
+
+      //If the user is watching his own profile, set the image to be the user's image
+      if (isOwner) {
+        userDetails.profileImage = profilePicture;
+      }
+
+      //Updates all the details in the page to fit the user we received
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
 
   //If user has info in local storage, retrive it
   React.useEffect(() => {
-    if (userInfo != "") {
-      const userLocalInfo = JSON.parse(userInfo);
-      console.log("Parsed info ", userLocalInfo);
-      let location: ICoordinate = { latitude: 0, longitude: 0 };
-      if (userLocalInfo.address && userLocalInfo.address.latitude) {
-        location.latitude = userLocalInfo.address.latitude;
-      }
-      if (userLocalInfo.address && userLocalInfo.address.longitude) {
-        location.longitude = userLocalInfo.address.longitude;
-      }
+    getUserDetails();
 
-      dispatch(
-        updateUser({
-          name: userLocalInfo.name,
-          email: userLocalInfo.email,
-          facebookId: userLocalInfo.facebookId,
-          accessToken: userLocalInfo.accessToken,
-          picture: userLocalInfo.picture,
-          currentAddress: {
-            latitude: location.latitude,
-            longitude: location.longitude,
-          },
-          serverAddress: {
-            //todo: what to put here?
-            latitude: 0,
-            longitude: 0,
-          },
-          userId: userLocalInfo.guid,
-        })
-      );
-    }
-  }, []);
+  }, [userId]);
 
   //Get the user's profile picture to show in avatar
-  const profilePicture = useAppSelector(selectPicture);
+  const [profilePicture, setProfilePicture] = useState("");
 
   const pages = ["Home"];
   const settings = ["Log In"];
-  const userName = useAppSelector(selectUserName);
-  const userGuid = useAppSelector(selectUserId);
+
 
   //In case the user is logged in and in redux is not represented as Guest
   //Change the options in the app bar menu
@@ -131,7 +150,7 @@ function ResponsiveAppBar() {
     }
 
     if (setting === "Profile") {
-      navigate(`/Users/${userGuid}`);
+      navigate(`/Users/${userId}`);
     }
 
     if (setting === "Borrower Dashboard") {

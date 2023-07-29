@@ -2,7 +2,7 @@ import { Avatar, Box, Container, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
-import { IUserDetails } from "../types";
+import { IInputImage, IUserDetails } from "../types";
 import { allUserDetails } from "../mocks/userDetails";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
 import { items } from "../mocks/items";
@@ -11,6 +11,7 @@ import { selectUserId, selectPicture } from "../features/UserSlice";
 import { useAppSelector } from "../app/hooks";
 import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId } from "../utils/authUtils";
+import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 type Props = {};
 
@@ -27,7 +28,7 @@ const userPage = (props: Props) => {
     const [isOwner, setIsOwner] = useState(false);
 
     //Get the profile picture of the user from redux
-    const userProfilePicture = useAppSelector(selectPicture);
+    const [userProfilePicture, setUserProfilePicture] = useState("");
 
     //Get the current url
     const currentUrl = window.location.href;
@@ -64,13 +65,13 @@ const userPage = (props: Props) => {
                 firstName: userProfile.firstName,
                 lastName: userProfile.lastName,
                 userId: userProfile.facebookId,
-                profileImage: "",
+                profileImage: formatImagesOnRecieve([userProfile.image as IInputImage])[0],
                 dateJoined: userProfile.dateJoined,
                 longitude: 0,
                 latitude: 0,
                 about: userProfile.about,
             };
-
+            setUserProfilePicture(userDetails.profileImage);
             //Check wether the profile currently watched is owned by the user.
             let isOwner = (userCurrentId == userId)
 
