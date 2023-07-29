@@ -7,8 +7,6 @@ import { allUserDetails } from "../mocks/userDetails";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
 import { items } from "../mocks/items";
 import Button from "@mui/material/Button";
-import { selectUserId, selectPicture } from "../features/UserSlice";
-import { useAppSelector } from "../app/hooks";
 import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId } from "../utils/authUtils";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";

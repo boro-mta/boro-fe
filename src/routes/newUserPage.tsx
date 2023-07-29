@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
-import { initialState, updateUser } from "../features/UserSlice";
+import { initialState, selectAccessToken, selectFacebookId, updateUser } from "../features/UserSlice";
 import {
   selectEmail,
   selectUserName,
@@ -73,7 +73,8 @@ const NewUserPage = (props: Props) => {
   }
 
 
-
+  const facebookid = useAppSelector(selectFacebookId);
+  const accessToken = useAppSelector(selectAccessToken);
   //Create a new user on Boro's server
   const handleCreateNewUserClick = async () => {
     const userPictureBase64 = await getBase64FromUrl(userProfilePicture) as string;
@@ -95,15 +96,23 @@ const NewUserPage = (props: Props) => {
       //Send userDetails to the server and create the new user on Boro's server
       const response = await apiUpdateUser(userDetails);
       console.log("User created successfully!", response);
-
       //After guid was retrived, update the redux with the new guid
       dispatch(
         updateUser({
-          ...initialState,
           name: firstName + " " + lastName,
           userId: userId,
           picture: userProfilePicture,
           email: formik.values.email,
+          facebookId: facebookid,
+          accessToken: accessToken,
+          serverAddress: {
+            latitude: 0,
+            longitude: 0
+          },
+          currentAddress: {
+            latitude: 0,
+            longitude: 0
+          }
         })
       );
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { IUserDetails } from "../types";
+import { IInputImage, IUserDetails } from "../types";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Button, CircularProgress, IconButton, List, ListItem, ListItemIcon, ListItemText, TextField, Typography } from "@mui/material";
@@ -8,12 +8,13 @@ import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
 import IUpdateUserData from "../api/Models/IUpdateUserData";
 import { updateUser as apiUpdateUser, getUserProfile, updateUserImage } from "../api/UserService"
-import { selectPicture } from "../features/UserSlice";
-import { useAppSelector } from "../app/hooks";
+import { selectPicture, updateCurrentPicture, updatePartialUser } from "../features/UserSlice";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import Box from "@mui/material/Box";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 type IUserDetailsParams = {
   userId: string;
@@ -33,6 +34,7 @@ const UserEditPage = (props: Props) => {
   const [userDetails, setUserDetails] = useState<IUserDetails>(
     allUserDetails[3]
   );
+  const dispatch = useAppDispatch();
 
   //Get the current userId
   let { userId } = useParams<IUserDetailsParams>();
@@ -41,6 +43,7 @@ const UserEditPage = (props: Props) => {
   const [images, setImages] = useState<string[]>();
   const [imagesNames, setImagesNames] = useState<string[]>([]);
   const [imageChanged, setImageChanged] = useState<boolean>();
+
   //A function used to get details of a user from the server
   //Used to set the initial values of the form
   const getUserDetails = async () => {
@@ -120,7 +123,12 @@ const UserEditPage = (props: Props) => {
           base64ImageData: imageBase64Data
         }
         updateUserImage(newUserPicture);
+        dispatch(updateCurrentPicture({
+          picture: images[0]
+        }))
       }
+
+
 
 
       navigate("/users/" + userId);
