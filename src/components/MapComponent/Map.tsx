@@ -18,19 +18,12 @@ import { getItemsByRadius } from "../../api/ItemService";
 import ToggleButton from "../ItemsMapListContainer/ToggleButton";
 import SearchIcon from "@mui/icons-material/Search";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
+import { libs } from "../../utils/googleMapsUtils";
 
 type Props = {
   myLocation: ICoordinate;
   locationsAroundMe: IMarkerDetails[];
 };
-
-const libs: (
-  | "places"
-  | "drawing"
-  | "geometry"
-  | "localContext"
-  | "visualization"
-)[] = ["places", "geometry"];
 
 const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
   const navigate = useNavigate();
@@ -77,14 +70,14 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
 
       return locations && locations.length > 0
         ? locations.map(({ id, imageIds, title, latitude, longitude }) => {
-            const marker = CustomMarker({ latitude, longitude });
+          const marker = CustomMarker({ latitude, longitude });
 
-            map.addListener("click", () => infoWindow.close());
-            marker.addListener("click", async () => {
-              let imgData = await getImage(imageIds[0]);
+          map.addListener("click", () => infoWindow.close());
+          marker.addListener("click", async () => {
+            let imgData = await getImage(imageIds[0]);
 
-              infoWindow.setPosition({ lat: latitude, lng: longitude });
-              infoWindow.setContent(`
+            infoWindow.setPosition({ lat: latitude, lng: longitude });
+            infoWindow.setContent(`
                 <div class="info-window">
                   <h2 class="info-title">${title}</h2>
                   <img class="info-img" src="${imgData}" />
@@ -92,11 +85,11 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
                   <button class="info-button" onclick="onMarkerClick('${id}')">Go to item</button>
                 </div>
               `);
-              infoWindow.open(map);
-            });
+            infoWindow.open(map);
+          });
 
-            return marker;
-          })
+          return marker;
+        })
         : [];
     },
     [locationsAroundMeUpdated]

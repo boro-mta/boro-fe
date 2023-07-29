@@ -3,7 +3,7 @@ import { IItemImageResponse } from "./IItemImageResponse";
 export interface IItemResponse {
   id: string;
   title: string;
-  description: string | null;
+  description: string;
   images: IItemImageResponse[];
   ownerId: string | null;
   categories: string[];

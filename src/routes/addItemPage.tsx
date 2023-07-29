@@ -32,11 +32,14 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ICoordinate, IInputImage, IInputItem } from "../types";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { selectCurrentAddress, updateServerAddress } from "../features/UserSlice";
+import { selectCurrentAddress, selectUserId, updateServerAddress } from "../features/UserSlice";
 import { addItem } from "../api/ItemService";
 import AddressField from "../components/AddressFieldComponent/AddressField";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
+import { useJsApiLoader } from "@react-google-maps/api";
+import { getUserLocation } from "../api/UserService";
+import { libs } from "../utils/googleMapsUtils";
 
 type Props = {};
 
@@ -81,12 +84,25 @@ const validationSchema = yup.object({
 });
 
 const addItemPage = (props: Props) => {
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    libraries: libs,
+  });
+
+  const [address, setAddress] = useState<ICoordinate>(
+    useAppSelector(selectCurrentAddress) // current location
+  );
+  const [homeAddress, setHomeAddress] = useState<any>({ lat: 0, lng: 0 });
+  const [itemInitialAddress, setItemInitialAddress] = useState<string>("");
+
   const imagesInputRef = useRef<HTMLInputElement | null>(null);
   const [images, setImages] = useState<string[]>();
   const [imagesNames, setImagesNames] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
   const [condition, setCondition] = useState<string>("");
+
+  const userId = useAppSelector(selectUserId);
 
   const [categoryArr, setCategoryArr] = React.useState<any[]>(
     categoriesOptions
@@ -201,13 +217,7 @@ const addItemPage = (props: Props) => {
     return imagesForBody;
   };
 
-  const [address, setAddress] = useState<ICoordinate>(
-    useAppSelector(selectCurrentAddress) // current location
-    //todo: user location from server
-  );
-
   const onAddItem = () => {
-    handleSaveAddress();
     const values: FormValues = formValuesAddItem;
     const forRequest: IInputItem = {
       condition: condition,
@@ -217,6 +227,7 @@ const addItemPage = (props: Props) => {
       latitude: address.latitude,
       longitude: address.longitude,
     };
+
     sendRequest({ ...forRequest, images }).then(() => {
       setOpen(true);
       formik.setSubmitting(false);
@@ -286,6 +297,7 @@ const addItemPage = (props: Props) => {
       ) {
         place = autocompleteRef.current.getPlace();
       }
+
     } catch (error) {
       console.error("Error getting place:", error);
       return;
@@ -310,22 +322,49 @@ const addItemPage = (props: Props) => {
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setMyLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-      },
-      () => {
-        setMyLocation({
-          latitude: 32.08602761576923,
-          longitude: 34.774667,
-        });
-        console.log("Failed to get the user's location");
+    const onWakeFunction = async () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setMyLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        () => {
+          setMyLocation({
+            latitude: 32.08602761576923,
+            longitude: 34.774667,
+          });
+          console.log("Failed to get the user's location");
+        }
+      );
+
+      if (userId) {
+        const serverHomeAddress = await getUserLocation(userId);
+        setHomeAddress(serverHomeAddress);
+        setAddress(serverHomeAddress);
       }
-    );
-  }, []);
+
+    };
+
+    onWakeFunction();
+  }, [userId]);
+
+
+
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
+    const geocoder = new google.maps.Geocoder();
+    if (homeAddress.latitude && homeAddress.longitude) {
+      geocoder.geocode({ location: { lat: homeAddress.latitude, lng: homeAddress.longitude } })
+        .then((response) => {
+          setItemInitialAddress(response.results[0].formatted_address);
+        })
+    }
+  }, [homeAddress, isLoaded]);
 
   return (
     <Container>
@@ -377,10 +416,13 @@ const addItemPage = (props: Props) => {
                         }
                       />
 
-                      <AddressField
-                        onLoad={onLoad}
-                        handlePlaceChanged={handlePlaceChanged}
-                      />
+                      {homeAddress.lat != 0 && homeAddress.lng != 0 && (
+                        <AddressField
+                          onLoad={onLoad}
+                          handlePlaceChanged={handlePlaceChanged}
+                          savedAddress={itemInitialAddress}
+                        />
+                      )}
 
                       <Autocomplete
                         id="condition"
