@@ -21,7 +21,7 @@ import Card from "@mui/material/Card";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
-import { IFullItemDetailsNew, IUserDetails } from "../types";
+import { IUserDetails } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
 import {
@@ -30,11 +30,11 @@ import {
 } from "../utils/calendarUtils";
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
+import { isCurrentUser } from "../utils/authUtils";
 import { Row } from "../components/ItemDetailsTable/ItemDetailsTable";
 import { getItem } from "../api/ItemService";
 import { blockDates, unBlockDates, getItemBlockedDates } from "../api/ReservationService";
-import { getUserLocation, getUserProfile } from "../api/UserService";
+import { getUserProfile } from "../api/UserService";
 import ILocationDetails from "../api/Models/ILocationDetails";
 import { libs } from "../utils/googleMapsUtils";
 import { useJsApiLoader } from "@react-google-maps/api";
@@ -72,7 +72,6 @@ const itemDetailsPage = (props: Props) => {
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [manageStartDate, setManageStartDate] = useState<Date>(new Date());
   const [manageEndDate, setManageEndDate] = useState<Date>(new Date());
-
   const [excludedDates, setExcludedDates] = useState<Date[]>([]);
 
   const [selectedDatesError, setSelectedDatesError] = useState<string>("");
@@ -206,6 +205,7 @@ const itemDetailsPage = (props: Props) => {
   const [ownerDetails, setOwnerDetails] = useState<IUserDetails>();
   const [ownerFullName, setOwnerFullName] = useState<string>("");
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [serverItemLocation, setServerItemLocation] = useState<ILocationDetails>();
   const [itemLocation, setItemLocation] = useState<string>("");
 
   useEffect(() => {
@@ -245,6 +245,7 @@ const itemDetailsPage = (props: Props) => {
 
       if (fullDetails && Object.keys(fullDetails).length > 0) {
         setItemDetails(fullDetails);
+        setServerItemLocation({ latitude: fullDetails.latitude, longitude: fullDetails.longitude });
         if (fullDetails.ownerId)
           serverLenderDetails = await getUserProfile(fullDetails.ownerId);
         setOwnerDetails(serverLenderDetails);
@@ -263,11 +264,9 @@ const itemDetailsPage = (props: Props) => {
       return;
     }
     const getItemAddress = async () => {
-      let serverItemALocation: ILocationDetails = { latitude: itemDetails.latitude, longitude: itemDetails.longitude };
-
       const geocoder = new google.maps.Geocoder();
-      if (serverItemALocation.latitude != 0 && serverItemALocation.longitude != 0) {
-        geocoder.geocode({ location: { lat: serverItemALocation.latitude, lng: serverItemALocation.longitude } })
+      if (serverItemLocation && serverItemLocation.latitude != 0 && serverItemLocation.longitude != 0) {
+        geocoder.geocode({ location: { lat: itemDetails.latitude, lng: itemDetails.longitude } })
           .then((response) => {
             setItemLocation(response.results[0].formatted_address);
           })
@@ -275,7 +274,7 @@ const itemDetailsPage = (props: Props) => {
     };
 
     getItemAddress();
-  }, [itemDetails.ownerId, isLoaded]);
+  }, [isLoaded, serverItemLocation]);
 
   return (
     <Container>

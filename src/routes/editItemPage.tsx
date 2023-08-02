@@ -29,15 +29,11 @@ import { categoriesOptions, conditionOptions } from "../mocks/items";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
-import { IFullItemDetailsNew } from "../types";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { selectCurrentAddress, updateServerAddress } from "../features/UserSlice";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import IUpdateItemInfoInput from "../api/Models/IUpdateItemInfoInput";
 import { getItem } from "../api/ItemService";
 import { updateItemInfo, addItemImage, updateItemLocation } from "../api/UpdateItemsService";
 import AddressField from "../components/AddressFieldComponent/AddressField";
-import useLocalStorage from "../hooks/useLocalStorage";
 import { IItemResponse } from "../api/Models/IItemResponse";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { libs } from "../utils/googleMapsUtils";
@@ -71,6 +67,7 @@ const EditItemPage = (props: Props) => {
   );
   const [images, setImages] = useState<IInputImage[]>([]);
   const [imagesNames, setImagesNames] = useState<string[]>([]);
+  const [serverImagesNames, setServerImagesNames] = useState<string[]>([]);
   const [imagesIDToRemove, setImagesIDToRemove] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
@@ -226,10 +223,7 @@ const EditItemPage = (props: Props) => {
     };
   };
 
-  const currentAddress = useAppSelector(selectCurrentAddress);
-
   const onEditItem = () => {
-    const values: FormValues = formValuesEditItem;
     const forRequest: IInputItem = {
       condition,
       categories: selectedCategories,
@@ -245,11 +239,12 @@ const EditItemPage = (props: Props) => {
   };
 
   const removeImage = (fileName: string) => {
-    const index = imagesNames.indexOf(fileName);
+    const index = serverImagesNames.indexOf(fileName);
+    const indexForImagesNames = imagesNames.indexOf(fileName);
 
     if (index !== -1) {
       const newImageNames = [...imagesNames];
-      newImageNames.splice(index, 1);
+      newImageNames.splice(indexForImagesNames, 1);
       setImagesNames(newImageNames);
 
       if (imagesFromServer[index]) {
@@ -259,15 +254,10 @@ const EditItemPage = (props: Props) => {
     }
   };
 
-  const [address, setAddress] = useState<ICoordinate>(
-    useAppSelector(selectCurrentAddress) // current location
-  );
+  const [address, setAddress] = useState<ICoordinate>({ latitude: 0, longitude: 0 });
 
   // item location
   const [itemAddress, setItemAddress] = useState<string>("");
-
-  const [userInfo, setUser] = useLocalStorage("user", "");
-  const dispatch = useAppDispatch();
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete>();
 
@@ -352,9 +342,12 @@ const EditItemPage = (props: Props) => {
           setItemDetails(itemServerDetails);
           setCondition(itemServerDetails.condition);
           setSelectedCategories(itemServerDetails.categories);
+          setAddress({ latitude: itemServerDetails.latitude, longitude: itemServerDetails.longitude });
           if (itemServerDetails.images) {
             setImagesFromServer(itemServerDetails.images);
-            setImagesNames(formatImagesOnRecieve(itemServerDetails.images));
+            const imagesInStringFormat: string[] = formatImagesOnRecieve(itemServerDetails.images);
+            setImagesNames(imagesInStringFormat);
+            setServerImagesNames(imagesInStringFormat);
           }
         }
       } catch (err) {
