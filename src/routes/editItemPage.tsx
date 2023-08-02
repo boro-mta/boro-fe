@@ -278,7 +278,6 @@ const EditItemPage = (props: Props) => {
         place = autocompleteRef.current.getPlace();
       }
 
-      console.log(place);
     } catch (error) {
       console.error("Error getting place:", error);
       return;
