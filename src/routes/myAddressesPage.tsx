@@ -8,15 +8,9 @@ import { updateServerAddress } from "../features/UserSlice";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { useNavigate } from "react-router";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { libs } from "../utils/googleMapsUtils";
 
 type Props = {};
-const libs: (
-  | "places"
-  | "drawing"
-  | "geometry"
-  | "localContext"
-  | "visualization"
-)[] = ["places"];
 
 const MyAddressesPage = (props: Props) => {
   const dispatch = useAppDispatch();

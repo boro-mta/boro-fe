@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Container } from "@mui/system";
-import { Button, Typography, Divider, Card, CardMedia } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router";
 import {
   IFullItemDetailsNew,
@@ -10,7 +10,6 @@ import {
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import { getItem } from "../api/ItemService";
 import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import {
@@ -18,9 +17,11 @@ import {
 } from "../api/ReservationService";
 import { getUserPicture, getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
-import { getCurrentUserId, isCurrentUser } from "../utils/authUtils";
+import { isCurrentUser } from "../utils/authUtils";
 import IUserProfile from "../api/Models/IUserProfile";
 import { IBodyStatus, getBodyByStatus, statusFromNumToString } from "../utils/reservationsUtils";
+import ButtonBase from '@mui/material/ButtonBase';
+import MinimizedUserDetails from "../components/Dashboard/MinimizedUserDetails/MinimizedUserDetails";
 
 type IReservationDetailsParams = {
   reservationId: string;
@@ -74,6 +75,7 @@ const ReservationDetailsPage = (props: Props) => {
 
   const [serverRequestError, setServerRequestError] = useState<any>();
   const [isLender, setIsLender] = useState<boolean>(false);
+  const [relevantPersonFullName, setRelevantPersonFullName] = useState<string>("");
 
   let itemServerDetails: IFullItemDetailsNew;
 
@@ -123,7 +125,6 @@ const ReservationDetailsPage = (props: Props) => {
           )) as IFullItemDetailsNew;
           setItemDetails(itemServerDetails);
 
-
         } catch (err) {
           console.log("Error while loading reservation");
           setServerRequestError(err);
@@ -151,7 +152,12 @@ const ReservationDetailsPage = (props: Props) => {
 
           const serverProfilePicture = await getUserPicture(personServerDetails.userId);
           setUserProfilePicture(serverProfilePicture);
+
+          let fullName: string = personServerDetails.firstName.concat(" " + personServerDetails.lastName);
+          setRelevantPersonFullName(fullName);
         }
+
+
       }
     }
     fetchUserDetails();
@@ -159,34 +165,141 @@ const ReservationDetailsPage = (props: Props) => {
 
   console.log(reservationDetails);
 
+  const Img = styled('img')({
+    margin: 'auto',
+    display: 'block',
+    maxWidth: '100%',
+    maxHeight: '100%',
+  });
+
+  const handleItemPictureClicked = () => {
+    navigate(`/Item/${reservationDetails.itemId}`);
+  }
+
+  const handleBackClicked = () => {
+    if (isLender) {
+      navigate(`/lenderDashboard`);
+    }
+    else {
+      navigate(`/borrowerDashboard`);
+    }
+  }
+
   return (
     <Container>
       <Typography component={"span"} variant="h3">
         Reservation Details Page
       </Typography>
 
-      <Box sx={{ flexGrow: 1 }}>
+      <Paper
+        sx={{
+          p: 2,
+          margin: 'auto',
+          maxWidth: 500,
+          flexGrow: 1,
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+        }}
+      >
+
+        <Typography component={"span"} variant="h6">
+          {relevantComponentDetails.title}
+        </Typography>
+        <Typography variant="body1">
+          {relevantComponentDetails.descroption}
+        </Typography>
+      </Paper>
+
+      <br></br>
+
+      <Paper
+        sx={{
+          p: 2,
+          margin: 'auto',
+          maxWidth: 500,
+          flexGrow: 1,
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+        }}
+      >
         <Grid container spacing={2}>
-
-          <Grid item xs={12}>
-            <Item>
-              <Typography component={"span"} variant="h6">
-                {relevantComponentDetails.title}
-              </Typography>
-              <Typography variant="body1">
-                {relevantComponentDetails.descroption}
-              </Typography>
-            </Item>
+          <Grid item>
+            <ButtonBase onClick={handleItemPictureClicked} sx={{ width: 128, height: 128 }}>
+              {itemDetails.images && (
+                <Img alt="complex" src={formatImagesOnRecieve(itemDetails.images)[0]} />
+              )}
+            </ButtonBase>
           </Grid>
+          <Grid item xs={12} sm container>
+            <Grid item xs container direction="column" spacing={2}>
+              <Grid item xs>
+                <Typography gutterBottom variant="h5" component="div">
+                  {itemDetails.title}
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  {itemDetails.description}
+                </Typography>
 
-          {relevantComponentDetails.components.length > 0 &&
-            <Grid item xs={12}>
-              <Item>
-                {relevantComponentDetails.components.map((ActionComponent, i) => <ActionComponent key={i} reservationId={reservationId} />)}
-              </Item>
+                <Typography variant="body2" gutterBottom>
+                  Dates:{""}
+                </Typography>
+
+                {reservationDetails.startDate &&
+                  reservationDetails.endDate && (
+                    <Typography variant="body2" >
+                      <div style=
+                        {{
+                          display: "flex",
+                          justifyContent: "space-around",
+                        }}
+                      >
+                        <DateContainer date={new Date(reservationDetails.startDate)} />
+                        <DateContainer date={new Date(reservationDetails.endDate)} />
+                      </div>
+                    </Typography>
+                  )}
+                <Typography variant="body2" gutterBottom>
+                  {""}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Request Status:{" "}
+                  {statusFromNumToString(reservationDetails.status)}
+                </Typography>
+              </Grid>
+              <Grid item>
+                {relevantComponentDetails.components.length > 0 && (
+                  <Typography variant="body2">
+                    {relevantComponentDetails.components.map((ActionComponent, i) => <ActionComponent key={i} reservationId={reservationId} />)}
+                  </Typography>
+                )}
+              </Grid>
+              <Grid item>
+                {!isLender && (
+                  <Typography variant="body2" sx={{ marginBottom: "5px" }}>
+                    The lender:{" "}
+                  </Typography>
+                )}
+                {isLender && (
+                  <Typography variant="body2" sx={{ marginBottom: "5px" }}>
+                    The borrower:{" "}
+                  </Typography>
+                )}
+                {userProfilePicture.base64ImageData !== "" &&
+                  relevantPersonDetails &&
+                  (
+                    <MinimizedUserDetails
+                      fullName={relevantPersonFullName}
+                      profileImg={formatImagesOnRecieve([userProfilePicture])[0]}
+                      partyId={relevantPersonDetails.userId}
+                    />
+                  )}
+              </Grid>
             </Grid>
-          }
-          {/* {!isLender && (
+          </Grid>
+        </Grid>
+      </Paper>
+
+      {/* {!isLender && (
             <Grid item xs={12}>
               <Item>
                 <Dialog
@@ -215,151 +328,14 @@ const ReservationDetailsPage = (props: Props) => {
             </Grid>
           )} */}
 
-          <Grid item xs={12}>
-            <Item>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  flexDirection: "row",
-                }}
-              >
-                <Card sx={{ marginBottom: "10px", marginRight: "10px" }}>
-                  {itemDetails.images && (
-                    <CardMedia
-                      component="img"
-                      style={{ height: "130px", width: "130px" }}
-                      image={formatImagesOnRecieve(itemDetails.images)[0]}
-                    ></CardMedia>
-                  )}
-                </Card>
-
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <Typography variant="h5">{itemDetails.title}</Typography>
-                  <Typography variant="body1">
-                    {itemDetails.description}
-                  </Typography>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="h6" sx={{ marginRight: "10px" }}>
-                  Request Status:{" "}
-                </Typography>
-                <Typography variant="body1">
-                  {statusFromNumToString(reservationDetails.status)}
-                </Typography>
-              </div>
-            </Item>
-          </Grid>
-
-          {userProfilePicture.base64ImageData !== "" &&
-            <Grid item xs={12}>
-              <Item>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    flexDirection: "row",
-                  }}
-                >
-                  <Card sx={{ marginBottom: "10px", marginRight: "10px" }}>
-                    {itemDetails.images && (
-                      <CardMedia
-                        component="img"
-                        style={{ height: "130px", width: "130px" }}
-                        image={formatImagesOnRecieve([userProfilePicture])[0]} //todo: change to profile picture of borrower
-                      ></CardMedia>
-                    )}
-                  </Card>
-
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <Typography variant="h5">
-                      {relevantPersonDetails.firstName}
-                    </Typography>
-                    <Typography variant="body1">
-                      {relevantPersonDetails.lastName}
-                    </Typography>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  {!isLender && (
-                    <Typography variant="h6" sx={{ marginRight: "10px" }}>
-                      About the lender:{" "}
-                    </Typography>
-                  )}
-                  {isLender && (
-                    <Typography variant="h6" sx={{ marginRight: "10px" }}>
-                      About the borrower:{" "}
-                    </Typography>
-                  )}
-                  <Typography variant="body1">
-                    {relevantPersonDetails.about}
-                  </Typography>
-                </div>
-              </Item>
-            </Grid>
-          }
-
-          <Grid item xs={5}>
-            <Item>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="body1">Start Date</Typography>
-                <DateContainer date={new Date(reservationDetails.startDate)} />
-              </div>
-            </Item>
-          </Grid>
-          <Grid item xs={2}>
-            <Item>
-              <Typography textAlign={"center"} variant="h6">
-                {">"}
-              </Typography>
-            </Item>
-          </Grid>
-          <Grid item xs={5}>
-            <Item>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="body1">End Date</Typography>
-                <DateContainer date={new Date(reservationDetails.endDate)} />
-              </div>
-            </Item>
-          </Grid>
-        </Grid>
-      </Box>
-
       <Button
         variant="contained"
         sx={{ mt: 1, mr: 1 }}
-      // onClick={() => navigate(`/item/${itemId}`)} //todo: change back to all items?
+        onClick={handleBackClicked}
       >
         Back
       </Button>
-    </Container>
+    </Container >
   );
 };
 

@@ -3,13 +3,13 @@ import { getUserItems } from "../api/ItemService";
 import { useAppSelector } from "../app/hooks";
 import { selectUserId } from "../features/UserSlice";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
-import { IItem, IUserItem } from "../types";
+import { IUserItem } from "../types";
 import { getImage } from "../api/ImageService";
 
 type Props = {};
 
 const myItemsPage = (props: Props) => {
-  const [myItems, setMyItems] = useState<IItem[]>([]);
+  const [myItems, setMyItems] = useState<IUserItem[]>([]);
   const userGuid = useAppSelector(selectUserId);
 
   useEffect(() => {
@@ -17,11 +17,12 @@ const myItemsPage = (props: Props) => {
       const items = (await getUserItems(userGuid)) as IUserItem[];
       if (Array.isArray(items) && items.length > 0) {
         let itemsWithImagesPromises = items.map(async (item, i) => {
-          let currObj: IItem = {
-            itemId: item.id,
+          let currObj: IUserItem = {
+            id: item.id,
             title: item.title,
+            imageIds: []
           };
-          currObj.img = await getImage(item.imageIds[0]);
+          currObj.imageIds[0] = await getImage(item.imageIds[0]);
 
           return currObj;
         });
