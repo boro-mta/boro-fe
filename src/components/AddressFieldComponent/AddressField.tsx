@@ -9,27 +9,19 @@ type Props = {
 };
 
 const AddressField = ({ onLoad, handlePlaceChanged, savedAddress }: Props) => {
-
     return (
         <>
-            <Autocomplete onLoad={onLoad} onPlaceChanged={handlePlaceChanged}>
+            {savedAddress && (
+                <Autocomplete onLoad={onLoad} onPlaceChanged={handlePlaceChanged}>
+                    <TextField
+                        defaultValue={savedAddress}
+                        label="Address"
+                        placeholder="Search for address"
+                        style={{ width: "100%", height: "100%" }}
+                    />
+                </Autocomplete>
 
-                <input
-                    defaultValue={savedAddress}
-                    type="text"
-                    placeholder="Search for address"
-                    style={{ width: "100%", height: "100%" }}
-                />
-
-
-                {/* <TextField
-                    //defaultValue={savedAddress}
-                    label="Address"
-                    value={savedAddress}
-                    placeholder="Search for address"
-                    style={{ width: "100%", height: "100%" }}
-                /> */}
-            </Autocomplete>
+            )}
         </>
     );
 }
