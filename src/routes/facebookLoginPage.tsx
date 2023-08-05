@@ -4,15 +4,19 @@ import { Box } from "@mui/material";
 import { ReactFacebookLoginInfo } from "react-facebook-login";
 import { useNavigate } from "react-router-dom";
 import {
+  updateAccessToken,
+  updateFacebookId,
   updatePartialUser,
   updateServerAddress,
   updateUser,
+  updateUserName,
 } from "../features/UserSlice";
 import { useAppDispatch } from "../app/hooks";
 import useLocalStorage from "../hooks/useLocalStorage";
-import { ICoordinate } from "../types";
-import { getUserLocation } from "../api/UserService";
+import { ICoordinate, IInputImage } from "../types";
+import { getUserLocation, getUserPicture, getUserProfile } from "../api/UserService";
 import { LoginWithFacebook } from "../api/BoroWebServiceClient";
+import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 const FacebookLoginPage = () => {
   //Get redux dispatcher
@@ -20,46 +24,6 @@ const FacebookLoginPage = () => {
 
   //Get navigation tool
   const navigate = useNavigate();
-
-  //User's local storage
-  const [userInfo, setUser] = useLocalStorage("user", "");
-
-  //If a user exists in the local storage, load it
-  useEffect(() => {
-    if (userInfo != "") {
-      //Parse info from local storage
-      const userLocalInfo = JSON.parse(userInfo);
-      console.log("Parsed info ", userLocalInfo);
-
-      let currentLocation: ICoordinate = { latitude: 0, longitude: 0 };
-      if (userLocalInfo.address && userLocalInfo.address.latitude) {
-        currentLocation.latitude = userLocalInfo.address.latitude;
-      }
-      if (userLocalInfo.address && userLocalInfo.address.longitude) {
-        currentLocation.longitude = userLocalInfo.address.longitude;
-      }
-
-      dispatch(
-        updateUser({
-          name: userLocalInfo.name,
-          email: userLocalInfo.email,
-          facebookId: userLocalInfo.facebookId,
-          accessToken: userLocalInfo.accessToken,
-          picture: userLocalInfo.picture,
-          currentAddress: {
-            longitude: currentLocation.longitude,
-            latitude: currentLocation.latitude,
-          },
-          serverAddress: {
-            //server address is not chosen yet
-            longitude: 0,
-            latitude: 0,
-          },
-          userId: userLocalInfo.guid,
-        })
-      );
-    }
-  }, []);
 
   //In case of a successfull login using facebook
   const handleLoginSuccess = (response: ReactFacebookLoginInfo) => {
@@ -116,7 +80,16 @@ const FacebookLoginPage = () => {
         userId: backendResponse.userId,
       })
     );
-    console.log(backendResponse);
+    dispatch(
+      updateAccessToken(response.accessToken)
+    );
+    dispatch(
+      updateFacebookId(response.userID)
+    );
+    dispatch(
+      updateUserName(response.name || "")
+    )
+    console.log(response);
 
     //Create a user to save.
     //Consider adding a type to the savedUser
@@ -133,20 +106,33 @@ const FacebookLoginPage = () => {
       },
     };
 
-    //Save the user to local storage
-    setUser(JSON.stringify(savedUser));
+
+
 
     if (backendResponse.firstLogin == true) {
       //In case of a first login
 
-      //Save the user to local storage as is
-      setUser(JSON.stringify(savedUser));
+
       navigate("/newUser");
     } else {
       //In case of a returning user:
       //we save in the redux user's 'home' address
 
       const userHomeLocation = await getUserLocation(backendResponse.userId);
+      const userProfile = await getUserProfile(backendResponse.userId);
+      dispatch(
+        updateUser({
+          name: userProfile.firstName || "",
+          email: response.email || "",
+          facebookId: response.id,
+          accessToken: response.accessToken,
+          picture: formatImagesOnRecieve([userProfile.image as IInputImage])[0] || "",
+          serverAddress: { latitude: userProfile.latitude, longitude: userProfile.longitude },
+          currentAddress: { latitude: 0, longitude: 0 },
+          userId: userProfile.userId,
+        })
+      );
+
 
       //Save the user to local storage with it's 'home' address
       savedUser = {
@@ -157,7 +143,6 @@ const FacebookLoginPage = () => {
         },
       };
 
-      setUser(JSON.stringify(savedUser));
 
       updateServerAddress({
         latitude: userHomeLocation.latitude,

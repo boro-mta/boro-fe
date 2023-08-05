@@ -18,6 +18,10 @@ interface PartialUserState {
   userId: string;
 }
 
+interface PictureState {
+  picture: string;
+}
+
 export const initialState: UserState = {
   name: "Guest",
   email: "",
@@ -53,6 +57,18 @@ export const userSlice = createSlice({
     updateCurrentAddress: (state, action: PayloadAction<ICoordinate>) => {
       state.currentAddress = action.payload;
     },
+    updateCurrentPicture: (state, action: PayloadAction<PictureState>) => {
+      state.picture = action.payload.picture;
+    },
+    updateAccessToken: (state, action: PayloadAction<string>) => {
+      state.accessToken = action.payload;
+    },
+    updateFacebookId: (state, action: PayloadAction<string>) => {
+      state.facebookId = action.payload;
+    },
+    updateUserName: (state, action: PayloadAction<string>) => {
+      state.name = action.payload;
+    }
   },
 });
 
@@ -65,6 +81,10 @@ export const {
   updatePartialUser,
   updateServerAddress,
   updateCurrentAddress,
+  updateCurrentPicture,
+  updateAccessToken,
+  updateFacebookId,
+  updateUserName
 } = userSlice.actions;
 
 export const selectUserName = (state: RootState) => state.user.name;
@@ -73,5 +93,7 @@ export const selectUserId = (state: RootState) => state.user.userId;
 export const selectEmail = (state: RootState) => state.user.email;
 export const selectServerAddress = (state: RootState) => state.user.serverAddress;
 export const selectCurrentAddress = (state: RootState) => state.user.currentAddress;
+export const selectFacebookId = (state: RootState) => state.user.facebookId;
+export const selectAccessToken = (state: RootState) => state.user.accessToken;
 
 export default userSliceReducer;
