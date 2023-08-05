@@ -156,6 +156,11 @@ const NewUserPage = (props: Props) => {
           error={formik.touched.email && Boolean(formik.errors.email)}
           helperText={formik.touched.email && formik.errors.email}
         />
+        <AddressField
+          onLoad={onLoad}
+          handlePlaceChanged={handlePlaceChanged}
+          savedAddress=""
+        />
         <Button
           variant="contained"
           type="submit"

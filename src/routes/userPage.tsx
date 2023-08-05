@@ -5,7 +5,6 @@ import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { IInputImage, IUserDetails } from "../types";
 import { allUserDetails } from "../mocks/userDetails";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
-import { items } from "../mocks/items";
 import Button from "@mui/material/Button";
 import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId } from "../utils/authUtils";
@@ -18,6 +17,7 @@ const userPage = (props: Props) => {
         allUserDetails[3]
     );
 
+    const [userItems, setUserItems] = useState<IUserItem[]>([]);
 
     //Gets the user's Id, Consider deleting
     const userCurrentId = getCurrentUserId();
@@ -131,12 +131,8 @@ const userPage = (props: Props) => {
             <br />
             <Typography variant="h4">{userDetails.firstName + ' \'s items'}</Typography>
             <Box>
-                <ItemsContainer containerTitle="My Tool Kit 🏠" items={items} />
+                <ItemsContainer containerTitle="" items={userItems} />
             </Box>
-            <Box>
-                <ItemsContainer containerTitle="My other Tool Kit 🏠" items={items} />
-            </Box>
-
         </Container>
 
 

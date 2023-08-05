@@ -19,7 +19,23 @@ export const items: IItem[] = [
   },
 ];
 
-export const categoriesOptions: string[] = ['Renovation', 'Gardening', 'Kitchen', 'Gaming', 'Electronics'];
+export const categoriesOptions: string[] = [
+  'Renovation',
+  'Gardening',
+  'Kitchen',
+  'Gaming',
+  'Electronics',
+  'Sports',
+  'Transportation',
+  'Pets',
+  'Home',
+  'Musical Instruments',
+  'Stuff for Events',
+  'Karaoke',
+  'Garden',
+  'Kids',
+
+];
 
 export const conditionOptions = [
   {

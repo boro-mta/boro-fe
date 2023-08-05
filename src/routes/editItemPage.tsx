@@ -20,7 +20,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Container, Stack } from "@mui/system";
-import { IFullImageDetails, IInputItem } from "../types";
+import { ICoordinate, IFullImageDetails, IInputItem } from "../types";
 import Box from "@mui/material/Box";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
@@ -29,13 +29,14 @@ import { categoriesOptions, conditionOptions } from "../mocks/items";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
-import { IFullItemDetailsNew } from "../types";
-import { useAppSelector } from "../app/hooks";
-import { selectCurrentAddress } from "../features/UserSlice";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import IUpdateItemInfoInput from "../api/Models/IUpdateItemInfoInput";
 import { getItem } from "../api/ItemService";
-import { updateItemInfo, addItemImage } from "../api/UpdateItemsService";
+import { updateItemInfo, addItemImage, updateItemLocation } from "../api/UpdateItemsService";
+import AddressField from "../components/AddressFieldComponent/AddressField";
+import { IItemResponse } from "../api/Models/IItemResponse";
+import { useJsApiLoader } from "@react-google-maps/api";
+import { libs } from "../utils/googleMapsUtils";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -66,6 +67,7 @@ const EditItemPage = (props: Props) => {
   );
   const [images, setImages] = useState<IInputImage[]>([]);
   const [imagesNames, setImagesNames] = useState<string[]>([]);
+  const [serverImagesNames, setServerImagesNames] = useState<string[]>([]);
   const [imagesIDToRemove, setImagesIDToRemove] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
@@ -83,17 +85,20 @@ const EditItemPage = (props: Props) => {
 
   let { itemId } = useParams<IFullItemDetailsParams>();
 
-  const [itemDetails, setItemDetails] = useState<IFullItemDetailsNew>({
+  const [itemDetails, setItemDetails] = useState<IItemResponse>({
     categories: [],
     condition: "",
-    itemId: "",
+    id: "",
     title: "",
     images: [],
     description: "",
-    excludedDates: [],
+    longitude: 0,
+    latitude: 0,
+    ownerId: null,
   });
+
   const [serverRequestError, setServerRequestError] = useState<any>();
-  let itemServerDetails: IFullItemDetailsNew;
+  let itemServerDetails: IItemResponse;
 
   const [formValuesEditItem, setFormValusEditItem] = React.useState<FormValues>(
     {
@@ -181,6 +186,9 @@ const EditItemPage = (props: Props) => {
         const imageId = await addItemImage(itemId, image);
       }
 
+      console.log(obj.latitude, obj.longitude);
+      const responseLocation = await updateItemLocation(itemId, obj.latitude, obj.longitude);
+      console.log(responseLocation);
       setIsAddSuccess(true);
       navigate(`/item/${itemId}`);
     } catch (e) {
@@ -215,17 +223,14 @@ const EditItemPage = (props: Props) => {
     };
   };
 
-  const currentAddress = useAppSelector(selectCurrentAddress);
-
   const onEditItem = () => {
-    const values: FormValues = formValuesEditItem;
     const forRequest: IInputItem = {
       condition,
       categories: selectedCategories,
       title: formik.values.title,
       description: formik.values.description,
-      latitude: currentAddress.latitude,
-      longitude: currentAddress.longitude,
+      latitude: address.latitude,
+      longitude: address.longitude,
     };
     sendEditRequest({ ...forRequest, images }).then(() => {
       setOpen(true);
@@ -234,17 +239,59 @@ const EditItemPage = (props: Props) => {
   };
 
   const removeImage = (fileName: string) => {
-    const index = imagesNames.indexOf(fileName);
+    const index = serverImagesNames.indexOf(fileName);
+    const indexForImagesNames = imagesNames.indexOf(fileName);
 
     if (index !== -1) {
       const newImageNames = [...imagesNames];
-      newImageNames.splice(index, 1);
+      newImageNames.splice(indexForImagesNames, 1);
       setImagesNames(newImageNames);
 
       if (imagesFromServer[index]) {
         const newImgIDToRemove: string = imagesFromServer[index].imageId;
         setImagesIDToRemove([...imagesIDToRemove, newImgIDToRemove]);
       }
+    }
+  };
+
+  const [address, setAddress] = useState<ICoordinate>({ latitude: 0, longitude: 0 });
+
+  // item location
+  const [itemAddress, setItemAddress] = useState<string>("");
+
+  const autocompleteRef = useRef<google.maps.places.Autocomplete>();
+
+  const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const handlePlaceChanged = () => {
+    let place;
+
+    try {
+      // Check if autocompleteRef exists and has the getPlace() method
+      if (
+        autocompleteRef &&
+        autocompleteRef.current &&
+        typeof autocompleteRef.current.getPlace === "function"
+      ) {
+        place = autocompleteRef.current.getPlace();
+      }
+
+    } catch (error) {
+      console.error("Error getting place:", error);
+      return;
+    }
+
+    // Check if place and place.geometry exist and have the location property
+    if (place && place.geometry && place.geometry.location) {
+      const newAddress = {
+        latitude: place.geometry.location.lat(),
+        longitude: place.geometry.location.lng(),
+      };
+      setAddress(newAddress);
+    } else {
+      console.error("Invalid place object:", place);
     }
   };
 
@@ -290,13 +337,16 @@ const EditItemPage = (props: Props) => {
     const onWakeFunction = async () => {
       try {
         if (itemId) {
-          itemServerDetails = (await getItem(itemId)) as IFullItemDetailsNew;
+          itemServerDetails = (await getItem(itemId)) as IItemResponse;
           setItemDetails(itemServerDetails);
           setCondition(itemServerDetails.condition);
           setSelectedCategories(itemServerDetails.categories);
+          setAddress({ latitude: itemServerDetails.latitude, longitude: itemServerDetails.longitude });
           if (itemServerDetails.images) {
             setImagesFromServer(itemServerDetails.images);
-            setImagesNames(formatImagesOnRecieve(itemServerDetails.images));
+            const imagesInStringFormat: string[] = formatImagesOnRecieve(itemServerDetails.images);
+            setImagesNames(imagesInStringFormat);
+            setServerImagesNames(imagesInStringFormat);
           }
         }
       } catch (err) {
@@ -308,6 +358,25 @@ const EditItemPage = (props: Props) => {
 
     onWakeFunction();
   }, []);
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    libraries: libs,
+  });
+
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
+    const geocoder = new google.maps.Geocoder();
+    if (itemDetails.latitude && itemDetails.longitude) {
+      geocoder.geocode({ location: { lat: itemDetails.latitude, lng: itemDetails.longitude } })
+        .then((response) => {
+          setItemAddress(response.results[0].formatted_address);
+        })
+    }
+  }, [itemDetails, isLoaded]);
 
   return (
     <Container>
@@ -356,6 +425,14 @@ const EditItemPage = (props: Props) => {
                           formik.errors.description
                         }
                       />
+
+                      {itemDetails.latitude && itemDetails.longitude && (
+                        <AddressField
+                          onLoad={onLoad}
+                          handlePlaceChanged={handlePlaceChanged}
+                          savedAddress={itemAddress}
+                        />
+                      )}
 
                       {itemDetails.condition != "" && (
                         <Autocomplete
