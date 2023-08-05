@@ -14,6 +14,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { updateUser as apiUpdateUser } from "../api/UserService"
 import IUpdateUserData from "../api/Models/IUpdateUserData";
+import AddressField from "../components/AddressFieldComponent/AddressField";
 
 type Props = {};
 
@@ -155,11 +156,6 @@ const NewUserPage = (props: Props) => {
           onChange={formik.handleChange}
           error={formik.touched.email && Boolean(formik.errors.email)}
           helperText={formik.touched.email && formik.errors.email}
-        />
-        <AddressField
-          onLoad={onLoad}
-          handlePlaceChanged={handlePlaceChanged}
-          savedAddress=""
         />
         <Button
           variant="contained"

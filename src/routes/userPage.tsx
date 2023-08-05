@@ -2,7 +2,7 @@ import { Avatar, Box, Container, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
-import { IInputImage, IUserDetails } from "../types";
+import { IInputImage, IUserDetails, IUserItem } from "../types";
 import { allUserDetails } from "../mocks/userDetails";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
 import Button from "@mui/material/Button";
