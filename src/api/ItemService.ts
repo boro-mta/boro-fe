@@ -1,12 +1,9 @@
-import {
-  ICoordinateRadius,
-  IInputItem,
-  IUserItem,
-} from "../types";
+import { ICoordinateRadius, IInputItem, IUserItem } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import { HttpOperation, requestAsync } from "./BoroWebServiceClient";
 import { IItemImageResponse } from "./Models/IItemImageResponse";
 import { IItemResponse } from "./Models/IItemResponse";
+import ISearchResult from "./Models/ISearchResult";
 
 export const getItem = async (itemId: string) => {
   console.log("getItem - entry with " + itemId);
@@ -57,4 +54,21 @@ export const getItemImages = async (itemId: string) => {
   )) as IItemImageResponse[];
 
   return formatImagesOnRecieve(images);
+};
+
+export const searchByTitle = async (
+  title: string,
+  latitude: number,
+  longitude: number,
+  radiusInMeters: number,
+  resultLimit: number
+): Promise<ISearchResult[]> => {
+  const endpoint = `Items/Search/ByTitle?partialTitle=${title}&latitude=${latitude}&longitude=${longitude}&radiusInMeters=${radiusInMeters}&limit=${resultLimit}}`;
+
+  const items = (await requestAsync<ISearchResult[]>(
+    HttpOperation.GET,
+    endpoint
+  )) as ISearchResult[];
+
+  return items;
 };
