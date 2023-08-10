@@ -126,14 +126,14 @@ const NewUserPage = (props: Props) => {
       );
 
       //Navigate to the created user's page
-      navigate("/Users/" + userId);
+      navigate(`/Users/${userId}`);
       window.location.reload();
     } catch (error) {
       console.error("Failed to create user:", error);
     }
   };
 
-  // item location
+  // user location
   const [userChosenAddress, setUserChosenAddress] = useState<ILocationDetails>({ longitude: 0, latitude: 0 });
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete>();
@@ -178,9 +178,17 @@ const NewUserPage = (props: Props) => {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
+        setUserChosenAddress({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
       },
       () => {
         setMyLocation({
+          latitude: 32.08602761576923,
+          longitude: 34.774667,
+        });
+        setUserChosenAddress({
           latitude: 32.08602761576923,
           longitude: 34.774667,
         });
