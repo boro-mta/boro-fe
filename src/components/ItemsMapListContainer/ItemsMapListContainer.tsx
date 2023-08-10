@@ -29,24 +29,24 @@ const ItemsMapListContainer = () => {
   const userName = useAppSelector(selectUserName);
   const userGuid = useAppSelector(selectUserId);
   const picture = useAppSelector(selectPicture);
-  /* useEffect(() => {
-     navigator.geolocation.getCurrentPosition(
-       (position) => {
-         setMyLocation({
-           latitude: position.coords.latitude,
-           longitude: position.coords.longitude,
-         });
-       },
-       () => {
-         setMyLocation({
-           latitude: 32.08602761576923,
-           longitude: 34.774667,
-         });
-         console.log("Failed to get the user's location");
-       }
-     );
- 
-   }, []);*/
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setMyLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      () => {
+        setMyLocation({
+          latitude: 32.08602761576923,
+          longitude: 34.774667,
+        });
+        console.log("Failed to get the user's location");
+      }
+    );
+
+  }, []);
 
   useEffect(() => {
     const fetchAndSetMarkers = async () => {
