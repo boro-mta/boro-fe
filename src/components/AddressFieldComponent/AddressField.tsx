@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 type Props = {
     onLoad: (autocomplete: google.maps.places.Autocomplete) => void;
     handlePlaceChanged: () => void;
-    savedAddress: string | number;
+    savedAddress: string;
 };
 
 const AddressField = ({ onLoad, handlePlaceChanged, savedAddress }: Props) => {
@@ -14,6 +14,7 @@ const AddressField = ({ onLoad, handlePlaceChanged, savedAddress }: Props) => {
             {savedAddress && (
                 <Autocomplete onLoad={onLoad} onPlaceChanged={handlePlaceChanged}>
                     <TextField
+                        required
                         defaultValue={savedAddress}
                         label="Address"
                         placeholder="Search for address"

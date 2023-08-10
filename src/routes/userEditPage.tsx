@@ -15,6 +15,9 @@ import Box from "@mui/material/Box";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
+import AddressField from "../components/AddressFieldComponent/AddressField";
+import { useJsApiLoader } from "@react-google-maps/api";
+import { libs } from "../utils/googleMapsUtils";
 
 type IUserDetailsParams = {
   userId: string;
@@ -31,9 +34,17 @@ const validationSchema = yup.object({
 });
 
 const UserEditPage = (props: Props) => {
-  const [userDetails, setUserDetails] = useState<IUserDetails>(
-    allUserDetails[3]
-  );
+  const [userDetails, setUserDetails] = useState<IUserDetails>({
+    userId: "",
+    profileImage: "",
+    firstName: "",
+    lastName: "",
+    about: "",
+    dateJoined: "",
+    email: "",
+    latitude: 0,
+    longitude: 0,
+  });
   const dispatch = useAppDispatch();
 
   //Get the current userId
@@ -58,8 +69,8 @@ const UserEditPage = (props: Props) => {
         userId: userProfile.facebookId,
         profileImage: userProfilePicture,
         dateJoined: userProfile.dateJoined,
-        longitude: 0,
-        latitude: 0,
+        longitude: userProfile.longitude,
+        latitude: userProfile.latitude,
         about: userProfile.about,
         email: userProfile.email
       };
@@ -105,8 +116,8 @@ const UserEditPage = (props: Props) => {
       const userDetailsEdit = {
         about: formik.values.about,
         email: formik.values.email,
-        latitude: 0,
-        longitude: 0,
+        latitude: userDetails.latitude,
+        longitude: userDetails.longitude,
       } as IUpdateUserData;
       try {
         //Send the new details to the server
@@ -128,10 +139,7 @@ const UserEditPage = (props: Props) => {
         }))
       }
 
-
-
-
-      navigate("/users/" + userId);
+      navigate(`/Users/${userId}`);
       window.location.reload();
     }
   };
@@ -184,6 +192,69 @@ const UserEditPage = (props: Props) => {
     }
   };
 
+  // user location
+  const [userAddressString, setUserAddressString] = useState<string>("");
+
+  const autocompleteRef = useRef<google.maps.places.Autocomplete>();
+
+  const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const handlePlaceChanged = () => {
+    let place;
+
+    try {
+      // Check if autocompleteRef exists and has the getPlace() method
+      if (
+        autocompleteRef &&
+        autocompleteRef.current &&
+        typeof autocompleteRef.current.getPlace === "function"
+      ) {
+        place = autocompleteRef.current.getPlace();
+      }
+
+    } catch (error) {
+      console.error("Error getting place:", error);
+      return;
+    }
+
+    // Check if place and place.geometry exist and have the location property
+    if (place && place.geometry && place.geometry.location) {
+      const newAddress = {
+        latitude: place.geometry.location.lat(),
+        longitude: place.geometry.location.lng(),
+      };
+      setUserDetails(prevState => {
+        return {
+          ...prevState,
+          latitude: newAddress.latitude,
+          longitude: newAddress.longitude,
+        }
+      })
+    } else {
+      console.error("Invalid place object:", place);
+    }
+  };
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    libraries: libs,
+  });
+
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
+    const geocoder = new google.maps.Geocoder();
+    if (userDetails.latitude != 0 && userDetails.longitude != 0) {
+      geocoder.geocode({ location: { lat: userDetails.latitude, lng: userDetails.longitude } })
+        .then((response) => {
+          setUserAddressString(response.results[0].formatted_address);
+        })
+    }
+  }, [userDetails.latitude != 0, isLoaded]);
 
   return (
     <Container>
@@ -215,9 +286,16 @@ const UserEditPage = (props: Props) => {
           helperText={formik.touched.about && formik.errors.about}
         />
 
-
         {formik.isSubmitting && <CircularProgress />}
       </form>
+
+      {userDetails.latitude != 0 && userDetails.longitude != 0 && (
+        <AddressField
+          onLoad={onLoad}
+          handlePlaceChanged={handlePlaceChanged}
+          savedAddress={userAddressString}
+        />
+      )}
 
       <Typography variant="h3">Edit Your Profile Picture</Typography>
 
