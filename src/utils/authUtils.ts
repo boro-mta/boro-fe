@@ -1,6 +1,10 @@
 import jwt_decode from "jwt-decode";
 import apiConfig from "../config/apiConfig";
-import { current } from "@reduxjs/toolkit";
+
+export interface ISendBirdCredentials {
+  userId: string;
+  accessToken: string;
+}
 
 export const getCurrentToken = (): string | null => {
   const token = localStorage.getItem(apiConfig.AUTH_TOKEN_KEY);
@@ -46,6 +50,24 @@ export const getCurrentUserId = (): string | null => {
         const decodedToken = jwt_decode<{ sub: string }>(token);
         const sub = decodedToken.sub;
         return sub;
+      } catch (error) {
+        console.error("Invalid token:", error);
+        setAuthToken("");
+      }
+    }
+  }
+  return null;
+};
+
+export const getSendbirdInfoFromToken = (): ISendBirdCredentials | null => {
+  if (isLoggedIn()) {
+    const token = getCurrentToken();
+    if (token && token !== "") {
+      try {
+        const decodedToken = jwt_decode<{ sbuid: string; sbat: string }>(token);
+        const userId = decodedToken.sbuid;
+        const accessToken = decodedToken.sbat;
+        return { userId, accessToken };
       } catch (error) {
         console.error("Invalid token:", error);
         setAuthToken("");
