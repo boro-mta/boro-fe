@@ -154,8 +154,13 @@ const FacebookLoginPage = () => {
 
   return (
     <div className="facebook-login-page">
-      <h1>Facebook Login</h1>
-      <Box>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="top"
+        minHeight="100vh"
+      >
         <FacebookLoginButton onLoginSuccess={handleLoginSuccess} />
       </Box>
     </div>
