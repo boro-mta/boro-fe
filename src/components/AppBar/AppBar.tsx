@@ -288,7 +288,13 @@ function ResponsiveAppBar() {
                 <Typography variant="h6" sx={{ mr: 1 }}>
                   {userName}
                 </Typography>
-                <Avatar alt="Remy Sharp" src={profilePicture} />
+                <Avatar
+                  alt="Remy Sharp"
+                  src={
+                    profilePicture ||
+                    "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png"
+                  }
+                />
               </IconButton>
             </Tooltip>
             <Menu

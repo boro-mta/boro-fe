@@ -16,14 +16,16 @@ import {
 } from "../utils/calendarUtils";
 import { getItem } from "../api/ItemService";
 import { addReservationRequest } from "../api/ReservationService";
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { styled } from "@mui/material/styles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { startChat } from "../api/ChatService";
+import { getMonthAndDayNumber } from "../utils/calendarUtils";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -58,6 +60,7 @@ const RequestToBookPage = (props: Props) => {
     images: [],
     description: "",
     excludedDates: [],
+    ownerId: "",
   });
 
   const navigate = useNavigate();
@@ -70,6 +73,20 @@ const RequestToBookPage = (props: Props) => {
     setOpen(true);
   };
 
+  const handleStartChat = () => {
+    const openNewChat = async () => {
+      const [startMonth, startDayNumber] = getMonthAndDayNumber(
+        calendarStartDate
+      );
+      const [endMonth, endDayNumber] = getMonthAndDayNumber(calendarEndDate);
+      await startChat(
+        itemDetails.ownerId || "",
+        `Hi! I would like to schedule the ${itemDetails.title}, Starting from ${startMonth} ${startDayNumber} until ${endMonth} ${endDayNumber}.`
+      );
+    };
+    openNewChat();
+  };
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -80,14 +97,14 @@ const RequestToBookPage = (props: Props) => {
     setOpen(false);
   };
 
-  const handleConfirmRequest = async () => {
+  const handleConfirmRequest = () => {
     const forRequest = {
       startDate: requestStartDate,
       endDate: requestEndDate,
-      itemId
-    }
-
+      itemId,
+    };
     sendReservationRequest(forRequest);
+    handleStartChat();
   };
 
   const sendReservationRequest = async (reqBody: any) => {
@@ -99,7 +116,7 @@ const RequestToBookPage = (props: Props) => {
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   const [serverRequestError, setServerRequestError] = useState<any>();
 
@@ -138,8 +155,8 @@ const RequestToBookPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-            getFormattedDate(loop) +
-            " is not available, please choose different dates."
+              getFormattedDate(loop) +
+              " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -156,8 +173,6 @@ const RequestToBookPage = (props: Props) => {
     }
   };
 
-
-
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -169,25 +184,22 @@ const RequestToBookPage = (props: Props) => {
   }));
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
+    "&:nth-of-type(odd)": {
       backgroundColor: theme.palette.action.hover,
     },
     // hide last border
-    '&:last-child td, &:last-child th': {
+    "&:last-child td, &:last-child th": {
       border: 0,
     },
   }));
 
-  function createData(
-    key: string,
-    value: string,
-  ) {
+  function createData(key: string, value: string) {
     return { key, value };
   }
 
   const rows = [
-    createData('Start Date', requestStartDate.toDateString()),
-    createData('End Date', requestEndDate.toDateString()),
+    createData("Start Date", requestStartDate.toDateString()),
+    createData("End Date", requestEndDate.toDateString()),
   ];
 
   return (
@@ -204,9 +216,7 @@ const RequestToBookPage = (props: Props) => {
             flexDirection: "row",
           }}
         >
-          <Card
-            sx={{ marginBottom: "10px", marginRight: "10px" }}
-          >
+          <Card sx={{ marginBottom: "10px", marginRight: "10px" }}>
             {itemDetails.images && (
               <CardMedia
                 component="img"
@@ -224,7 +234,10 @@ const RequestToBookPage = (props: Props) => {
       )}
 
       {itemDetails.title != "" && (
-        <TableContainer component={Paper} sx={{ marginTop: "20px", marginBottom: "20px" }}>
+        <TableContainer
+          component={Paper}
+          sx={{ marginTop: "20px", marginBottom: "20px" }}
+        >
           <Table aria-label="customized table">
             <TableBody>
               {rows.map((row) => (
@@ -251,7 +264,7 @@ const RequestToBookPage = (props: Props) => {
         <DateRangePicker
           startDate={requestStartDate}
           endDate={requestEndDate}
-          onChange={() => { }}
+          onChange={() => {}}
           datesToExclude={excludedDates}
           datesToHighlight={[]}
         />

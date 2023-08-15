@@ -3,7 +3,8 @@ import { ChannelList, Channel, ChannelSettings } from "@sendbird/uikit-react";
 import { GroupChannel } from "@sendbird/chat/groupChannel";
 import "./chat.styles.css";
 import "@sendbird/uikit-react/dist/index.css";
-import ChannelListHeader from "@sendbird/uikit-react/ChannelList/components/ChannelListHeader";
+import MinimizedUserDetails from "../Dashboard/MinimizedUserDetails/MinimizedUserDetails";
+import { useAppSelector } from "../../app/hooks";
 
 type Props = {};
 
@@ -16,6 +17,10 @@ const Chat = (props: Props) => {
       HTMLElement
     >
   )[0];
+
+  const name = useAppSelector((state) => state.user.name);
+  const picture = useAppSelector((state) => state.user.picture);
+  const userId = useAppSelector((state) => state.user.userId);
 
   const renderSettingsBar = () => {
     channelChatDiv.style.width = "70%";
@@ -30,7 +35,18 @@ const Chat = (props: Props) => {
   return (
     <div className="channel-wrap">
       <div className="channel-list">
-        <ChannelList onChannelSelect={setCurrentChannel} />
+        <ChannelList
+          onChannelSelect={setCurrentChannel}
+          renderHeader={() => (
+            <div style={{ marginLeft: "15px" }}>
+              <MinimizedUserDetails
+                fullName={name}
+                profileImg={picture}
+                partyId={userId}
+              />
+            </div>
+          )}
+        />
       </div>
       <div className="channel-chat">
         <Channel

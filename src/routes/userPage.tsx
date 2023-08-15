@@ -9,6 +9,8 @@ import Button from "@mui/material/Button";
 import { getUserProfile } from "../api/UserService";
 import { getCurrentUserId } from "../utils/authUtils";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
+import ChatIcon from "@mui/icons-material/Chat";
+import { startChat } from "../api/ChatService";
 
 type Props = {};
 
@@ -104,6 +106,14 @@ const userPage = (props: Props) => {
     return formattedDate;
   };
 
+  const handleStartChat = () => {
+    const openNewChat = async () => {
+      await startChat(userId, "Hi! I have a general question.");
+    };
+    openNewChat();
+    navigate("/chat");
+  };
+
   return (
     <Container>
       <Grid container spacing={2} alignItems="center">
@@ -120,9 +130,17 @@ const userPage = (props: Props) => {
           }
         </Grid>
         <Grid item>
-          <Typography variant="h5">
-            {"Hi! I am " + userDetails.firstName + " " + userDetails.lastName}{" "}
-          </Typography>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="h5">
+              {"Hi! I am " + userDetails.firstName + " " + userDetails.lastName}{" "}
+            </Typography>
+            <Box
+              onClick={handleStartChat}
+              sx={{ marginLeft: "10px", cursor: "pointer" }}
+            >
+              <ChatIcon />
+            </Box>
+          </div>
           <Typography
             variant="subtitle2"
             style={{ color: "gray" }}
