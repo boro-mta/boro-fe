@@ -44,12 +44,9 @@ function ResponsiveAppBar() {
   const userId = getCurrentUserId();
   const getUserDetails = async () => {
     try {
-      console.log("Getting user profile: ", userId, " from the server");
-
       //Get a certain userProfile by userId
       const userProfile = await getUserProfile(userId as string);
-      console.log("Got a user: ");
-      console.log(userProfile);
+      if (!userProfile) return;
 
       //Fit all the details into userDetails
       let userDetails: IUserDetails = {
@@ -150,7 +147,9 @@ function ResponsiveAppBar() {
     if (setting === "Profile") {
       navigate(`/Users/${userId}`);
     }
-
+    if (setting === "Chats") {
+      navigate(`/chat`);
+    }
     if (setting === "Borrower Dashboard") {
       navigate("/borrowerDashboard");
     }

@@ -1,0 +1,17 @@
+.channel-wrap {
+    display: flex;
+    height: 90vh;   
+    width: 100vw;   
+  }
+  
+  .channel-list {
+    float: left;
+    border-right: 1px solid var(--sendbird-light-onlight-04);
+    .sendbird-iconbutton, .sendbird-channel-header__title__right__user-id {
+        display: none;
+    }
+  }
+  
+  .channel-chat {
+    width: 70%;
+  }
