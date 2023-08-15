@@ -44,12 +44,9 @@ function ResponsiveAppBar() {
   const userId = getCurrentUserId();
   const getUserDetails = async () => {
     try {
-      console.log("Getting user profile: ", userId, " from the server");
-
       //Get a certain userProfile by userId
       const userProfile = await getUserProfile(userId as string);
-      console.log("Got a user: ");
-      console.log(userProfile);
+      if (!userProfile) return;
 
       //Fit all the details into userDetails
       let userDetails: IUserDetails = {
@@ -150,7 +147,9 @@ function ResponsiveAppBar() {
     if (setting === "Profile") {
       navigate(`/Users/${userId}`);
     }
-
+    if (setting === "Chats") {
+      navigate(`/chat`);
+    }
     if (setting === "Borrower Dashboard") {
       navigate("/borrowerDashboard");
     }
@@ -289,7 +288,13 @@ function ResponsiveAppBar() {
                 <Typography variant="h6" sx={{ mr: 1 }}>
                   {userName}
                 </Typography>
-                <Avatar alt="Remy Sharp" src={profilePicture} />
+                <Avatar
+                  alt="Remy Sharp"
+                  src={
+                    profilePicture ||
+                    "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png"
+                  }
+                />
               </IconButton>
             </Tooltip>
             <Menu
