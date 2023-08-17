@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Container } from "@mui/system";
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router";
 import {
   IFullItemDetailsNew,
@@ -12,20 +12,25 @@ import { getItem } from "../api/ItemService";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import {
-  getReservation,
-} from "../api/ReservationService";
+import { getReservation } from "../api/ReservationService";
 import { getUserPicture, getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
 import { isCurrentUser } from "../utils/authUtils";
 import IUserProfile from "../api/Models/IUserProfile";
-import { IBodyStatus, getBodyByStatus, statusFromNumToString } from "../utils/reservationsUtils";
-import ButtonBase from '@mui/material/ButtonBase';
+import {
+  IBodyStatus,
+  getBodyByStatus,
+  statusFromNumToString,
+} from "../utils/reservationsUtils";
+import ButtonBase from "@mui/material/ButtonBase";
 import MinimizedUserDetails from "../components/Dashboard/MinimizedUserDetails/MinimizedUserDetails";
-
+"@sendbird/uikit-react/react/";
 type IReservationDetailsParams = {
   reservationId: string;
 };
+
+import ChatIcon from "@mui/icons-material/Chat";
+import { startChat } from "../api/ChatService";
 
 type Props = {};
 
@@ -75,7 +80,10 @@ const ReservationDetailsPage = (props: Props) => {
 
   const [serverRequestError, setServerRequestError] = useState<any>();
   const [isLender, setIsLender] = useState<boolean>(false);
-  const [relevantPersonFullName, setRelevantPersonFullName] = useState<string>("");
+  const [relevantPersonFullName, setRelevantPersonFullName] = useState<string>(
+    ""
+  );
+  const [relevantPersonId, setRelevantPersonId] = useState<string>("");
 
   let itemServerDetails: IFullItemDetailsNew;
 
@@ -89,20 +97,18 @@ const ReservationDetailsPage = (props: Props) => {
     color: theme.palette.text.secondary,
   }));
 
-  const [relevantComponentDetails, setRelevantComponentDetails] = useState<IBodyStatus>(
-    {
-      title: "",
-      descroption: "",
-      components: [],
-    }
-  );
+  const [relevantComponentDetails, setRelevantComponentDetails] = useState<
+    IBodyStatus
+  >({
+    title: "",
+    descroption: "",
+    components: [],
+  });
 
-  const [userProfilePicture, setUserProfilePicture] = useState<IInputImage>(
-    {
-      base64ImageData: "",
-      base64ImageMetaData: ""
-    }
-  );
+  const [userProfilePicture, setUserProfilePicture] = useState<IInputImage>({
+    base64ImageData: "",
+    base64ImageMetaData: "",
+  });
 
   const [borrowerId, setBorrowerId] = useState<string>("");
   const [lenderId, setLenderId] = useState<string>("");
@@ -124,7 +130,6 @@ const ReservationDetailsPage = (props: Props) => {
             reservationItemId
           )) as IFullItemDetailsNew;
           setItemDetails(itemServerDetails);
-
         } catch (err) {
           console.log("Error while loading reservation");
           setServerRequestError(err);
@@ -139,9 +144,11 @@ const ReservationDetailsPage = (props: Props) => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (borrowerId.length > 0 && lenderId.length > 0) {
-        let x = isCurrentUser(lenderId)
+        let x = isCurrentUser(lenderId);
         setIsLender(x);
-        setRelevantComponentDetails(getBodyByStatus(reservationDetails.status, x));
+        setRelevantComponentDetails(
+          getBodyByStatus(reservationDetails.status, x)
+        );
 
         const personServerDetails: IUserProfile = (await getUserProfile(
           x ? borrowerId : lenderId
@@ -150,40 +157,55 @@ const ReservationDetailsPage = (props: Props) => {
         if (personServerDetails) {
           setRelevantPersonDetails(personServerDetails);
 
-          const serverProfilePicture = await getUserPicture(personServerDetails.userId);
+          const serverProfilePicture = await getUserPicture(
+            personServerDetails.userId
+          );
           setUserProfilePicture(serverProfilePicture);
 
-          let fullName: string = personServerDetails.firstName.concat(" " + personServerDetails.lastName);
+          let fullName: string = personServerDetails.firstName.concat(
+            " " + personServerDetails.lastName
+          );
           setRelevantPersonFullName(fullName);
+          setRelevantPersonId(personServerDetails.userId);
         }
-
-
       }
-    }
+    };
     fetchUserDetails();
-  }, [borrowerId, lenderId])
+  }, [borrowerId, lenderId]);
 
   console.log(reservationDetails);
 
-  const Img = styled('img')({
-    margin: 'auto',
-    display: 'block',
-    maxWidth: '100%',
-    maxHeight: '100%',
+  const Img = styled("img")({
+    margin: "auto",
+    display: "block",
+    maxWidth: "100%",
+    maxHeight: "100%",
   });
 
   const handleItemPictureClicked = () => {
     navigate(`/Item/${reservationDetails.itemId}`);
-  }
+  };
 
   const handleBackClicked = () => {
     if (isLender) {
       navigate(`/lenderDashboard`);
-    }
-    else {
+    } else {
       navigate(`/borrowerDashboard`);
     }
-  }
+  };
+
+  const handleStartChat = () => {
+    const openNewChat = async () => {
+      await startChat(
+        relevantPersonId,
+        isLender
+          ? `I saw you have requested to book my item. Let's chat.`
+          : `I have a question about ${itemDetails.title}.`
+      );
+    };
+    openNewChat();
+    navigate("/chat");
+  };
 
   return (
     <Container>
@@ -194,14 +216,13 @@ const ReservationDetailsPage = (props: Props) => {
       <Paper
         sx={{
           p: 2,
-          margin: 'auto',
+          margin: "auto",
           maxWidth: 500,
           flexGrow: 1,
           backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+            theme.palette.mode === "dark" ? "#1A2027" : "#fff",
         }}
       >
-
         <Typography component={"span"} variant="h6">
           {relevantComponentDetails.title}
         </Typography>
@@ -215,18 +236,24 @@ const ReservationDetailsPage = (props: Props) => {
       <Paper
         sx={{
           p: 2,
-          margin: 'auto',
+          margin: "auto",
           maxWidth: 500,
           flexGrow: 1,
           backgroundColor: (theme) =>
-            theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+            theme.palette.mode === "dark" ? "#1A2027" : "#fff",
         }}
       >
         <Grid container spacing={2}>
           <Grid item>
-            <ButtonBase onClick={handleItemPictureClicked} sx={{ width: 128, height: 128 }}>
+            <ButtonBase
+              onClick={handleItemPictureClicked}
+              sx={{ width: 128, height: 128 }}
+            >
               {itemDetails.images && (
-                <Img alt="complex" src={formatImagesOnRecieve(itemDetails.images)[0]} />
+                <Img
+                  alt="complex"
+                  src={formatImagesOnRecieve(itemDetails.images)[0]}
+                />
               )}
             </ButtonBase>
           </Grid>
@@ -244,20 +271,23 @@ const ReservationDetailsPage = (props: Props) => {
                   Dates:{""}
                 </Typography>
 
-                {reservationDetails.startDate &&
-                  reservationDetails.endDate && (
-                    <Typography variant="body2" >
-                      <div style=
-                        {{
-                          display: "flex",
-                          justifyContent: "space-around",
-                        }}
-                      >
-                        <DateContainer date={new Date(reservationDetails.startDate)} />
-                        <DateContainer date={new Date(reservationDetails.endDate)} />
-                      </div>
-                    </Typography>
-                  )}
+                {reservationDetails.startDate && reservationDetails.endDate && (
+                  <Typography variant="body2">
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                      }}
+                    >
+                      <DateContainer
+                        date={new Date(reservationDetails.startDate)}
+                      />
+                      <DateContainer
+                        date={new Date(reservationDetails.endDate)}
+                      />
+                    </div>
+                  </Typography>
+                )}
                 <Typography variant="body2" gutterBottom>
                   {""}
                 </Typography>
@@ -269,7 +299,16 @@ const ReservationDetailsPage = (props: Props) => {
               <Grid item>
                 {relevantComponentDetails.components.length > 0 && (
                   <Typography variant="body2">
-                    {relevantComponentDetails.components.map((ActionComponent, i) => <ActionComponent key={i} reservationId={reservationId} />)}
+                    {relevantComponentDetails.components.map(
+                      (ActionComponent, i) => (
+                        <ActionComponent
+                          key={i}
+                          reservationId={reservationId}
+                          partyId={relevantPersonDetails.userId}
+                          itemName={itemDetails.title}
+                        />
+                      )
+                    )}
                   </Typography>
                 )}
               </Grid>
@@ -285,13 +324,22 @@ const ReservationDetailsPage = (props: Props) => {
                   </Typography>
                 )}
                 {userProfilePicture.base64ImageData !== "" &&
-                  relevantPersonDetails &&
-                  (
-                    <MinimizedUserDetails
-                      fullName={relevantPersonFullName}
-                      profileImg={formatImagesOnRecieve([userProfilePicture])[0]}
-                      partyId={relevantPersonDetails.userId}
-                    />
+                  relevantPersonDetails && (
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <MinimizedUserDetails
+                        fullName={relevantPersonFullName}
+                        profileImg={
+                          formatImagesOnRecieve([userProfilePicture])[0]
+                        }
+                        partyId={relevantPersonDetails.userId}
+                      />
+                      <Box
+                        onClick={handleStartChat}
+                        sx={{ marginLeft: "10px", cursor: "pointer" }}
+                      >
+                        <ChatIcon />
+                      </Box>
+                    </div>
                   )}
               </Grid>
             </Grid>
@@ -335,7 +383,7 @@ const ReservationDetailsPage = (props: Props) => {
       >
         Back
       </Button>
-    </Container >
+    </Container>
   );
 };
 

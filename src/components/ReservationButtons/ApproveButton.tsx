@@ -1,23 +1,43 @@
 import Button from "@mui/material/Button";
 import React from "react";
 import { approveReservation } from "../../api/ReservationService";
+import { startChat } from "../../api/ChatService";
 
 const handleApprove = async (reservationId: any) => {
-    if (reservationId.reservationId) {
-        await approveReservation(reservationId.reservationId);
-    }
+  if (reservationId.reservationId) {
+    await approveReservation(reservationId.reservationId);
+  }
 };
 
-const ApproveButton = (reservationId: any) => {
-    return (
-        <Button
-            variant="contained"
-            color="success"
-            onClick={() => handleApprove(reservationId)}
-        >
-            Approve
-        </Button>
-    )
-}
+const handleStartChat = (partyId: string, itemName: string) => {
+  const openNewChat = async () => {
+    await startChat(
+      partyId,
+      `Your request to book ${itemName} has been confirmed.`
+    );
+  };
+  openNewChat();
+};
 
-export default ApproveButton
+type IProps = {
+  reservationId: string;
+  partyId: string;
+  itemName: string;
+};
+
+const ApproveButton = ({ reservationId, partyId, itemName }: IProps) => {
+  return (
+    <Button
+      variant="contained"
+      color="success"
+      onClick={() => {
+        handleApprove(reservationId);
+        handleStartChat(partyId, itemName);
+      }}
+    >
+      Approve
+    </Button>
+  );
+};
+
+export default ApproveButton;

@@ -1,9 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FacebookLoginButton from "../components/FacebookLogin/FacebookLogin";
 import { Box } from "@mui/material";
 import { ReactFacebookLoginInfo } from "react-facebook-login";
 import { useNavigate } from "react-router-dom";
 import {
+  selectAccessToken,
+  selectPicture,
+  selectUserId,
+  selectUserName,
   updateAccessToken,
   updateFacebookId,
   updatePartialUser,
@@ -11,14 +15,16 @@ import {
   updateUser,
   updateUserName,
 } from "../features/UserSlice";
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { ICoordinate, IInputImage } from "../types";
 import { getUserLocation, getUserPicture, getUserProfile } from "../api/UserService";
 import { LoginWithFacebook } from "../api/BoroWebServiceClient";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
+import { getCurrentUserId } from "../utils/authUtils";
 
 const FacebookLoginPage = () => {
+
   //Get redux dispatcher
   const dispatch = useAppDispatch();
 
@@ -151,15 +157,31 @@ const FacebookLoginPage = () => {
       navigate("/");
     }
   };
+  const userid = getCurrentUserId();
+  useEffect(() => {
+    if (userid != null) {
+      console.log(userid);
+      console.log("Redirecting...");
+      navigate("/");
+    }
+  },);
 
   return (
     <div className="facebook-login-page">
-      <h1>Facebook Login</h1>
-      <Box>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="top"
+        minHeight="100vh"
+      >
+        <h3>We Are Happy To See You Are Using Boro!</h3>
+        <h4>Continue By Logging In</h4>
         <FacebookLoginButton onLoginSuccess={handleLoginSuccess} />
       </Box>
     </div>
   );
 };
+
 
 export default FacebookLoginPage;
