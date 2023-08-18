@@ -32,7 +32,11 @@ import { IInputImage } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import IUpdateItemInfoInput from "../api/Models/IUpdateItemInfoInput";
 import { getItem } from "../api/ItemService";
-import { updateItemInfo, addItemImage, updateItemLocation } from "../api/UpdateItemsService";
+import {
+  updateItemInfo,
+  addItemImage,
+  updateItemLocation,
+} from "../api/UpdateItemsService";
 import AddressField from "../components/AddressFieldComponent/AddressField";
 import { IItemResponse } from "../api/Models/IItemResponse";
 import { useJsApiLoader } from "@react-google-maps/api";
@@ -152,14 +156,14 @@ const EditItemPage = (props: Props) => {
         newImagesNamesInBase64Format
       );
 
-      newImagesNamesInStringFormat.map(function (fileName) {
+      newImagesNamesInStringFormat.map(function(fileName) {
         setImagesNames((oldArray) => [...oldArray, fileName]);
       });
 
       //images for server update:
       let newImagesInStringormat: string[] = [];
 
-      filesInBase64.map(function (file) {
+      filesInBase64.map(function(file) {
         newImagesInStringormat.push(file);
       });
 
@@ -187,7 +191,11 @@ const EditItemPage = (props: Props) => {
       }
 
       console.log(obj.latitude, obj.longitude);
-      const responseLocation = await updateItemLocation(itemId, obj.latitude, obj.longitude);
+      const responseLocation = await updateItemLocation(
+        itemId,
+        obj.latitude,
+        obj.longitude
+      );
       console.log(responseLocation);
       setIsAddSuccess(true);
       navigate(`/item/${itemId}`);
@@ -254,7 +262,10 @@ const EditItemPage = (props: Props) => {
     }
   };
 
-  const [address, setAddress] = useState<ICoordinate>({ latitude: 0, longitude: 0 });
+  const [address, setAddress] = useState<ICoordinate>({
+    latitude: 0,
+    longitude: 0,
+  });
 
   // item location
   const [itemAddress, setItemAddress] = useState<string>("");
@@ -277,7 +288,6 @@ const EditItemPage = (props: Props) => {
       ) {
         place = autocompleteRef.current.getPlace();
       }
-
     } catch (error) {
       console.error("Error getting place:", error);
       return;
@@ -324,7 +334,7 @@ const EditItemPage = (props: Props) => {
 
   const getConditionFronItemDetails = (conditionFromServer: any): any => {
     let contiditionToReturn: any = "";
-    conditionArr.forEach(function (value) {
+    conditionArr.forEach(function(value) {
       if (value.text === conditionFromServer) {
         contiditionToReturn = value;
       }
@@ -341,10 +351,15 @@ const EditItemPage = (props: Props) => {
           setItemDetails(itemServerDetails);
           setCondition(itemServerDetails.condition);
           setSelectedCategories(itemServerDetails.categories);
-          setAddress({ latitude: itemServerDetails.latitude, longitude: itemServerDetails.longitude });
+          setAddress({
+            latitude: itemServerDetails.latitude,
+            longitude: itemServerDetails.longitude,
+          });
           if (itemServerDetails.images) {
             setImagesFromServer(itemServerDetails.images);
-            const imagesInStringFormat: string[] = formatImagesOnRecieve(itemServerDetails.images);
+            const imagesInStringFormat: string[] = formatImagesOnRecieve(
+              itemServerDetails.images
+            );
             setImagesNames(imagesInStringFormat);
             setServerImagesNames(imagesInStringFormat);
           }
@@ -360,7 +375,7 @@ const EditItemPage = (props: Props) => {
   }, []);
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
   });
 
@@ -371,10 +386,13 @@ const EditItemPage = (props: Props) => {
 
     const geocoder = new google.maps.Geocoder();
     if (itemDetails.latitude && itemDetails.longitude) {
-      geocoder.geocode({ location: { lat: itemDetails.latitude, lng: itemDetails.longitude } })
+      geocoder
+        .geocode({
+          location: { lat: itemDetails.latitude, lng: itemDetails.longitude },
+        })
         .then((response) => {
           setItemAddress(response.results[0].formatted_address);
-        })
+        });
     }
   }, [itemDetails, isLoaded]);
 

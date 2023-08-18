@@ -33,7 +33,11 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { isCurrentUser } from "../utils/authUtils";
 import { Row } from "../components/ItemDetailsTable/ItemDetailsTable";
 import { getItem } from "../api/ItemService";
-import { blockDates, unBlockDates, getItemBlockedDates } from "../api/ReservationService";
+import {
+  blockDates,
+  unBlockDates,
+  getItemBlockedDates,
+} from "../api/ReservationService";
 import { getUserProfile } from "../api/UserService";
 import ILocationDetails from "../api/Models/ILocationDetails";
 import { libs } from "../utils/googleMapsUtils";
@@ -48,7 +52,7 @@ type Props = {};
 
 const itemDetailsPage = (props: Props) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
   });
 
@@ -94,8 +98,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-            getFormattedDate(loop) +
-            " is not available, please choose different dates."
+              getFormattedDate(loop) +
+              " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -116,31 +120,35 @@ const itemDetailsPage = (props: Props) => {
     const [selectedBlockStartDate, selectedBlockEndDate] = dates;
     setManageStartDate(selectedBlockStartDate);
     setManageEndDate(selectedBlockEndDate);
-  }
+  };
 
   const handleBlockDates = async () => {
     if (itemId) {
-      let datesToBlockStringFormat: string[] = getDatesInStringArr(manageStartDate, manageEndDate);
+      let datesToBlockStringFormat: string[] = getDatesInStringArr(
+        manageStartDate,
+        manageEndDate
+      );
       await blockDates(datesToBlockStringFormat, itemId);
-    }
-    else {
+    } else {
       console.log("there is no itemId");
     }
 
     window.location.reload();
-  }
+  };
 
   const handleUnBlockDates = async () => {
     if (itemId) {
-      let datesToUnBlock: string[] = getDatesInStringArr(manageStartDate, manageEndDate);
+      let datesToUnBlock: string[] = getDatesInStringArr(
+        manageStartDate,
+        manageEndDate
+      );
       await unBlockDates(datesToUnBlock, itemId);
-    }
-    else {
+    } else {
       console.log("there is no itemId");
     }
 
     window.location.reload();
-  }
+  };
 
   const getDatesInStringArr = (startDate: Date, endDate: Date): string[] => {
     let loop: Date = new Date(manageStartDate);
@@ -159,7 +167,7 @@ const itemDetailsPage = (props: Props) => {
     }
 
     return datesInStringArr;
-  }
+  };
 
   //todo: put in another file
   const getDatesInDateArr = (startDate: Date, endDate: Date): Date[] => {
@@ -179,7 +187,7 @@ const itemDetailsPage = (props: Props) => {
     }
 
     return datesInDateArr;
-  }
+  };
 
   const handleOpenModal = () => setOpen(true);
 
@@ -205,7 +213,9 @@ const itemDetailsPage = (props: Props) => {
   const [ownerDetails, setOwnerDetails] = useState<IUserDetails>();
   const [ownerFullName, setOwnerFullName] = useState<string>("");
   const [isOwner, setIsOwner] = useState<boolean>(false);
-  const [serverItemLocation, setServerItemLocation] = useState<ILocationDetails>();
+  const [serverItemLocation, setServerItemLocation] = useState<
+    ILocationDetails
+  >();
   const [itemLocation, setItemLocation] = useState<string>("");
 
   useEffect(() => {
@@ -214,7 +224,9 @@ const itemDetailsPage = (props: Props) => {
         return;
       }
 
-      const fullDetails: IItemResponse = (await getItem(itemId)) as IItemResponse;
+      const fullDetails: IItemResponse = (await getItem(
+        itemId
+      )) as IItemResponse;
       let serverLenderDetails: any;
 
       const today: Date = new Date();
@@ -228,14 +240,11 @@ const itemDetailsPage = (props: Props) => {
       );
 
       setExcludedDates(blockedDatesServer);
-      setBlockedDatesToHighlight(
-        [
-          {
-            "react-datepicker__day--highlighted-custom-1":
-              blockedDatesServer
-          },
-        ]
-      )
+      setBlockedDatesToHighlight([
+        {
+          "react-datepicker__day--highlighted-custom-1": blockedDatesServer,
+        },
+      ]);
 
       if (fullDetails.images != undefined) {
         setImagesAsString(formatImagesOnRecieve(fullDetails.images));
@@ -245,12 +254,21 @@ const itemDetailsPage = (props: Props) => {
 
       if (fullDetails && Object.keys(fullDetails).length > 0) {
         setItemDetails(fullDetails);
-        setServerItemLocation({ latitude: fullDetails.latitude, longitude: fullDetails.longitude });
+        setServerItemLocation({
+          latitude: fullDetails.latitude,
+          longitude: fullDetails.longitude,
+        });
         if (fullDetails.ownerId)
           serverLenderDetails = await getUserProfile(fullDetails.ownerId);
         setOwnerDetails(serverLenderDetails);
-        if (serverLenderDetails && serverLenderDetails.firstName && serverLenderDetails.lastName) {
-          let fullLenderName: string = serverLenderDetails.firstName.concat(" " + serverLenderDetails.lastName);
+        if (
+          serverLenderDetails &&
+          serverLenderDetails.firstName &&
+          serverLenderDetails.lastName
+        ) {
+          let fullLenderName: string = serverLenderDetails.firstName.concat(
+            " " + serverLenderDetails.lastName
+          );
           setOwnerFullName(fullLenderName);
         }
       }
@@ -265,12 +283,19 @@ const itemDetailsPage = (props: Props) => {
     }
     const getItemAddress = async () => {
       const geocoder = new google.maps.Geocoder();
-      if (serverItemLocation && serverItemLocation.latitude != 0 && serverItemLocation.longitude != 0) {
-        geocoder.geocode({ location: { lat: itemDetails.latitude, lng: itemDetails.longitude } })
+      if (
+        serverItemLocation &&
+        serverItemLocation.latitude != 0 &&
+        serverItemLocation.longitude != 0
+      ) {
+        geocoder
+          .geocode({
+            location: { lat: itemDetails.latitude, lng: itemDetails.longitude },
+          })
           .then((response) => {
             setItemLocation(response.results[0].formatted_address);
-          })
-      };
+          });
+      }
     };
 
     getItemAddress();
@@ -302,8 +327,7 @@ const itemDetailsPage = (props: Props) => {
               key: "Lender Name",
               value:
                 ownerDetails && ownerFullName
-                  ?
-                  ownerFullName
+                  ? ownerFullName
                   : "No info about the lender!",
             },
             {
@@ -338,128 +362,131 @@ const itemDetailsPage = (props: Props) => {
       )}
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
 
-      {isOwner && <> <Button
-        variant="contained"
-        sx={{ mt: 1, mr: 1 }}
-        onClick={() => navigate(`/editItem/${itemId}`)}
-      >
-        Edit Item
-      </Button>
+      {isOwner && (
+        <>
+          {" "}
+          <Button
+            variant="contained"
+            sx={{ mt: 1, mr: 1 }}
+            onClick={() => navigate(`/editItem/${itemId}`)}
+          >
+            Edit Item
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ mt: 1, mr: 1 }}
+            onClick={handleClickOpen}
+          >
+            Manage Calendar
+          </Button>
+          <Dialog open={openDialog} onClose={handleClose}>
+            <DialogTitle>Manage Calendar</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please choose the dates you would like to block/unblock from
+                your item calendar (pink dates are your blocked dates):
+              </DialogContentText>
+              <DateRangePicker
+                startDate={manageStartDate}
+                endDate={manageEndDate}
+                onChange={handleChangeBlockDates}
+                datesToExclude={[]}
+                datesToHighlight={blockedDatesToHighlight}
+              />
+              <Demo>
+                <List dense={dense}>
+                  <ListItem>
+                    {manageStartDate && (
+                      <ListItemText
+                        primary="Start Date:"
+                        secondary={manageStartDate.toDateString()}
+                      />
+                    )}
+                  </ListItem>
+                  <ListItem>
+                    {manageEndDate && (
+                      <ListItemText
+                        primary="End Date:"
+                        secondary={manageEndDate.toDateString()}
+                      />
+                    )}
+                  </ListItem>
+                </List>
+              </Demo>
+              {
+                <>
+                  {" "}
+                  <Button
+                    variant="contained"
+                    sx={{ mt: 1, mr: 1 }}
+                    onClick={handleBlockDates}
+                    disabled={!manageEndDate}
+                  >
+                    Block
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{ mt: 1, mr: 1 }}
+                    onClick={handleUnBlockDates}
+                    disabled={!manageEndDate}
+                  >
+                    Unblock
+                  </Button>
+                </>
+              }
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+            </DialogActions>
+          </Dialog>
+          <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+        </>
+      )}
 
-        <Button
-          variant="contained"
-          sx={{ mt: 1, mr: 1 }}
-          onClick={handleClickOpen}
-        >
-          Manage Calendar
-        </Button>
+      {!isOwner && (
+        <>
+          <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+            Find available dates:
+          </Typography>
 
-        <Dialog open={openDialog} onClose={handleClose}>
-          <DialogTitle>Manage Calendar</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Please choose the dates you would like to block/unblock from your item calendar
-              (pink dates are your blocked dates):
-            </DialogContentText>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <DateRangePicker
-              startDate={manageStartDate}
-              endDate={manageEndDate}
-              onChange={handleChangeBlockDates}
-              datesToExclude={[]}
-              datesToHighlight={blockedDatesToHighlight}
+              startDate={startDate}
+              endDate={endDate}
+              onChange={handleChangeDates}
+              datesToExclude={excludedDates}
+              datesToHighlight={[]}
             />
-            <Demo>
-              <List dense={dense}>
-                <ListItem>
-                  {manageStartDate && (
-                    <ListItemText
-                      primary="Start Date:"
-                      secondary={manageStartDate.toDateString()}
-                    />
-                  )}
-                </ListItem>
-                <ListItem>
-                  {manageEndDate && (
-                    <ListItemText
-                      primary="End Date:"
-                      secondary={manageEndDate.toDateString()}
-                    />
-                  )}
-                </ListItem>
-              </List>
-            </Demo>
-            {<> <Button
-              variant="contained"
-              sx={{ mt: 1, mr: 1 }}
-              onClick={handleBlockDates}
-              disabled={!manageEndDate}
-            >
-              Block
-            </Button>
 
-              <Button
-                variant="contained"
-                sx={{ mt: 1, mr: 1 }}
-                onClick={handleUnBlockDates}
-                disabled={!manageEndDate}
-              >
-                Unblock
-              </Button>
-            </>
-            }
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-          </DialogActions>
-        </Dialog>
-
-        <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-      </>
-      }
-
-      {!isOwner && <>
-        <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-          Find available dates:
-        </Typography>
-
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <DateRangePicker
-            startDate={startDate}
-            endDate={endDate}
-            onChange={handleChangeDates}
-            datesToExclude={excludedDates}
-            datesToHighlight={[]}
-          />
-
-
-          <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Demo>
-                  <List dense={dense}>
-                    <ListItem>
-                      {startDate && (
-                        <ListItemText
-                          primary="Start Date:"
-                          secondary={startDate.toDateString()}
-                        />
-                      )}
-                    </ListItem>
-                    <ListItem>
-                      {endDate && (
-                        <ListItemText
-                          primary="End Date:"
-                          secondary={endDate.toDateString()}
-                        />
-                      )}
-                    </ListItem>
-                  </List>
-                </Demo>
+            <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <Demo>
+                    <List dense={dense}>
+                      <ListItem>
+                        {startDate && (
+                          <ListItemText
+                            primary="Start Date:"
+                            secondary={startDate.toDateString()}
+                          />
+                        )}
+                      </ListItem>
+                      <ListItem>
+                        {endDate && (
+                          <ListItemText
+                            primary="End Date:"
+                            secondary={endDate.toDateString()}
+                          />
+                        )}
+                      </ListItem>
+                    </List>
+                  </Demo>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        </div>
-      </>}
+            </Box>
+          </div>
+        </>
+      )}
 
       {isValidDates === true && (
         <Button

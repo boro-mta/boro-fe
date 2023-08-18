@@ -3,12 +3,30 @@ import { useNavigate, useParams } from "react-router-dom";
 import { IInputImage, IUserDetails } from "../types";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { Button, CircularProgress, IconButton, List, ListItem, ListItemIcon, ListItemText, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
 import IUpdateUserData from "../api/Models/IUpdateUserData";
-import { updateUser as apiUpdateUser, getUserProfile, updateUserImage } from "../api/UserService"
-import { selectPicture, updateCurrentPicture, updatePartialUser } from "../features/UserSlice";
+import {
+  updateUser as apiUpdateUser,
+  getUserProfile,
+  updateUserImage,
+} from "../api/UserService";
+import {
+  selectPicture,
+  updateCurrentPicture,
+  updatePartialUser,
+} from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import Box from "@mui/material/Box";
@@ -28,7 +46,10 @@ type Props = {};
 //A validation schema for the form
 const validationSchema = yup.object({
   about: yup.string().max(250, "Must be 250 characters or less"),
-  email: yup.string().email("Invalid email address").max(50, "Must be 50 characters or less"),
+  email: yup
+    .string()
+    .email("Invalid email address")
+    .max(50, "Must be 50 characters or less"),
   latitude: yup.string().max(30, "Must be 30 characters or less"),
   longitude: yup.string().max(30, "Must be 30 characters or less"),
 });
@@ -72,14 +93,14 @@ const UserEditPage = (props: Props) => {
         longitude: userProfile.longitude,
         latitude: userProfile.latitude,
         about: userProfile.about,
-        email: userProfile.email
+        email: userProfile.email,
       };
       //Set the current user data to be the user retreived from the server
       setUserDetails(userDetails);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
     //Get the user's details to fill the form's initial values
@@ -94,7 +115,7 @@ const UserEditPage = (props: Props) => {
     },
     enableReinitialize: true,
     validationSchema: validationSchema,
-    onSubmit: () => { },
+    onSubmit: () => {},
   });
 
   //Navigation tool
@@ -109,7 +130,6 @@ const UserEditPage = (props: Props) => {
   const imagesInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleEditClick = async () => {
-
     await formik.validateForm();
     if (formik.isValid) {
       //Get the user's new details filled in the form
@@ -128,15 +148,17 @@ const UserEditPage = (props: Props) => {
       }
 
       if (imageChanged && images != undefined) {
-        const [imageMetaData, imageBase64Data] = images[0].split(',');
+        const [imageMetaData, imageBase64Data] = images[0].split(",");
         const newUserPicture = {
           base64ImageMetaData: imageMetaData,
-          base64ImageData: imageBase64Data
-        }
+          base64ImageData: imageBase64Data,
+        };
         updateUserImage(newUserPicture);
-        dispatch(updateCurrentPicture({
-          picture: images[0]
-        }))
+        dispatch(
+          updateCurrentPicture({
+            picture: images[0],
+          })
+        );
       }
 
       navigate(`/Users/${userId}`);
@@ -145,8 +167,7 @@ const UserEditPage = (props: Props) => {
   };
 
   const handleUploadButtonClick = () => {
-
-    console.log('Browse was clicked');
+    console.log("Browse was clicked");
     if (imagesInputRef && imagesInputRef.current) {
       imagesInputRef.current.click();
     }
@@ -213,7 +234,6 @@ const UserEditPage = (props: Props) => {
       ) {
         place = autocompleteRef.current.getPlace();
       }
-
     } catch (error) {
       console.error("Error getting place:", error);
       return;
@@ -225,20 +245,20 @@ const UserEditPage = (props: Props) => {
         latitude: place.geometry.location.lat(),
         longitude: place.geometry.location.lng(),
       };
-      setUserDetails(prevState => {
+      setUserDetails((prevState) => {
         return {
           ...prevState,
           latitude: newAddress.latitude,
           longitude: newAddress.longitude,
-        }
-      })
+        };
+      });
     } else {
       console.error("Invalid place object:", place);
     }
   };
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
   });
 
@@ -249,10 +269,13 @@ const UserEditPage = (props: Props) => {
 
     const geocoder = new google.maps.Geocoder();
     if (userDetails.latitude != 0 && userDetails.longitude != 0) {
-      geocoder.geocode({ location: { lat: userDetails.latitude, lng: userDetails.longitude } })
+      geocoder
+        .geocode({
+          location: { lat: userDetails.latitude, lng: userDetails.longitude },
+        })
         .then((response) => {
           setUserAddressString(response.results[0].formatted_address);
-        })
+        });
     }
   }, [userDetails.latitude != 0, isLoaded]);
 
@@ -378,8 +401,7 @@ const UserEditPage = (props: Props) => {
       >
         Cancel
       </Button>
-    </Container >
-
+    </Container>
   );
 };
 

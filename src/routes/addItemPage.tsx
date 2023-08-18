@@ -32,7 +32,11 @@ import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ICoordinate, IInputImage, IInputItem } from "../types";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { selectCurrentAddress, selectUserId, updateServerAddress } from "../features/UserSlice";
+import {
+  selectCurrentAddress,
+  selectUserId,
+  updateServerAddress,
+} from "../features/UserSlice";
 import { addItem } from "../api/ItemService";
 import AddressField from "../components/AddressFieldComponent/AddressField";
 import useLocalStorage from "../hooks/useLocalStorage";
@@ -85,7 +89,7 @@ const validationSchema = yup.object({
 
 const addItemPage = (props: Props) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
   });
 
@@ -168,7 +172,7 @@ const addItemPage = (props: Props) => {
         newImagesNamesInBase64Format
       );
 
-      newImagesNamesInStringFormat.map(function (fileName) {
+      newImagesNamesInStringFormat.map(function(fileName) {
         setImagesNames((oldArray) => [...oldArray, fileName]);
       });
     }
@@ -297,7 +301,6 @@ const addItemPage = (props: Props) => {
       ) {
         place = autocompleteRef.current.getPlace();
       }
-
     } catch (error) {
       console.error("Error getting place:", error);
       return;
@@ -344,13 +347,10 @@ const addItemPage = (props: Props) => {
         setHomeAddress(serverHomeAddress);
         setAddress(serverHomeAddress);
       }
-
     };
 
     onWakeFunction();
   }, [userId]);
-
-
 
   useEffect(() => {
     if (!isLoaded) {
@@ -359,10 +359,13 @@ const addItemPage = (props: Props) => {
 
     const geocoder = new google.maps.Geocoder();
     if (homeAddress.latitude && homeAddress.longitude) {
-      geocoder.geocode({ location: { lat: homeAddress.latitude, lng: homeAddress.longitude } })
+      geocoder
+        .geocode({
+          location: { lat: homeAddress.latitude, lng: homeAddress.longitude },
+        })
         .then((response) => {
           setItemInitialAddress(response.results[0].formatted_address);
-        })
+        });
     }
   }, [homeAddress, isLoaded]);
 

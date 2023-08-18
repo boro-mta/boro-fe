@@ -1,9 +1,9 @@
+import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
 import React, { useEffect, useState } from "react";
 import {
   ISendBirdCredentials,
   getSendbirdInfoFromToken,
 } from "../utils/authUtils";
-import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
 import Chat from "../components/Chat/Chat";
 import { useAppSelector } from "../app/hooks";
 

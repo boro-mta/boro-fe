@@ -38,7 +38,7 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
   });
 
@@ -70,14 +70,14 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
 
       return locations && locations.length > 0
         ? locations.map(({ id, imageIds, title, latitude, longitude }) => {
-          const marker = CustomMarker({ latitude, longitude });
+            const marker = CustomMarker({ latitude, longitude });
 
-          map.addListener("click", () => infoWindow.close());
-          marker.addListener("click", async () => {
-            let imgData = await getImage(imageIds[0]);
+            map.addListener("click", () => infoWindow.close());
+            marker.addListener("click", async () => {
+              let imgData = await getImage(imageIds[0]);
 
-            infoWindow.setPosition({ lat: latitude, lng: longitude });
-            infoWindow.setContent(`
+              infoWindow.setPosition({ lat: latitude, lng: longitude });
+              infoWindow.setContent(`
                 <div class="info-window">
                   <h2 class="info-title">${title}</h2>
                   <img class="info-img" src="${imgData}" />
@@ -85,11 +85,11 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
                   <button class="info-button" onclick="onMarkerClick('${id}')">Go to item</button>
                 </div>
               `);
-            infoWindow.open(map);
-          });
+              infoWindow.open(map);
+            });
 
-          return marker;
-        })
+            return marker;
+          })
         : [];
     },
     [locationsAroundMeUpdated]
