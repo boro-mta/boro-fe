@@ -20,31 +20,24 @@ import { getCurrentUserId } from "../../utils/authUtils";
 import AppBarMenu from "./AppBarMenu/AppBarMenu";
 
 function ResponsiveAppBar() {
-  //Use local storage for user info
   const userName = useAppSelector((state) => state.user.name);
   const profilePicture = useAppSelector((state) => state.user.picture);
-
-  //Navigation tool
   const navigate = useNavigate();
-
-  //Redux dispatcher
   const dispatch = useAppDispatch();
   const userId = getCurrentUserId();
+
   const getUserDetails = async () => {
     try {
-      //Get a certain userProfile by userId
       if (!userId) return;
       const userProfile = await getUserProfile(userId as string);
       if (!userProfile) return;
 
       dispatch(updateUserAfterFetchByToken(userProfile));
-      //Updates all the details in the page to fit the user we received
     } catch (error) {
       console.error(error);
     }
   };
 
-  //If user has info in local storage, retrive it
   React.useEffect(() => {
     getUserDetails();
   }, [userId]);
@@ -82,7 +75,12 @@ function ResponsiveAppBar() {
   return (
     <AppBar
       position="static"
-      sx={{ marginBottom: "10px", background: "white" }}
+      sx={{
+        marginBottom: "10px",
+        background: "white",
+        height: "70px",
+        justifyContent: "center",
+      }}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -91,21 +89,21 @@ function ResponsiveAppBar() {
             sx={{
               cursor: "pointer",
               display: "flex",
-              alignItems: "center", // Vertically center content
-              width: "100%", // Adjust width to fit entire app bar
+              alignItems: "center",
+              width: "100%",
             }}
           >
             <Box
               sx={{
                 display: { xs: "flex", md: "flex" },
-                alignItems: "center", // Vertically center content
+                alignItems: "center",
                 mr: 1,
               }}
             >
               <img
                 src="/assets/logo.png"
                 alt="Logo"
-                style={{ maxHeight: "80px", width: "auto" }}
+                style={{ maxHeight: "150px", width: "auto" }}
               />
             </Box>
           </Box>
@@ -113,8 +111,6 @@ function ResponsiveAppBar() {
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Typography variant="h6" sx={{ mr: 1, whiteSpace: "nowrap" }}>
-                  {" "}
-                  {/* Add whiteSpace property */}
                   {userName}
                 </Typography>
                 <Avatar
@@ -127,7 +123,7 @@ function ResponsiveAppBar() {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: "45px" }}
+              sx={{ mt: "45px", ml: "25px" }}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
