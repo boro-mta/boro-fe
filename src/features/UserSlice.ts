@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction, Reducer } from "@reduxjs/toolkit";
 import { RootState } from "../app/store";
-import { ICoordinate } from "../types";
+import { ICoordinate, IInputImage, IUserDetails } from "../types";
+import IUserProfile from "../api/Models/IUserProfile";
+import { formatImagesOnRecieve } from "../utils/imagesUtils";
 
 export interface UserState {
   name: string;
@@ -42,7 +44,7 @@ export const userSlice = createSlice({
       state.email = action.payload.email;
       state.facebookId = action.payload.facebookId;
       state.accessToken = action.payload.accessToken;
-      state.picture = action.payload.picture;
+      state.picture = action.payload.picture || state.picture;
       state.userId = action.payload.userId;
       state.serverAddress = action.payload.serverAddress;
       state.currentAddress = action.payload.currentAddress;
@@ -68,7 +70,29 @@ export const userSlice = createSlice({
     },
     updateUserName: (state, action: PayloadAction<string>) => {
       state.name = action.payload;
-    }
+    },
+    setCurrentLocation: (state, { payload }: PayloadAction<ICoordinate>) => {
+      state.currentAddress = {
+        latitude: payload.latitude,
+        longitude: payload.longitude,
+      };
+    },
+    updateUserAfterFetchByToken: (
+      state,
+      { payload }: PayloadAction<IUserProfile>
+    ) => {
+      state.email = payload.email;
+      state.facebookId = payload.facebookId;
+      state.userId = payload.userId;
+      state.name = payload.firstName + " " + payload.lastName;
+      state.picture =
+        formatImagesOnRecieve([payload.image as IInputImage])[0] ||
+        state.picture;
+      state.serverAddress = {
+        longitude: payload.longitude,
+        latitude: payload.latitude,
+      };
+    },
   },
 });
 
@@ -84,15 +108,19 @@ export const {
   updateCurrentPicture,
   updateAccessToken,
   updateFacebookId,
-  updateUserName
+  updateUserName,
+  setCurrentLocation,
+  updateUserAfterFetchByToken,
 } = userSlice.actions;
 
 export const selectUserName = (state: RootState) => state.user.name;
 export const selectPicture = (state: RootState) => state.user.picture;
 export const selectUserId = (state: RootState) => state.user.userId;
 export const selectEmail = (state: RootState) => state.user.email;
-export const selectServerAddress = (state: RootState) => state.user.serverAddress;
-export const selectCurrentAddress = (state: RootState) => state.user.currentAddress;
+export const selectServerAddress = (state: RootState) =>
+  state.user.serverAddress;
+export const selectCurrentAddress = (state: RootState) =>
+  state.user.currentAddress;
 export const selectFacebookId = (state: RootState) => state.user.facebookId;
 export const selectAccessToken = (state: RootState) => state.user.accessToken;
 

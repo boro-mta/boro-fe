@@ -14,28 +14,20 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate } from "react-router";
 import {
-  selectPicture,
-  selectUserName,
-  selectUserId,
   updateUser,
   initialState,
+  updateUserAfterFetchByToken,
 } from "../../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import useLocalStorage from "../../hooks/useLocalStorage";
 import Divider from "@mui/material/Divider";
-import { ICoordinate, IInputImage, IUserDetails } from "../../types";
 import { getUserProfile } from "../../api/UserService";
-import { formatImagesOnRecieve } from "../../utils/imagesUtils";
-import { useState } from "react";
 import { getCurrentUserId } from "../../utils/authUtils";
-import { allUserDetails } from "../../mocks/userDetails";
 
 function ResponsiveAppBar() {
   //Use local storage for user info
-  const [userInfo, setUser] = useLocalStorage("user", "");
-  const [isOwner, setIsOwner] = useState(false);
-  const [userName, setUserName] = useState("Guest");
-  const userGuid = useAppSelector(selectUserId);
+  const userName = useAppSelector((state) => state.user.name);
+  const profilePicture = useAppSelector((state) => state.user.picture);
+
   //Navigation tool
   const navigate = useNavigate();
 
@@ -45,36 +37,11 @@ function ResponsiveAppBar() {
   const getUserDetails = async () => {
     try {
       //Get a certain userProfile by userId
+      if (!userId) return;
       const userProfile = await getUserProfile(userId as string);
       if (!userProfile) return;
 
-      //Fit all the details into userDetails
-      let userDetails: IUserDetails = {
-        firstName: userProfile.firstName,
-        lastName: userProfile.lastName,
-        userId: userProfile.facebookId,
-        profileImage: formatImagesOnRecieve([
-          userProfile.image as IInputImage,
-        ])[0],
-        dateJoined: userProfile.dateJoined,
-        longitude: 0,
-        latitude: 0,
-        about: userProfile.about,
-      };
-      setUserName(userDetails.firstName);
-      setProfilePicture(userDetails.profileImage);
-      //Check wether the profile currently watched is owned by the user.
-      const userCurrentId = getCurrentUserId();
-      let isOwner = userCurrentId == userId;
-
-      //Set the state of isOwner
-      setIsOwner(!isOwner);
-
-      //If the user is watching his own profile, set the image to be the user's image
-      if (isOwner) {
-        userDetails.profileImage = profilePicture;
-      }
-
+      dispatch(updateUserAfterFetchByToken(userProfile));
       //Updates all the details in the page to fit the user we received
     } catch (error) {
       console.error(error);
@@ -85,9 +52,6 @@ function ResponsiveAppBar() {
   React.useEffect(() => {
     getUserDetails();
   }, [userId]);
-
-  //Get the user's profile picture to show in avatar
-  const [profilePicture, setProfilePicture] = useState("");
 
   const pages = ["Home"];
   const settings = ["Log In"];
@@ -176,7 +140,6 @@ function ResponsiveAppBar() {
 
       //navigate back to home page
       navigate("/");
-      window.location.reload();
     }
 
     if (setting === "Add Item") {

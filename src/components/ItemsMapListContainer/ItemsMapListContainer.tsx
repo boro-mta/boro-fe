@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   selectUserId,
   selectPicture,
   selectUserName,
+  setCurrentLocation,
 } from "../../features/UserSlice";
 import { Container } from "@mui/material";
 import Map from "../MapComponent/Map";
@@ -26,28 +27,37 @@ const ItemsMapListContainer = () => {
   const [locationsAroundMe, setLocationsAroundMe] = useState<IMarkerDetails[]>(
     []
   );
+  const dispatch = useAppDispatch();
   const userName = useAppSelector(selectUserName);
   const userGuid = useAppSelector(selectUserId);
   const picture = useAppSelector(selectPicture);
   useEffect(() => {
+    let currLocation;
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setMyLocation({
+        currLocation = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-        });
+        };
+        setMyLocation(currLocation);
       },
       () => {
-        setMyLocation({
+        currLocation = {
           latitude: 32.08602761576923,
           longitude: 34.774667,
-        });
+        };
+        setMyLocation(currLocation);
         console.log("Failed to get the user's location");
       }
     );
-
   }, []);
 
+  useEffect(() => {
+    myLocation.latitude !== 0 &&
+      myLocation.longitude !== 0 &&
+      dispatch(setCurrentLocation(myLocation));
+  }, [myLocation]);
   useEffect(() => {
     const fetchAndSetMarkers = async () => {
       if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
