@@ -91,7 +91,7 @@ const AppBarMenu = ({ afterClick }: Props) => {
       <MenuList>
         {menuToRender.map((menuItem, i) =>
           "isDivider" in menuItem ? (
-            <Divider key={i} />
+            <Divider key={i} sx={{ marginY: "7px" }} />
           ) : (
             <Box sx={{ cursor: "pointer" }} key={menuItem.title}>
               <AppBarMenuItem
