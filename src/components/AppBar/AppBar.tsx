@@ -13,15 +13,11 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate } from "react-router";
-import {
-  updateUser,
-  initialState,
-  updateUserAfterFetchByToken,
-} from "../../features/UserSlice";
+import { updateUserAfterFetchByToken } from "../../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import Divider from "@mui/material/Divider";
 import { getUserProfile } from "../../api/UserService";
 import { getCurrentUserId } from "../../utils/authUtils";
+import AppBarMenu from "./AppBarMenu/AppBarMenu";
 
 function ResponsiveAppBar() {
   //Use local storage for user info
@@ -54,23 +50,6 @@ function ResponsiveAppBar() {
   }, [userId]);
 
   const pages = ["Home"];
-  const settings = ["Log In"];
-
-  //In case the user is logged in and in redux is not represented as Guest
-  //Change the options in the app bar menu
-  if (userName != "Guest") {
-    settings.pop();
-
-    settings.push("Chats");
-    settings.push("Reservations");
-    settings.push("divider");
-    settings.push("Add Item");
-    settings.push("Lender Dashboard");
-    settings.push("Borrower Dashboard");
-    settings.push("divider");
-    settings.push("Profile");
-    settings.push("Log Out");
-  }
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -100,53 +79,6 @@ function ResponsiveAppBar() {
       navigate("/");
       handleCloseNavMenu();
     }
-  };
-
-  const handleSettingButtonClick = (setting: any) => {
-    console.log(`click ${setting}`);
-    if (setting === "Log In") {
-      navigate("/login");
-    }
-
-    if (setting === "Profile") {
-      navigate(`/Users/${userId}`);
-    }
-    if (setting === "Chats") {
-      navigate(`/chat`);
-    }
-    if (setting === "Borrower Dashboard") {
-      navigate("/borrowerDashboard");
-    }
-
-    if (setting === "Lender Dashboard") {
-      navigate("/lenderDashboard");
-    }
-
-    if (setting === "Log Out") {
-      //Return the redux to its initial state
-      dispatch(updateUser(initialState));
-
-      //Clear every saved data including token and user information
-      localStorage.clear();
-
-      //Change the app bar options Guest options
-      //First, pop every thing
-      for (let i = 0; i < settings.length; i++) {
-        settings.pop();
-      }
-
-      //Then, add log in
-      settings.push("Log In");
-
-      //navigate back to home page
-      navigate("/");
-    }
-
-    if (setting === "Add Item") {
-      navigate("/addItem");
-    }
-
-    handleCloseUserMenu();
   };
 
   return (
@@ -276,19 +208,7 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting, i) => {
-                if (setting === "divider") {
-                  return <Divider key={i} />;
-                }
-                return (
-                  <MenuItem
-                    key={setting}
-                    onClick={() => handleSettingButtonClick(setting)}
-                  >
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                );
-              })}
+              <AppBarMenu afterClick={handleCloseUserMenu} />
             </Menu>
           </Box>
         </Toolbar>
