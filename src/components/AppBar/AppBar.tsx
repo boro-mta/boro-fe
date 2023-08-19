@@ -29,6 +29,7 @@ import { formatImagesOnRecieve } from "../../utils/imagesUtils";
 import { useState } from "react";
 import { getCurrentUserId } from "../../utils/authUtils";
 import { allUserDetails } from "../../mocks/userDetails";
+import SearchBar from "../SearchBar/SearchBar";
 
 function ResponsiveAppBar() {
   //Use local storage for user info
@@ -251,25 +252,21 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="/"
+          <Box
             sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
+              display: "flex",
+              justifyContent: "center",
               flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
             }}
           >
-            BORO
-          </Typography>
+            <SearchBar
+              onSearchResults={(results) => {
+                // Handle the search results here
+                console.log("Received search results:", results);
+              }}
+            />
+          </Box>
+
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
@@ -332,5 +329,6 @@ function ResponsiveAppBar() {
       </Container>
     </AppBar>
   );
+
 }
 export default React.memo(ResponsiveAppBar);
