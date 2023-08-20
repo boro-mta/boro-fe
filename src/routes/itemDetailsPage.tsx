@@ -105,8 +105,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -347,6 +347,7 @@ const itemDetailsPage = (props: Props) => {
       </Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+
       <div>
         <Accordion expanded={expanded} onChange={handleExpandAccordion}>
           <AccordionSummary
@@ -401,101 +402,86 @@ const itemDetailsPage = (props: Props) => {
           </AccordionDetails>
         </Accordion>
       </div>
-      {isOwner && (
-        <>
-          {" "}
-          <Button
-            variant="contained"
-            sx={{ mt: 1, mr: 1 }}
-            onClick={() => navigate(`/editItem/${itemId}`)}
-          >
-            Edit Item
-          </Button>
-          <Button
-            variant="contained"
-            sx={{ mt: 1, mr: 1 }}
-            onClick={handleClickOpen}
-          >
-            Manage Calendar
-          </Button>
-          <Dialog open={openDialog} onClose={handleClose}>
-            <DialogTitle>Manage Calendar</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Please choose the dates you would like to block/unblock from
-                your item calendar (pink dates are your blocked dates):
-              </DialogContentText>
-              <DateRangePicker
-                startDate={manageStartDate}
-                endDate={manageEndDate}
-                onChange={handleChangeBlockDates}
-                datesToExclude={[]}
-                datesToHighlight={blockedDatesToHighlight}
-              />
-              <Demo>
-                <List dense={dense}>
-                  <ListItem>
-                    {manageStartDate && (
-                      <ListItemText
-                        primary="Start Date:"
-                        secondary={manageStartDate.toDateString()}
-                      />
-                    )}
-                  </ListItem>
-                  <ListItem>
-                    {manageEndDate && (
-                      <ListItemText
-                        primary="End Date:"
-                        secondary={manageEndDate.toDateString()}
-                      />
-                    )}
-                  </ListItem>
-                </List>
-              </Demo>
-              {
-                <>
-                  {" "}
-                  <Button
-                    variant="contained"
-                    sx={{ mt: 1, mr: 1 }}
-                    onClick={handleBlockDates}
-                    disabled={!manageEndDate}
-                  >
-                    Block
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{ mt: 1, mr: 1 }}
-                    onClick={handleUnBlockDates}
-                    disabled={!manageEndDate}
-                  >
-                    Unblock
-                  </Button>
-                </>
-              }
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-            </DialogActions>
-          </Dialog>
-          <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-        </>
-      )}
 
-      {!isOwner && (
-        <>
-          <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-            Find available dates:
-          </Typography>
+      {isOwner && <> <Button
+        variant="contained"
+        sx={{ mt: 1, mr: 1 }}
+        onClick={() => navigate(`/editItem/${itemId}`)}
+      >
+        Edit Item
+      </Button>
 
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Button
+          variant="contained"
+          sx={{ mt: 1, mr: 1 }}
+          onClick={handleClickOpen}
+        >
+          Manage Calendar
+        </Button>
+
+        <Dialog open={openDialog} onClose={handleClose}>
+          <DialogTitle>Manage Calendar</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please choose the dates you would like to block/unblock from your item calendar
+              (pink dates are your blocked dates):
+            </DialogContentText>
             <DateRangePicker
-              startDate={startDate}
-              endDate={endDate}
-              onChange={handleChangeDates}
-              datesToExclude={excludedDates}
-              datesToHighlight={[]}
+              startDate={manageStartDate}
+              endDate={manageEndDate}
+              onChange={handleChangeBlockDates}
+              datesToExclude={[]}
+              datesToHighlight={blockedDatesToHighlight}
             />
+            <Demo>
+              <List dense={dense}>
+                <ListItem>
+                  {manageStartDate && (
+                    <ListItemText
+                      primary="Start Date:"
+                      secondary={manageStartDate.toDateString()}
+                    />
+                  )}
+                </ListItem>
+                <ListItem>
+                  {manageEndDate && (
+                    <ListItemText
+                      primary="End Date:"
+                      secondary={manageEndDate.toDateString()}
+                    />
+                  )}
+                </ListItem>
+              </List>
+            </Demo>
+            {<> <Button
+              variant="contained"
+              sx={{ mt: 1, mr: 1 }}
+              onClick={handleBlockDates}
+              disabled={!manageEndDate}
+            >
+              Block
+            </Button>
+
+              <Button
+                variant="contained"
+                sx={{ mt: 1, mr: 1 }}
+                onClick={handleUnBlockDates}
+                disabled={!manageEndDate}
+              >
+                Unblock
+              </Button>
+            </>
+            }
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+
+        <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+      </>
+      }
+
       {!isOwner && (
         <Box>
           <Box>
