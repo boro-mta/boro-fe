@@ -93,7 +93,8 @@ const router = [
     path: "address",
     element: <MyAddressesPage />,
   },
-  { path: "chat", element: <ChatPage /> },
+  { path: "/chat", element: <ChatPage /> },
+  { path: "/chat/:channelId", element: <ChatPage /> },
   {
     path: "*",
     element: <ErrorPage />,
