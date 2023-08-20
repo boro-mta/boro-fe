@@ -9,7 +9,11 @@ import LoginIcon from "@mui/icons-material/Login";
 
 import { useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { updateUser, initialState } from "../../../features/UserSlice";
+import {
+  updateUser,
+  initialState,
+  logoutUser,
+} from "../../../features/UserSlice";
 import { Box } from "@mui/system";
 import { Divider, MenuList } from "@mui/material";
 import AppBarMenuItem from "./AppBarMenuItem";
@@ -70,6 +74,7 @@ const AppBarMenu = ({ afterClick }: Props) => {
       icon: <LogoutIcon />,
       onItemSelect: () => {
         dispatch(updateUser(initialState));
+        dispatch(logoutUser());
         localStorage.clear();
         navigate("/");
       },
