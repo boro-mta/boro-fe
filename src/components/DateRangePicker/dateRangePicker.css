@@ -1,9 +1,14 @@
-.react-datepicker__week {
-    width: 300px;
-}
-
 .react-datepicker__day {
     width: 32px;
     height: 32px;
-    font-size: 20px;
+    font-size: 18px;
+
+}
+
+.react-datepicker__day--range-start {
+    font-size: 18px;
+}
+
+.react-datepicker__day-names {
+    font-size: 16px;
 }

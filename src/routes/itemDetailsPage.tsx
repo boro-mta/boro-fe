@@ -9,16 +9,19 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  FormControlLabel,
   Grid,
   List,
   ListItem,
   ListItemText,
   Modal,
+  Slide,
+  Switch,
   Typography,
   styled,
 } from "@mui/material";
 import Card from "@mui/material/Card";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { IUserDetails } from "../types";
@@ -39,6 +42,10 @@ import ILocationDetails from "../api/Models/ILocationDetails";
 import { libs } from "../utils/googleMapsUtils";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { IItemResponse } from "../api/Models/IItemResponse";
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -161,7 +168,6 @@ const itemDetailsPage = (props: Props) => {
     return datesInStringArr;
   }
 
-  //todo: put in another file
   const getDatesInDateArr = (startDate: Date, endDate: Date): Date[] => {
     let loop: Date = new Date(manageStartDate);
     let datesInDateArr: Date[] = [];
@@ -276,6 +282,27 @@ const itemDetailsPage = (props: Props) => {
     getItemAddress();
   }, [isLoaded, serverItemLocation]);
 
+  const [expanded, setExpanded] = React.useState<boolean>(true);
+
+  const handleExpandAccordion =
+    () => {
+      setExpanded(!expanded);
+    };
+
+  const [checked, setChecked] = React.useState(false);
+
+  const handleCheck = () => {
+    setChecked((prev) => !prev);
+  };
+
+  const scrollPageDown = () => {
+    window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: "smooth" });
+  }
+
+  useEffect(() => {
+    scrollPageDown();
+  }, [checked]);
+
   return (
     <Container>
       <Card sx={{ marginBottom: "10px" }}>
@@ -295,48 +322,61 @@ const itemDetailsPage = (props: Props) => {
       </Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-      {itemLocation && itemLocation.length > 0 && (
-        <Row
-          tableData={[
-            {
-              key: "Lender Name",
-              value:
-                ownerDetails && ownerFullName
-                  ?
-                  ownerFullName
-                  : "No info about the lender!",
-            },
-            {
-              key: "About the lender",
-              value:
-                ownerDetails && ownerDetails.about
-                  ? ownerDetails.about
-                  : "No info about the lender!",
-            },
-            {
-              key: "Condition",
-              value: itemDetails.condition
-                ? itemDetails.condition
-                : "No Condition Selected!",
-            },
-            {
-              key: "Category",
-              value:
-                itemDetails && itemDetails.categories.length > 0
-                  ? itemDetails.categories.join(", ")
-                  : "No Categories Selected!",
-            },
-            {
-              key: "Location",
-              value:
-                itemLocation && itemLocation.length > 0
-                  ? itemLocation
-                  : "No Location Selected!",
-            },
-          ]}
-        />
-      )}
-      <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
+
+      <div>
+        <Accordion expanded={expanded} onChange={handleExpandAccordion}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel4bh-content"
+            id="panel4bh-header"
+          >
+            <Typography sx={{ width: '33%', flexShrink: 0 }}>Item Details</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {itemLocation && itemLocation.length > 0 && (
+              <Row
+                tableData={[
+                  {
+                    key: "Lender Name",
+                    value:
+                      ownerDetails && ownerFullName
+                        ?
+                        ownerFullName
+                        : "No info about the lender!",
+                  },
+                  {
+                    key: "About the lender",
+                    value:
+                      ownerDetails && ownerDetails.about
+                        ? ownerDetails.about
+                        : "No info about the lender!",
+                  },
+                  {
+                    key: "Condition",
+                    value: itemDetails.condition
+                      ? itemDetails.condition
+                      : "No Condition Selected!",
+                  },
+                  {
+                    key: "Category",
+                    value:
+                      itemDetails && itemDetails.categories.length > 0
+                        ? itemDetails.categories.join(", ")
+                        : "No Categories Selected!",
+                  },
+                  {
+                    key: "Location",
+                    value:
+                      itemLocation && itemLocation.length > 0
+                        ? itemLocation
+                        : "No Location Selected!",
+                  },
+                ]}
+              />
+            )}
+          </AccordionDetails>
+        </Accordion>
+      </div>
 
       {isOwner && <> <Button
         variant="contained"
@@ -417,111 +457,125 @@ const itemDetailsPage = (props: Props) => {
       </>
       }
 
-      {!isOwner && <>
-        <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-          Find available dates:
-        </Typography>
+      {!isOwner && (
+        <Box>
+          <Box>
+            <FormControlLabel
+              control={<Switch checked={checked} onChange={handleCheck} />}
+              label="Reserve"
+            />
+            <Slide direction="up" in={checked} mountOnEnter unmountOnExit>
+              <div>
+                <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+                  Find available dates:
+                </Typography>
 
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <DateRangePicker
-            startDate={startDate}
-            endDate={endDate}
-            onChange={handleChangeDates}
-            datesToExclude={excludedDates}
-            datesToHighlight={[]}
-          />
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <DateRangePicker
+                    startDate={startDate}
+                    endDate={endDate}
+                    onChange={handleChangeDates}
+                    datesToExclude={excludedDates}
+                    datesToHighlight={[]}
+                  />
 
 
-          <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Demo>
-                  <List dense={dense}>
-                    <ListItem>
-                      {startDate && (
-                        <ListItemText
-                          primary="Start Date:"
-                          secondary={startDate.toDateString()}
-                        />
-                      )}
-                    </ListItem>
-                    <ListItem>
-                      {endDate && (
-                        <ListItemText
-                          primary="End Date:"
-                          secondary={endDate.toDateString()}
-                        />
-                      )}
-                    </ListItem>
-                  </List>
-                </Demo>
-              </Grid>
-            </Grid>
+                  <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Demo>
+                          <List dense={dense}>
+                            <ListItem>
+                              {startDate && (
+                                <ListItemText
+                                  primary="Start Date:"
+                                  secondary={startDate.toDateString()}
+                                />
+                              )}
+                            </ListItem>
+                            <ListItem>
+                              {endDate && (
+                                <ListItemText
+                                  primary="End Date:"
+                                  secondary={endDate.toDateString()}
+                                />
+                              )}
+                            </ListItem>
+                          </List>
+                        </Demo>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </div>
+
+                {isValidDates === true && (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    endIcon={<TaskAltIcon />}
+                    sx={{
+                      marginTop: "10px",
+                      position: "sticky",
+                      bottom: "10px",
+                      right: "2%",
+                      width: "96%",
+                    }}
+                    onClick={() => {
+                      navigate(`/requestToBook/${itemId}`, {
+                        state: {
+                          selectedStartDate: startDate,
+                          selectedEndDate: endDate,
+                          excludedDates: excludedDates,
+                        },
+                      });
+                    }}
+                  >
+                    Reserve
+                  </Button>
+                )}
+                {isValidDates === false && (
+                  <Button
+                    variant="contained"
+                    color="error"
+                    endIcon={<ErrorIcon />}
+                    sx={{
+                      marginTop: "10px",
+                      position: "sticky",
+                      bottom: "10px",
+                      right: "2%",
+                      width: "96%",
+                    }}
+                    onClick={handleOpenModal}
+                  >
+                    Invalid dates
+                  </Button>
+                )}
+                <Modal open={open} onClose={() => setOpen(false)}>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      width: "80%",
+                      bgcolor: "background.paper",
+                      border: "2px solid #000",
+                      boxShadow: 24,
+                      p: 4,
+                    }}
+                  >
+                    <Typography component={"span"} variant="body1">
+                      {selectedDatesError}
+                    </Typography>
+                  </Box>
+                </Modal>
+
+              </div>
+
+            </Slide>
           </Box>
-        </div>
-      </>}
-
-      {isValidDates === true && (
-        <Button
-          variant="contained"
-          color="success"
-          endIcon={<TaskAltIcon />}
-          sx={{
-            marginTop: "10px",
-            position: "sticky",
-            bottom: "10px",
-            right: "2%",
-            width: "96%",
-          }}
-          onClick={() => {
-            navigate(`/requestToBook/${itemId}`, {
-              state: {
-                selectedStartDate: startDate,
-                selectedEndDate: endDate,
-                excludedDates: excludedDates,
-              },
-            });
-          }}
-        >
-          Reserve
-        </Button>
-      )}
-      {isValidDates === false && (
-        <Button
-          variant="contained"
-          color="error"
-          endIcon={<ErrorIcon />}
-          sx={{
-            marginTop: "10px",
-            position: "sticky",
-            bottom: "10px",
-            right: "2%",
-            width: "96%",
-          }}
-          onClick={handleOpenModal}
-        >
-          Invalid dates
-        </Button>
-      )}
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "80%",
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Typography component={"span"} variant="body1">
-            {selectedDatesError}
-          </Typography>
         </Box>
-      </Modal>
+      )}
     </Container>
   );
 };

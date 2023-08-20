@@ -29,14 +29,6 @@ const DateRangePicker = ({
       excludeDates={datesToExclude}
       minDate={new Date()}
       highlightDates={datesToHighlight}
-      dayClassName={(date) => {
-        if (date.getDate() === startDate.getDate() && !endDate) {
-          return "start-date";
-        } else if (endDate && date.getDate() === endDate.getDate()) {
-          return "end-date";
-        }
-        return "";
-      }}
     />
   );
 };
