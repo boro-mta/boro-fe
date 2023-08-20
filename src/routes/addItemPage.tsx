@@ -1,10 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import SendIcon from "@mui/icons-material/Send";
-import { FormikHelpers, useFormik } from "formik";
-import { Container } from "@mui/system";
-import LoadingButton from "@mui/lab/LoadingButton";
-import * as yup from "yup";
+import { LoadingButton } from "@mui/lab";
 import {
+  Container,
   Button,
   TextField,
   Typography,
@@ -15,23 +12,25 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
+  Autocomplete,
+  Stack,
+  Box,
+  Stepper,
+  Step,
+  StepLabel,
+  StepContent,
+  Paper,
+  useTheme,
 } from "@mui/material";
-import { useNavigate } from "react-router";
-import Autocomplete from "@mui/material/Autocomplete";
-import Stack from "@mui/material/Stack";
-import { categoriesOptions, conditionOptions } from "../mocks/items";
-import { Theme, useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import StepContent from "@mui/material/StepContent";
-import Paper from "@mui/material/Paper";
+
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+
+import { FormikHelpers, useFormik } from "formik";
+import { categoriesOptions, conditionOptions } from "../mocks/items";
 import { ICoordinate, IInputImage, IInputItem } from "../types";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useNavigate } from "react-router-dom";
 import {
   selectCurrentAddress,
   selectUserId,
@@ -44,8 +43,13 @@ import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { getUserLocation } from "../api/UserService";
 import { libs } from "../utils/googleMapsUtils";
+import { Theme } from "@mui/material/styles";
+import SendIcon from "@mui/icons-material/Send";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 type Props = {};
+
+import * as yup from "yup";
 
 interface FormValues {
   title: string;

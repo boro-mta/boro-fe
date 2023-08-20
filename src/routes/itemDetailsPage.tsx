@@ -19,8 +19,11 @@ import {
   Switch,
   Typography,
   styled,
+  Card,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
 } from "@mui/material";
-import Card from "@mui/material/Card";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
@@ -46,10 +49,7 @@ import ILocationDetails from "../api/Models/ILocationDetails";
 import { libs } from "../utils/googleMapsUtils";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { IItemResponse } from "../api/Models/IItemResponse";
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -105,8 +105,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-            getFormattedDate(loop) +
-            " is not available, please choose different dates."
+              getFormattedDate(loop) +
+              " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -309,10 +309,9 @@ const itemDetailsPage = (props: Props) => {
 
   const [expanded, setExpanded] = React.useState<boolean>(true);
 
-  const handleExpandAccordion =
-    () => {
-      setExpanded(!expanded);
-    };
+  const handleExpandAccordion = () => {
+    setExpanded(!expanded);
+  };
 
   const [checked, setChecked] = React.useState(false);
 
@@ -321,8 +320,12 @@ const itemDetailsPage = (props: Props) => {
   };
 
   const scrollPageDown = () => {
-    window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: "smooth" });
-  }
+    window.scrollTo({
+      left: 0,
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+  };
 
   useEffect(() => {
     scrollPageDown();
@@ -355,7 +358,9 @@ const itemDetailsPage = (props: Props) => {
             aria-controls="panel4bh-content"
             id="panel4bh-header"
           >
-            <Typography sx={{ width: '33%', flexShrink: 0 }}>Item Details</Typography>
+            <Typography sx={{ width: "33%", flexShrink: 0 }}>
+              Item Details
+            </Typography>
           </AccordionSummary>
           <AccordionDetails>
             {itemLocation && itemLocation.length > 0 && (
@@ -365,8 +370,7 @@ const itemDetailsPage = (props: Props) => {
                     key: "Lender Name",
                     value:
                       ownerDetails && ownerFullName
-                        ?
-                        ownerFullName
+                        ? ownerFullName
                         : "No info about the lender!",
                   },
                   {
@@ -403,84 +407,86 @@ const itemDetailsPage = (props: Props) => {
         </Accordion>
       </div>
 
-      {isOwner && <> <Button
-        variant="contained"
-        sx={{ mt: 1, mr: 1 }}
-        onClick={() => navigate(`/editItem/${itemId}`)}
-      >
-        Edit Item
-      </Button>
-
-        <Button
-          variant="contained"
-          sx={{ mt: 1, mr: 1 }}
-          onClick={handleClickOpen}
-        >
-          Manage Calendar
-        </Button>
-
-        <Dialog open={openDialog} onClose={handleClose}>
-          <DialogTitle>Manage Calendar</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Please choose the dates you would like to block/unblock from your item calendar
-              (pink dates are your blocked dates):
-            </DialogContentText>
-            <DateRangePicker
-              startDate={manageStartDate}
-              endDate={manageEndDate}
-              onChange={handleChangeBlockDates}
-              datesToExclude={[]}
-              datesToHighlight={blockedDatesToHighlight}
-            />
-            <Demo>
-              <List dense={dense}>
-                <ListItem>
-                  {manageStartDate && (
-                    <ListItemText
-                      primary="Start Date:"
-                      secondary={manageStartDate.toDateString()}
-                    />
-                  )}
-                </ListItem>
-                <ListItem>
-                  {manageEndDate && (
-                    <ListItemText
-                      primary="End Date:"
-                      secondary={manageEndDate.toDateString()}
-                    />
-                  )}
-                </ListItem>
-              </List>
-            </Demo>
-            {<> <Button
-              variant="contained"
-              sx={{ mt: 1, mr: 1 }}
-              onClick={handleBlockDates}
-              disabled={!manageEndDate}
-            >
-              Block
-            </Button>
-
-              <Button
-                variant="contained"
-                sx={{ mt: 1, mr: 1 }}
-                onClick={handleUnBlockDates}
-                disabled={!manageEndDate}
-              >
-                Unblock
-              </Button>
-            </>
-            }
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-          </DialogActions>
-        </Dialog>
-
-        <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-      </>
-      }
+      {isOwner && (
+        <>
+          {" "}
+          <Button
+            variant="contained"
+            sx={{ mt: 1, mr: 1 }}
+            onClick={() => navigate(`/editItem/${itemId}`)}
+          >
+            Edit Item
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ mt: 1, mr: 1 }}
+            onClick={handleClickOpen}
+          >
+            Manage Calendar
+          </Button>
+          <Dialog open={openDialog} onClose={handleClose}>
+            <DialogTitle>Manage Calendar</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please choose the dates you would like to block/unblock from
+                your item calendar (pink dates are your blocked dates):
+              </DialogContentText>
+              <DateRangePicker
+                startDate={manageStartDate}
+                endDate={manageEndDate}
+                onChange={handleChangeBlockDates}
+                datesToExclude={[]}
+                datesToHighlight={blockedDatesToHighlight}
+              />
+              <Demo>
+                <List dense={dense}>
+                  <ListItem>
+                    {manageStartDate && (
+                      <ListItemText
+                        primary="Start Date:"
+                        secondary={manageStartDate.toDateString()}
+                      />
+                    )}
+                  </ListItem>
+                  <ListItem>
+                    {manageEndDate && (
+                      <ListItemText
+                        primary="End Date:"
+                        secondary={manageEndDate.toDateString()}
+                      />
+                    )}
+                  </ListItem>
+                </List>
+              </Demo>
+              {
+                <>
+                  {" "}
+                  <Button
+                    variant="contained"
+                    sx={{ mt: 1, mr: 1 }}
+                    onClick={handleBlockDates}
+                    disabled={!manageEndDate}
+                  >
+                    Block
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{ mt: 1, mr: 1 }}
+                    onClick={handleUnBlockDates}
+                    disabled={!manageEndDate}
+                  >
+                    Unblock
+                  </Button>
+                </>
+              }
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+            </DialogActions>
+          </Dialog>
+          <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+        </>
+      )}
 
       {!isOwner && (
         <Box>
@@ -495,7 +501,9 @@ const itemDetailsPage = (props: Props) => {
                   Find available dates:
                 </Typography>
 
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
                   <DateRangePicker
                     startDate={startDate}
                     endDate={endDate}
@@ -503,7 +511,6 @@ const itemDetailsPage = (props: Props) => {
                     datesToExclude={excludedDates}
                     datesToHighlight={[]}
                   />
-
 
                   <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
                     <Grid container spacing={2}>
@@ -594,9 +601,7 @@ const itemDetailsPage = (props: Props) => {
                     </Typography>
                   </Box>
                 </Modal>
-
               </div>
-
             </Slide>
           </Box>
         </Box>

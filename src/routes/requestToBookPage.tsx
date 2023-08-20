@@ -1,31 +1,39 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Container } from "@mui/system";
-import { Button, Typography, Divider, Card, CardMedia } from "@mui/material";
+import {
+  Container,
+  Button,
+  Typography,
+  Divider,
+  Card,
+  CardMedia,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  styled,
+} from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IFullItemDetailsNew } from "../types";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import {
   checkExcludeDatesArrayContainsDate,
   getFormattedDate,
+  getMonthAndDayNumber,
 } from "../utils/calendarUtils";
 import { getItem } from "../api/ItemService";
 import { addReservationRequest } from "../api/ReservationService";
-import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import { tableCellClasses } from "@mui/material/TableCell";
+
 import { startChat } from "../api/ChatService";
-import { getMonthAndDayNumber } from "../utils/calendarUtils";
 
 type IFullItemDetailsParams = {
   itemId: string;

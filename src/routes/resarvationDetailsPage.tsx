@@ -1,6 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Container } from "@mui/system";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Paper,
+  Grid,
+  styled,
+  ButtonBase,
+} from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router";
 import {
   IFullItemDetailsNew,
@@ -9,9 +17,7 @@ import {
 } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import { getItem } from "../api/ItemService";
-import { styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
+
 import { getReservation } from "../api/ReservationService";
 import { getUserPicture, getUserProfile } from "../api/UserService";
 import DateContainer from "../components/DateContainer/DateContainer";
@@ -22,7 +28,6 @@ import {
   getBodyByStatus,
   statusFromNumToString,
 } from "../utils/reservationsUtils";
-import ButtonBase from "@mui/material/ButtonBase";
 import MinimizedUserDetails from "../components/Dashboard/MinimizedUserDetails/MinimizedUserDetails";
 "@sendbird/uikit-react/react/";
 type IReservationDetailsParams = {

@@ -1,4 +1,4 @@
-import Button from "@mui/material/Button";
+import { Button } from "@mui/material";
 import React from "react";
 import { cancelReservation } from "../../api/ReservationService";
 import { startChat } from "../../api/ChatService";
