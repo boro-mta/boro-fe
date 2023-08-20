@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ChannelList, Channel, ChannelSettings } from "@sendbird/uikit-react";
 import MinimizedUserDetails from "../../Dashboard/MinimizedUserDetails/MinimizedUserDetails";
-import { useAppSelector } from "../../../app/hooks";
 import { GroupChannel } from "@sendbird/chat/groupChannel";
-
+import { IMinifiedUserDetails } from "../Chat";
+import "./desktopChat.css";
 type Props = {};
 
-const DesktopChat = (props: Props) => {
+const DesktopChat = ({
+  fullName,
+  profileImg,
+  partyId,
+}: IMinifiedUserDetails) => {
   const [currentChannel, setCurrentChannel] = useState<GroupChannel>();
   const currentChannelUrl = currentChannel ? currentChannel.url : "";
   const [showSettings, setShowSettings] = useState<boolean>(false);
@@ -16,9 +20,6 @@ const DesktopChat = (props: Props) => {
     >
   )[0];
 
-  const name = useAppSelector((state) => state.user.name);
-  const picture = useAppSelector((state) => state.user.picture);
-  const userId = useAppSelector((state) => state.user.userId);
   const renderSettingsBar = () => {
     channelChatDiv.style.width = "70%";
     channelChatDiv.style.cssFloat = "left";
@@ -37,9 +38,9 @@ const DesktopChat = (props: Props) => {
           renderHeader={() => (
             <div style={{ marginLeft: "15px" }}>
               <MinimizedUserDetails
-                fullName={name === "Guest" ? "Me" : name}
-                profileImg={picture}
-                partyId={userId}
+                fullName={fullName}
+                profileImg={profileImg}
+                partyId={partyId}
               />
             </div>
           )}

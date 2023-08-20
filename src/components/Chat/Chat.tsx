@@ -1,15 +1,22 @@
 import "@sendbird/uikit-react/dist/index.css";
 import React, { useEffect, useState } from "react";
-import { ChannelList, Channel, ChannelSettings } from "@sendbird/uikit-react";
-import { GroupChannel } from "@sendbird/chat/groupChannel";
-import "./chat.styles.css";
-import MinimizedUserDetails from "../Dashboard/MinimizedUserDetails/MinimizedUserDetails";
-import { useAppSelector } from "../../app/hooks";
 import DesktopChat from "./DesktopChat/DesktopChat";
+import MobileChat from "./MobileChat/MobileChat";
+import { useAppSelector } from "../../app/hooks";
 
 type Props = {};
 
+export interface IMinifiedUserDetails {
+  profileImg: string;
+  fullName: string;
+  partyId?: string;
+}
+
 const Chat = (props: Props) => {
+  const name = useAppSelector((state) => state.user.name);
+  const picture = useAppSelector((state) => state.user.picture);
+  const userId = useAppSelector((state) => state.user.userId);
+
   const [isMobileView, setIsMobileView] = useState<boolean>(
     window.innerWidth <= 1024
   );
@@ -26,11 +33,11 @@ const Chat = (props: Props) => {
     };
   }, []);
 
-  if (isMobileView) {
-    return <div>Mobile!</div>;
-  }
-
-  return isMobileView ? <div>Mobile!</div> : <DesktopChat />;
+  return isMobileView ? (
+    <MobileChat fullName={name} profileImg={picture} partyId={userId} />
+  ) : (
+    <DesktopChat fullName={name} profileImg={picture} partyId={userId} />
+  );
 };
 
 export default Chat;
