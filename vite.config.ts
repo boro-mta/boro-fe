@@ -13,4 +13,7 @@ export default defineConfig({
     open: true,
     host: "localhost",
   },
+  optimizeDeps: {
+    include: ['@mui/icons-material'],
+  }
 });

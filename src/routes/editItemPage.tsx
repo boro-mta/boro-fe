@@ -18,11 +18,11 @@ import {
   Stepper,
   TextField,
   Typography,
+  Box,
 } from "@mui/material";
 import { Container, Stack } from "@mui/system";
 import { ICoordinate, IFullImageDetails, IInputItem } from "../types";
-import Box from "@mui/material/Box";
-import LoadingButton from "@mui/lab/LoadingButton";
+import { LoadingButton } from "@mui/lab";
 import SendIcon from "@mui/icons-material/Send";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { categoriesOptions, conditionOptions } from "../mocks/items";

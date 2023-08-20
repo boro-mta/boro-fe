@@ -13,6 +13,7 @@ import {
   ListItemText,
   TextField,
   Typography,
+  Box,
 } from "@mui/material";
 import { Container } from "@mui/system";
 import { allUserDetails } from "../mocks/userDetails";
@@ -29,7 +30,6 @@ import {
 } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import Box from "@mui/material/Box";
 import ImageIcon from "@mui/icons-material/Image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";

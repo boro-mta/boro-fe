@@ -18,13 +18,16 @@ import {
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { ICoordinate, IInputImage } from "../types";
-import { getUserLocation, getUserPicture, getUserProfile } from "../api/UserService";
+import {
+  getUserLocation,
+  getUserPicture,
+  getUserProfile,
+} from "../api/UserService";
 import { LoginWithFacebook } from "../api/BoroWebServiceClient";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import { getCurrentUserId } from "../utils/authUtils";
 
 const FacebookLoginPage = () => {
-
   //Get redux dispatcher
   const dispatch = useAppDispatch();
 
@@ -86,44 +89,14 @@ const FacebookLoginPage = () => {
         userId: backendResponse.userId,
       })
     );
-    dispatch(
-      updateAccessToken(response.accessToken)
-    );
-    dispatch(
-      updateFacebookId(response.userID)
-    );
-    dispatch(
-      updateUserName(response.name || "")
-    )
+    dispatch(updateAccessToken(response.accessToken));
+    dispatch(updateFacebookId(response.userID));
+    dispatch(updateUserName(response.name || ""));
     console.log(response);
 
-    //Create a user to save.
-    //Consider adding a type to the savedUser
-    let savedUser = {
-      name: response.name || "",
-      email: response.email || "",
-      facebookId: response.id,
-      accessToken: response.accessToken,
-      picture: pictureUrl || "",
-      guid: backendResponse.userId,
-      address: {
-        latitude: 0,
-        longitude: 0,
-      },
-    };
-
-
-
-
     if (backendResponse.firstLogin == true) {
-      //In case of a first login
-
-
       navigate("/newUser");
     } else {
-      //In case of a returning user:
-      //we save in the redux user's 'home' address
-
       const userHomeLocation = await getUserLocation(backendResponse.userId);
       const userProfile = await getUserProfile(backendResponse.userId);
       dispatch(
@@ -132,23 +105,16 @@ const FacebookLoginPage = () => {
           email: response.email || "",
           facebookId: response.id,
           accessToken: response.accessToken,
-          picture: formatImagesOnRecieve([userProfile.image as IInputImage])[0] || "",
-          serverAddress: { latitude: userProfile.latitude, longitude: userProfile.longitude },
+          picture:
+            formatImagesOnRecieve([userProfile.image as IInputImage])[0] || "",
+          serverAddress: {
+            latitude: userProfile.latitude,
+            longitude: userProfile.longitude,
+          },
           currentAddress: { latitude: 0, longitude: 0 },
           userId: userProfile.userId,
         })
       );
-
-
-      //Save the user to local storage with it's 'home' address
-      savedUser = {
-        ...savedUser,
-        address: {
-          latitude: userHomeLocation.latitude,
-          longitude: userHomeLocation.longitude,
-        },
-      };
-
 
       updateServerAddress({
         latitude: userHomeLocation.latitude,
@@ -164,7 +130,7 @@ const FacebookLoginPage = () => {
       console.log("Redirecting...");
       navigate("/");
     }
-  },);
+  });
 
   return (
     <div className="facebook-login-page">
@@ -182,6 +148,5 @@ const FacebookLoginPage = () => {
     </div>
   );
 };
-
 
 export default FacebookLoginPage;
