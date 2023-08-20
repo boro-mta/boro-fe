@@ -4,15 +4,21 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
-import { initialState, selectAccessToken, selectCurrentAddress, selectFacebookId, updateUser } from "../features/UserSlice";
+import {
+  initialState,
+  selectAccessToken,
+  selectCurrentAddress,
+  selectFacebookId,
+  updateUser,
+} from "../features/UserSlice";
 import {
   selectEmail,
   selectUserName,
   selectPicture,
-  selectUserId
+  selectUserId,
 } from "../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { updateUser as apiUpdateUser } from "../api/UserService"
+import { updateUser as apiUpdateUser } from "../api/UserService";
 import IUpdateUserData from "../api/Models/IUpdateUserData";
 import AddressField from "../components/AddressFieldComponent/AddressField";
 import ILocationDetails from "../api/Models/ILocationDetails";
@@ -34,7 +40,7 @@ const validationSchema = yup.object({
 
 const NewUserPage = (props: Props) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
     libraries: libs,
   });
 
@@ -47,7 +53,9 @@ const NewUserPage = (props: Props) => {
   const userProfilePicture = useAppSelector(selectPicture);
   const [firstName, lastName] = userFullName.split(" ");
   const userId = useAppSelector(selectUserId);
-  const [currentLocationString, setCurrentLocationString] = useState<string>("");
+  const [currentLocationString, setCurrentLocationString] = useState<string>(
+    ""
+  );
   const [myLocation, setMyLocation] = useState<ILocationDetails>();
 
   const formik = useFormik({
@@ -63,7 +71,7 @@ const NewUserPage = (props: Props) => {
     },
     enableReinitialize: true,
     validationSchema: validationSchema,
-    onSubmit: () => { },
+    onSubmit: () => {},
   });
 
   //Navigation tool
@@ -78,27 +86,29 @@ const NewUserPage = (props: Props) => {
       reader.onloadend = () => {
         const base64data = reader.result;
         resolve(base64data);
-      }
+      };
     });
-  }
+  };
 
   const facebookid = useAppSelector(selectFacebookId);
   const accessToken = useAppSelector(selectAccessToken);
   //Create a new user on Boro's server
   const handleCreateNewUserClick = async () => {
-    const userPictureBase64 = await getBase64FromUrl(userProfilePicture) as string;
-    const [imageMetaData, imageBase64Data] = userPictureBase64.split(',');
+    const userPictureBase64 = (await getBase64FromUrl(
+      userProfilePicture
+    )) as string;
+    const [imageMetaData, imageBase64Data] = userPictureBase64.split(",");
     const userPictureToUpdate = {
       base64ImageMetaData: imageMetaData,
-      base64ImageData: imageBase64Data
-    }
+      base64ImageData: imageBase64Data,
+    };
 
     const userDetails = {
       about: formik.values.about,
       email: formik.values.email,
       longitude: userChosenAddress.longitude,
       latitude: userChosenAddress.latitude,
-      image: userPictureToUpdate
+      image: userPictureToUpdate,
     } as IUpdateUserData;
 
     try {
@@ -116,12 +126,12 @@ const NewUserPage = (props: Props) => {
           accessToken: accessToken,
           serverAddress: {
             latitude: 0,
-            longitude: 0
+            longitude: 0,
           },
           currentAddress: {
             latitude: 0,
-            longitude: 0
-          }
+            longitude: 0,
+          },
         })
       );
 
@@ -134,7 +144,10 @@ const NewUserPage = (props: Props) => {
   };
 
   // user location
-  const [userChosenAddress, setUserChosenAddress] = useState<ILocationDetails>({ longitude: 0, latitude: 0 });
+  const [userChosenAddress, setUserChosenAddress] = useState<ILocationDetails>({
+    longitude: 0,
+    latitude: 0,
+  });
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete>();
 
@@ -195,7 +208,6 @@ const NewUserPage = (props: Props) => {
         console.log("Failed to get the user's location");
       }
     );
-
   }, []);
 
   useEffect(() => {
@@ -206,10 +218,13 @@ const NewUserPage = (props: Props) => {
     const geocoder = new google.maps.Geocoder();
 
     if (myLocation && myLocation.latitude != 0 && myLocation.longitude) {
-      geocoder.geocode({ location: { lat: myLocation.latitude, lng: myLocation.longitude } })
+      geocoder
+        .geocode({
+          location: { lat: myLocation.latitude, lng: myLocation.longitude },
+        })
         .then((response) => {
           setCurrentLocationString(response.results[0].formatted_address);
-        })
+        });
     }
   }, [isLoaded, myLocation]);
 

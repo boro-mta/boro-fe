@@ -1,8 +1,8 @@
+import "@sendbird/uikit-react/dist/index.css";
 import React, { useState } from "react";
 import { ChannelList, Channel, ChannelSettings } from "@sendbird/uikit-react";
 import { GroupChannel } from "@sendbird/chat/groupChannel";
 import "./chat.styles.css";
-import "@sendbird/uikit-react/dist/index.css";
 import MinimizedUserDetails from "../Dashboard/MinimizedUserDetails/MinimizedUserDetails";
 import { useAppSelector } from "../../app/hooks";
 
@@ -40,7 +40,7 @@ const Chat = (props: Props) => {
           renderHeader={() => (
             <div style={{ marginLeft: "15px" }}>
               <MinimizedUserDetails
-                fullName={name}
+                fullName={name === "Guest" ? "Me" : name}
                 profileImg={picture}
                 partyId={userId}
               />
