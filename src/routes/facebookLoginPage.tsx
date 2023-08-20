@@ -28,41 +28,34 @@ import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import { getCurrentUserId } from "../utils/authUtils";
 
 const FacebookLoginPage = () => {
-  //Get redux dispatcher
   const dispatch = useAppDispatch();
 
-  //Get navigation tool
   const navigate = useNavigate();
 
-  //In case of a successfull login using facebook
   const handleLoginSuccess = (response: ReactFacebookLoginInfo) => {
-    //Get the url to the user's picture from facebook
     const pictureUrl =
       response.picture && response.picture.data && response.picture.data.url;
 
     console.log(response);
 
-    //Send data to redux after successfull login
     dispatch(
       updateUser({
         name: response.name || "",
         email: response.email || "",
         facebookId: response.id,
         accessToken: response.accessToken,
-        picture: pictureUrl || "",
+        picture: "",
         serverAddress: { latitude: 0, longitude: 0 },
         currentAddress: { latitude: 0, longitude: 0 },
         userId: "",
       })
     );
 
-    //save the user's login details
     const userFacebookLoginDetails = {
       accessToken: response.accessToken,
       facebookId: response.userID,
     };
 
-    //Call the function to authenticate infront of Boro's server
     backendFacebookAuthentication(
       userFacebookLoginDetails,
       response,
@@ -70,22 +63,19 @@ const FacebookLoginPage = () => {
     );
   };
 
-  //A function used to authenticate infront of Boro's server
   const backendFacebookAuthentication = async (
     userFacebookLoginDetails: any,
     response: ReactFacebookLoginInfo,
     pictureUrl: any
   ) => {
-    //Create a user on Boro's server using facebook id and facebook access token
     const backendResponse = await LoginWithFacebook(
       userFacebookLoginDetails.accessToken,
       userFacebookLoginDetails.facebookId
     );
 
-    //Update the user's guid after the backend response
     dispatch(
       updatePartialUser({
-        picture: pictureUrl || "",
+        picture: "",
         userId: backendResponse.userId,
       })
     );
@@ -101,7 +91,7 @@ const FacebookLoginPage = () => {
       const userProfile = await getUserProfile(backendResponse.userId);
       dispatch(
         updateUser({
-          name: userProfile.firstName || "",
+          name: userProfile.firstName + " " + userProfile.lastName || "",
           email: response.email || "",
           facebookId: response.id,
           accessToken: response.accessToken,
