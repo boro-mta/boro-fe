@@ -8,17 +8,15 @@ import {
   Menu,
   Container,
   Avatar,
-  Button,
   Tooltip,
-  MenuItem,
 } from "@mui/material";
-import { Menu as MenuIcon, Adb as AdbIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { updateUserAfterFetchByToken } from "../../features/UserSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getUserProfile } from "../../api/UserService";
 import { getCurrentUserId } from "../../utils/authUtils";
 import AppBarMenu from "./AppBarMenu/AppBarMenu";
+import * as Styles from "./Appbar.style";
 
 function ResponsiveAppBar() {
   const userName = useAppSelector((state) => state.user.name);
@@ -43,64 +41,24 @@ function ResponsiveAppBar() {
     getUserDetails();
   }, [userId]);
 
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
-  const handleMenuButtonClick = (page: any) => {
-    console.log(`click ${page}`);
-    if (page === "Home") {
-      navigate("/");
-      handleCloseNavMenu();
-    }
-  };
-
   return (
-    <AppBar
-      position="static"
-      sx={{
-        marginBottom: "10px",
-        background: "white",
-        height: "70px",
-        justifyContent: "center",
-      }}
-    >
-      <Container maxWidth="xl">
+    <AppBar position="static" sx={Styles.appBarStyles}>
+      <Container maxWidth="xl" sx={Styles.containerStyles}>
         <Toolbar disableGutters>
-          <Box
-            onClick={() => navigate("/")}
-            sx={{
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <Box
-              sx={{
-                display: { xs: "flex", md: "flex" },
-                alignItems: "center",
-                mr: 1,
-              }}
-            >
+          <Box onClick={() => navigate("/")} sx={Styles.logoContainerStyles}>
+            <Box sx={Styles.logoBoxStyles}>
               <img
                 src="/assets/logo.png"
                 alt="Logo"
@@ -110,8 +68,11 @@ function ResponsiveAppBar() {
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Typography variant="h6" sx={{ mr: 1, whiteSpace: "nowrap" }}>
+              <IconButton
+                onClick={handleOpenUserMenu}
+                sx={Styles.avatarButtonStyles}
+              >
+                <Typography sx={Styles.avatarTypographyStyles}>
                   {userName}
                 </Typography>
                 <Avatar
@@ -124,7 +85,7 @@ function ResponsiveAppBar() {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: "45px", ml: "25px" }}
+              sx={Styles.menuStyles}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
@@ -147,4 +108,5 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
+
 export default React.memo(ResponsiveAppBar);
