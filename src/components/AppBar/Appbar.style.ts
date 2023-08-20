@@ -12,7 +12,6 @@ export const containerStyles: SxProps = {
 };
 
 export const logoContainerStyles: SxProps = {
-  cursor: "pointer",
   display: "flex",
   alignItems: "center",
   width: "100%",
@@ -21,6 +20,8 @@ export const logoContainerStyles: SxProps = {
 export const logoBoxStyles: SxProps = {
   display: { xs: "flex", md: "flex" },
   alignItems: "center",
+  cursor: "pointer",
+
   mr: 1,
 };
 

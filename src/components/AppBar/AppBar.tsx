@@ -57,13 +57,23 @@ function ResponsiveAppBar() {
     <AppBar position="static" sx={Styles.appBarStyles}>
       <Container maxWidth="xl" sx={Styles.containerStyles}>
         <Toolbar disableGutters>
-          <Box onClick={() => navigate("/")} sx={Styles.logoContainerStyles}>
+          <Box sx={Styles.logoContainerStyles}>
             <Box sx={Styles.logoBoxStyles}>
-              <img
-                src="/assets/logo.png"
-                alt="Logo"
-                style={{ maxHeight: "150px", width: "auto" }}
-              />
+              <a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/");
+                }}
+              >
+                <Box sx={Styles.logoBoxStyles}>
+                  <img
+                    src="/assets/logo.png"
+                    alt="Logo"
+                    style={{ maxHeight: "150px", width: "auto" }}
+                  />
+                </Box>
+              </a>
             </Box>
           </Box>
           <Box sx={{ flexGrow: 0 }}>
