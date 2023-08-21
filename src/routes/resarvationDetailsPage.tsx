@@ -36,6 +36,7 @@ type IReservationDetailsParams = {
 
 import ChatIcon from "@mui/icons-material/Chat";
 import { startChat } from "../api/ChatService";
+import PointsContainer from "../components/PointsContainer/PointsContainer";
 
 type Props = {};
 
@@ -347,6 +348,11 @@ const ReservationDetailsPage = (props: Props) => {
                     </div>
                   )}
               </Grid>
+              {isLender && (
+                <Grid item>
+                  <PointsContainer title={"Amount of points you get by lending this item:: "} points={500} />
+                </Grid>
+              )}
             </Grid>
           </Grid>
         </Grid>

@@ -50,6 +50,7 @@ import { libs } from "../utils/googleMapsUtils";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { IItemResponse } from "../api/Models/IItemResponse";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import PointsContainer from "../components/PointsContainer/PointsContainer";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -105,8 +106,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -538,6 +539,10 @@ const itemDetailsPage = (props: Props) => {
                       </Grid>
                     </Grid>
                   </Box>
+                </div>
+
+                <div>
+                  <PointsContainer title={"Amount of points you get by borrowing this item: "} points={300} />
                 </div>
 
                 {isValidDates === true && (
