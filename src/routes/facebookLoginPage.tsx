@@ -73,18 +73,19 @@ const FacebookLoginPage = () => {
       userFacebookLoginDetails.facebookId
     );
 
-    dispatch(
-      updatePartialUser({
-        picture: "",
-        userId: backendResponse.userId,
-      })
-    );
+
     dispatch(updateAccessToken(response.accessToken));
     dispatch(updateFacebookId(response.userID));
     dispatch(updateUserName(response.name || ""));
     console.log(response);
 
     if (backendResponse.firstLogin == true) {
+      dispatch(
+        updatePartialUser({
+          picture: pictureUrl,
+          userId: backendResponse.userId,
+        })
+      );
       navigate("/newUser");
     } else {
       const userHomeLocation = await getUserLocation(backendResponse.userId);
