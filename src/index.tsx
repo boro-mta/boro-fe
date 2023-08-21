@@ -32,6 +32,7 @@ import LenderDashboard from "./routes/lenderDashboard";
 import BorrowerDashboard from "./routes/borrowerDashboard";
 import ReservationDetailsPage from "./routes/resarvationDetailsPage";
 import ChatPage from "./routes/chatPage";
+import LeaderBoard from "./routes/leaderBoard";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -88,6 +89,10 @@ const router = [
   {
     path: "/reservationDetails/:reservationId",
     element: <ReservationDetailsPage />,
+  },
+  {
+    path: "/leaderBoard",
+    element: <LeaderBoard />,
   },
   {
     path: "address",

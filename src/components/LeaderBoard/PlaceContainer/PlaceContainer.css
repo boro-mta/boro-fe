@@ -1,0 +1,18 @@
+.place-container {
+    border-radius: 50%;
+    border: 3px solid rgba(201, 239, 204, 255);
+    background-color: rgba(201, 239, 204, 255);
+    height: 42px;
+    width: 42px;
+    padding: 4px;
+
+    .place-item {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        font-size: 26px;
+        color: rgb(0, 0, 0);
+        -webkit-text-stroke: 3px rgb(0, 0, 0);
+        text-align: center;
+    }
+}
