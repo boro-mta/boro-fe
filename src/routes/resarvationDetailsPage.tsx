@@ -271,7 +271,7 @@ const ReservationDetailsPage = (props: Props) => {
                 </Typography>
                 {isLender && (
                   <Grid item>
-                    <PointsContainer title={"Amount of points you get by lending this item:: "} points={500} />
+                    <PointsContainer title={"Earn 300 points by lending this item "} points={500} />
                   </Grid>
                 )}
                 <Typography variant="body2" gutterBottom>
