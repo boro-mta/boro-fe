@@ -4,8 +4,9 @@ import { declineReservation } from "../../api/ReservationService";
 import { startChat } from "../../api/ChatService";
 
 const handleDecline = async (reservationId: any) => {
-  if (reservationId.reservationId) {
-    await declineReservation(reservationId.reservationId);
+  if (reservationId) {
+    await declineReservation(reservationId);
+    location.reload();
   }
 };
 

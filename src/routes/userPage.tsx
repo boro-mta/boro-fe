@@ -17,6 +17,8 @@ import { getCurrentUserId } from "../utils/authUtils";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import ChatIcon from "@mui/icons-material/Chat";
 import { startChat } from "../api/ChatService";
+import { getUserItems } from "../api/ItemService";
+import { useAppSelector } from "../app/hooks";
 
 type Props = {};
 
@@ -27,46 +29,40 @@ const userPage = (props: Props) => {
 
   const [userItems, setUserItems] = useState<IUserItem[]>([]);
 
-  //Gets the user's Id, Consider deleting
   const userCurrentId = getCurrentUserId();
 
-  //A boolean object defining wether the user owns the current profile
   const [isOwner, setIsOwner] = useState(false);
 
-  //Get the profile picture of the user from redux
   const [userProfilePicture, setUserProfilePicture] = useState("");
-
-  //Get the current url
   const currentUrl = window.location.href;
-  //The userId of the profile currently being watched
-  let userId = currentUrl.split("/").pop() as string; //useParams<IUserDetailsParams>();
+
+  let userId = currentUrl.split("/").pop() as string;
   console.log("current profile user id is : ", userId);
 
-  //Navigation tool
   const navigate = useNavigate();
 
-  //Navigate to user's edit page
   const handleEditClick = () => {
-    //A check to see wether the user currently watching is the owner or not
     navigate(`/users/${userId}/edit`);
   };
 
-  //Unused, consider deleting
-  const handleHomeClick = () => {
-    navigate("/");
-  };
+  useEffect(() => {
+    const fetchUserItems = async () => {
+      const items = await getUserItems(userId);
+      items && items?.length > 0 && setUserItems(items);
+    };
+    fetchUserItems();
+  }, [userId]);
 
-  //A function for getting user's details form the server.
+  const currUserProfilePicture = useAppSelector((state) => state.user.picture);
+
   const getUserDetails = async () => {
     try {
       console.log("Getting user profile: ", userId, " from the server");
 
-      //Get a certain userProfile by userId
       const userProfile = await getUserProfile(userId as string);
       console.log("Got a user: ");
       console.log(userProfile);
 
-      //Fit all the details into userDetails
       let userDetails: IUserDetails = {
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
@@ -79,19 +75,18 @@ const userPage = (props: Props) => {
         latitude: 0,
         about: userProfile.about,
       };
-      setUserProfilePicture(userDetails.profileImage);
-      //Check wether the profile currently watched is owned by the user.
+
       let isOwner = userCurrentId == userId;
 
-      //Set the state of isOwner
       setIsOwner(!isOwner);
 
-      //If the user is watching his own profile, set the image to be the user's image
-      if (isOwner) {
+      if (isOwner && currUserProfilePicture) {
         userDetails.profileImage = userProfilePicture;
+        setUserProfilePicture(currUserProfilePicture);
+      } else {
+        setUserProfilePicture(userDetails.profileImage);
       }
 
-      //Updates all the details in the page to fit the user we received
       setUserDetails(userDetails);
     } catch (error) {
       console.error(error);
@@ -99,10 +94,14 @@ const userPage = (props: Props) => {
   };
 
   useEffect(() => {
+    if (userCurrentId == userId && currUserProfilePicture) {
+      setUserProfilePicture(currUserProfilePicture);
+    }
+  }, [currUserProfilePicture]);
+  useEffect(() => {
     getUserDetails();
   }, [userId]);
 
-  //A function for formatting dates
   const formatDate = (date: string) => {
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -171,11 +170,11 @@ const userPage = (props: Props) => {
         {userDetails.about}
       </Typography>
       <br />
-      <Typography variant="h4">
-        {userDetails.firstName + " 's items"}
-      </Typography>
       <Box>
-        <ItemsContainer containerTitle="" items={userItems} />
+        <ItemsContainer
+          containerTitle={userDetails.firstName + " 's items"}
+          items={userItems}
+        />
       </Box>
     </Container>
   );

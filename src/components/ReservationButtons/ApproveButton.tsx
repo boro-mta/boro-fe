@@ -4,8 +4,9 @@ import { approveReservation } from "../../api/ReservationService";
 import { startChat } from "../../api/ChatService";
 
 const handleApprove = async (reservationId: any) => {
-  if (reservationId.reservationId) {
-    await approveReservation(reservationId.reservationId);
+  if (reservationId) {
+    await approveReservation(reservationId);
+    location.reload();
   }
 };
 

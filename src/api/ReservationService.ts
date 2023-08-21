@@ -1,6 +1,4 @@
-import {
-  IReservationRow,
-} from "../types";
+import { IReservationRow } from "../types";
 import { IReservation } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import { HttpOperation, requestAsync } from "./BoroWebServiceClient";
@@ -92,15 +90,16 @@ export const getAllReservationsData = async (
       ? reservations.map(async (reservation: IReservation) => {
           let itemData = (await getItem(reservation.itemId)) as IItemResponse;
           let itemImg = formatImagesOnRecieve(itemData.images)[0];
-
-          let userData = (await getUserProfile(
-            reservation.borrowerId
-          )) as IUserProfile;
+          let partyId =
+            party === "Borrower"
+              ? reservation.lenderId
+              : reservation.borrowerId;
+          let userData = (await getUserProfile(partyId)) as IUserProfile;
           let partyImg = userData.image
             ? formatImagesOnRecieve([userData.image])[0]
             : "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png";
 
-          let x = {
+          let fullSingleReservation = {
             reservationId: reservation.reservationId,
             itemTitle: itemData.title,
             itemId: reservation.itemId,
@@ -108,12 +107,12 @@ export const getAllReservationsData = async (
             itemDescription: itemData.description || "",
             startDate: new Date(reservation.startDate),
             endDate: new Date(reservation.endDate),
-            partyId: reservation.borrowerId,
+            partyId,
             partyImg: partyImg,
             partyName: `${userData.firstName} ${userData.lastName}`,
             status: reservation.status,
           };
-          return x;
+          return fullSingleReservation;
         })
       : [];
 

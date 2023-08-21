@@ -27,7 +27,9 @@ const lenderDashboard = (props: Props) => {
 
   const completedRows = rows.filter(
     (row) =>
-      row.endDate < new Date() && row.status !== ReservationStatus.Canceled
+      row.endDate < new Date() &&
+      row.status !== ReservationStatus.Canceled &&
+      row.status !== ReservationStatus.Declined
   );
   const pendingRows = rows.filter(
     (row) => row.status === ReservationStatus.Pending
@@ -40,7 +42,9 @@ const lenderDashboard = (props: Props) => {
   );
   const upcomingRows = rows.filter(
     (row) =>
-      row.startDate > new Date() && row.status !== ReservationStatus.Canceled
+      row.startDate > new Date() &&
+      row.status !== ReservationStatus.Canceled &&
+      row.status !== ReservationStatus.Declined
   );
 
   return (
