@@ -344,7 +344,7 @@ const itemDetailsPage = (props: Props) => {
         )}
       </Card>
       <Typography variant="h5">{itemDetails.title}</Typography>
-      {isOwner && (
+      {!isOwner && (
         <div>
           <PointsContainer title={"Earn 300 points by borrowing this item "} />
         </div>
