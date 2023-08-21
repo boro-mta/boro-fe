@@ -344,6 +344,12 @@ const itemDetailsPage = (props: Props) => {
         )}
       </Card>
       <Typography variant="h5">{itemDetails.title}</Typography>
+      {isOwner && (
+        <div>
+          <PointsContainer title={"Earn 300 points by borrowing this item "} />
+        </div>
+      )}
+
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
       <Typography variant="h6">About the product</Typography>
       <Typography component={"span"} variant="body1">
@@ -351,6 +357,8 @@ const itemDetailsPage = (props: Props) => {
       </Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+
+
 
       <div>
         <Accordion expanded={expanded} onChange={handleExpandAccordion}>
@@ -541,9 +549,7 @@ const itemDetailsPage = (props: Props) => {
                   </Box>
                 </div>
 
-                <div>
-                  <PointsContainer title={"Amount of points you get by borrowing this item: "} points={300} />
-                </div>
+
 
                 {isValidDates === true && (
                   <Button

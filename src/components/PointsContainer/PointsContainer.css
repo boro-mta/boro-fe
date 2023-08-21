@@ -1,23 +1,22 @@
 .points-container {
-    background-color: rgba(201, 239, 204, 255);
     max-width: fit-content;
-    border-radius: 16px;
-    padding: 8px;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 
     .points-item {
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 12px;
         text-transform: uppercase;
         line-height: 1.20;
+        color: #00bf7a;
     }
 
     .points-img-data {
         border-radius: 50%;
-        height: 42px;
-        width: 42px;
+        height: 16px;
+        width: 16x;
         padding: 4px;
     }
 }

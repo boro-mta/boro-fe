@@ -269,6 +269,11 @@ const ReservationDetailsPage = (props: Props) => {
                 <Typography gutterBottom variant="h5" component="div">
                   {itemDetails.title}
                 </Typography>
+                {isLender && (
+                  <Grid item>
+                    <PointsContainer title={"Amount of points you get by lending this item:: "} points={500} />
+                  </Grid>
+                )}
                 <Typography variant="body2" gutterBottom>
                   {itemDetails.description}
                 </Typography>
@@ -348,11 +353,7 @@ const ReservationDetailsPage = (props: Props) => {
                     </div>
                   )}
               </Grid>
-              {isLender && (
-                <Grid item>
-                  <PointsContainer title={"Amount of points you get by lending this item:: "} points={500} />
-                </Grid>
-              )}
+
             </Grid>
           </Grid>
         </Grid>
