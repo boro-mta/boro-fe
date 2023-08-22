@@ -6,7 +6,7 @@ import { startChat } from "../../api/ChatService";
 const cancelReservationRequest = async (reservationId: any) => {
   if (reservationId) {
     await cancelReservation(reservationId);
-    window.location.reload();
+    location.reload();
   }
 };
 

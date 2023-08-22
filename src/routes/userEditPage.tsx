@@ -43,7 +43,6 @@ type IUserDetailsParams = {
 
 type Props = {};
 
-//A validation schema for the form
 const validationSchema = yup.object({
   about: yup.string().max(250, "Must be 250 characters or less"),
   email: yup
@@ -68,7 +67,6 @@ const UserEditPage = (props: Props) => {
   });
   const dispatch = useAppDispatch();
 
-  //Get the current userId
   let { userId } = useParams<IUserDetailsParams>();
 
   const userProfilePicture = useAppSelector(selectPicture);
@@ -76,14 +74,11 @@ const UserEditPage = (props: Props) => {
   const [imagesNames, setImagesNames] = useState<string[]>([]);
   const [imageChanged, setImageChanged] = useState<boolean>();
 
-  //A function used to get details of a user from the server
-  //Used to set the initial values of the form
   const getUserDetails = async () => {
     setImageChanged(false);
     try {
-      //Get the current details of the user from the server
       const userProfile = await getUserProfile(userId as string);
-      //Save the details inside userDetails
+
       const userDetails: IUserDetails = {
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
@@ -95,7 +90,7 @@ const UserEditPage = (props: Props) => {
         about: userProfile.about,
         email: userProfile.email,
       };
-      //Set the current user data to be the user retreived from the server
+
       setUserDetails(userDetails);
     } catch (error) {
       console.error(error);
@@ -103,11 +98,9 @@ const UserEditPage = (props: Props) => {
   };
 
   useEffect(() => {
-    //Get the user's details to fill the form's initial values
     getUserDetails();
   }, [userId]);
 
-  //The form used in the page
   const formik = useFormik({
     initialValues: {
       about: userDetails.about,
@@ -118,10 +111,8 @@ const UserEditPage = (props: Props) => {
     onSubmit: () => {},
   });
 
-  //Navigation tool
   const navigate = useNavigate();
 
-  //In case of a cancel click, return to the user's page
   const handleCancelClick = () => {
     navigate(`/users/${userId}`);
     window.location.reload();
@@ -132,7 +123,6 @@ const UserEditPage = (props: Props) => {
   const handleEditClick = async () => {
     await formik.validateForm();
     if (formik.isValid) {
-      //Get the user's new details filled in the form
       const userDetailsEdit = {
         about: formik.values.about,
         email: formik.values.email,
@@ -140,7 +130,6 @@ const UserEditPage = (props: Props) => {
         longitude: userDetails.longitude,
       } as IUpdateUserData;
       try {
-        //Send the new details to the server
         const response = apiUpdateUser(userDetailsEdit);
         console.log("User created successfully!", response);
       } catch (error) {
@@ -162,7 +151,6 @@ const UserEditPage = (props: Props) => {
       }
 
       navigate(`/Users/${userId}`);
-      window.location.reload();
     }
   };
 
@@ -213,7 +201,6 @@ const UserEditPage = (props: Props) => {
     }
   };
 
-  // user location
   const [userAddressString, setUserAddressString] = useState<string>("");
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete>();
@@ -226,7 +213,6 @@ const UserEditPage = (props: Props) => {
     let place;
 
     try {
-      // Check if autocompleteRef exists and has the getPlace() method
       if (
         autocompleteRef &&
         autocompleteRef.current &&
@@ -239,7 +225,6 @@ const UserEditPage = (props: Props) => {
       return;
     }
 
-    // Check if place and place.geometry exist and have the location property
     if (place && place.geometry && place.geometry.location) {
       const newAddress = {
         latitude: place.geometry.location.lat(),

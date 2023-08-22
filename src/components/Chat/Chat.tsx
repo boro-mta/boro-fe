@@ -1,76 +1,42 @@
 import "@sendbird/uikit-react/dist/index.css";
-import React, { useState } from "react";
-import { ChannelList, Channel, ChannelSettings } from "@sendbird/uikit-react";
-import { GroupChannel } from "@sendbird/chat/groupChannel";
-import "./chat.styles.css";
-import MinimizedUserDetails from "../Dashboard/MinimizedUserDetails/MinimizedUserDetails";
+import React, { useEffect, useState } from "react";
+import DesktopChat from "./DesktopChat/DesktopChat";
+import MobileChat from "./MobileChat/MobileChat";
 import { useAppSelector } from "../../app/hooks";
 
 type Props = {};
 
-const Chat = (props: Props) => {
-  const [currentChannel, setCurrentChannel] = useState<GroupChannel>();
-  const currentChannelUrl = currentChannel ? currentChannel.url : "";
-  const [showSettings, setShowSettings] = useState<boolean>(false);
-  let channelChatDiv = Array.from(
-    document.getElementsByClassName("channel-chat") as HTMLCollectionOf<
-      HTMLElement
-    >
-  )[0];
+export interface IMinifiedUserDetails {
+  profileImg: string;
+  fullName: string;
+  partyId?: string;
+}
 
+const Chat = (props: Props) => {
   const name = useAppSelector((state) => state.user.name);
   const picture = useAppSelector((state) => state.user.picture);
   const userId = useAppSelector((state) => state.user.userId);
 
-  const renderSettingsBar = () => {
-    channelChatDiv.style.width = "70%";
-    channelChatDiv.style.cssFloat = "left";
-  };
+  const [isMobileView, setIsMobileView] = useState<boolean>(
+    window.innerWidth <= 1024
+  );
 
-  const hideSettingsBar = () => {
-    channelChatDiv.style.width = "76%";
-    channelChatDiv.style.cssFloat = "right";
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth <= 1024);
+    };
 
-  return (
-    <div className="channel-wrap">
-      <div className="channel-list">
-        <ChannelList
-          onChannelSelect={setCurrentChannel}
-          renderHeader={() => (
-            <div style={{ marginLeft: "15px" }}>
-              <MinimizedUserDetails
-                fullName={name === "Guest" ? "Me" : name}
-                profileImg={picture}
-                partyId={userId}
-              />
-            </div>
-          )}
-        />
-      </div>
-      <div className="channel-chat">
-        <Channel
-          channelUrl={currentChannelUrl}
-          onChatHeaderActionClick={() => {
-            setShowSettings(!showSettings);
-            renderSettingsBar();
-          }}
-        />
-      </div>
-      {showSettings && (
-        <>
-          <div className="channel-settings">
-            <ChannelSettings
-              channelUrl={currentChannelUrl}
-              onCloseClick={() => {
-                setShowSettings(false);
-                hideSettingsBar();
-              }}
-            />
-          </div>
-        </>
-      )}
-    </div>
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return isMobileView ? (
+    <MobileChat fullName={name} profileImg={picture} partyId={userId} />
+  ) : (
+    <DesktopChat fullName={name} profileImg={picture} partyId={userId} />
   );
 };
 
