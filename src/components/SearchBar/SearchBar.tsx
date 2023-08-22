@@ -4,6 +4,7 @@ import { HttpOperation, requestAsync } from "../../api/BoroWebServiceClient";
 import { getUserLocation } from "../../api/UserService";
 import { getCurrentUserId } from "../../utils/authUtils";
 import { isEmptyArray } from "formik";
+import SearchResultsDropdown from "./SearchResultsDropdown";
 
 interface SearchResult {
     id: string;
@@ -16,6 +17,7 @@ interface SearchResult {
         base64ImageData: string;
     };
 }
+
 interface SearchBarProps {
     onSearchResults: (results: SearchResult[]) => void;
 }
@@ -23,6 +25,7 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ onSearchResults }) => {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [results, setResults] = useState<SearchResult[]>([]);
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const handleSearchTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
@@ -38,6 +41,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearchResults }) => {
                 let endpoint = `Items/Search/ByTitle?partialTitle=${searchTerm}&latitude=31.760521&longitude=35.201366&radiusInMeters=50000000&limit=100`;
                 const response = await requestAsync(HttpOperation.GET, endpoint);
                 console.log(response);
+                setResults(response as SearchResult[]);
             }
         } catch (error) {
             console.error("Error fetching search results:", error);
@@ -48,6 +52,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearchResults }) => {
         sendSearchRequest();
     }, [searchTerm]);
 
+    const handleSelectResult = (result: SearchResult) => {
+
+        console.log("Selected result:", result);
+    };
+
+
     return (
         <div>
             <input
@@ -55,12 +65,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearchResults }) => {
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={handleSearchTermChange}
+                onFocus={() => setShowDropdown(true)}
+                onBlur={() => setShowDropdown(false)}
             />
-            <ul>
-                {results.map((result) => (
-                    <li key={result.id}>{result.title}</li>
-                ))}
-            </ul>
+            {showDropdown && results.length > 0 && (
+                <SearchResultsDropdown
+                    results={results}
+                    onSelectResult={handleSelectResult}
+                />
+            )}
         </div>
     );
 };
