@@ -1,0 +1,14 @@
+.leaderBoard-name-container {
+    border-radius: 15px;
+    border: 3px solid rgba(201, 239, 204, 255);
+    background-color: rgb(255, 255, 255);
+    height: 42px;
+    width: 300px;
+    padding: 4px;
+
+    .leaderBoard-name-item {
+        font-size: 22px;
+        color: rgb(0, 0, 0);
+        text-align: center;
+    }
+}

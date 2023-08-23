@@ -50,6 +50,7 @@ import { libs } from "../utils/googleMapsUtils";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { IItemResponse } from "../api/Models/IItemResponse";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import PointsContainer from "../components/PointsContainer/PointsContainer";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -105,8 +106,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -343,6 +344,12 @@ const itemDetailsPage = (props: Props) => {
         )}
       </Card>
       <Typography variant="h5">{itemDetails.title}</Typography>
+      {!isOwner && (
+        <div>
+          <PointsContainer title={"Earn 300 points by borrowing this item "} />
+        </div>
+      )}
+
       <Divider sx={{ marginTop: "10px", marginBottom: "10px" }} />
       <Typography variant="h6">About the product</Typography>
       <Typography component={"span"} variant="body1">
@@ -350,6 +357,8 @@ const itemDetailsPage = (props: Props) => {
       </Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
+
+
 
       <div>
         <Accordion expanded={expanded} onChange={handleExpandAccordion}>
@@ -539,6 +548,8 @@ const itemDetailsPage = (props: Props) => {
                     </Grid>
                   </Box>
                 </div>
+
+
 
                 {isValidDates === true && (
                   <Button

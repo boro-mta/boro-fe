@@ -1,0 +1,22 @@
+.points-container {
+    max-width: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .points-item {
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        line-height: 1.20;
+        color: #00bf7a;
+    }
+
+    .points-img-data {
+        border-radius: 50%;
+        height: 16px;
+        width: 16x;
+        padding: 4px;
+    }
+}
