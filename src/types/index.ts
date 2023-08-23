@@ -118,6 +118,5 @@ export interface ILeaderBoardRow {
   userFullName: string;
   userId: string;
   userImg: string;
-  place: number;
   score: number;
 }

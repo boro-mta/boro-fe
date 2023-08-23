@@ -26,7 +26,6 @@ type Props = {
 
 const LeaderBoardTable = ({ rows }: Props) => {
     const navigate = useNavigate();
-
     //todo: check if I'm the user and make another background color, change the className accordingly
 
     return (
@@ -41,10 +40,10 @@ const LeaderBoardTable = ({ rows }: Props) => {
                     <Table className="leaderBoard-table" aria-label="simple table">
 
                         <TableBody className="table-body-container">
-                            {rows.map((row) => (
-                                <TableRow className="leaderBoard-table-row-container">
+                            {rows.map((row, i) => (
+                                <TableRow className="leaderBoard-table-row-container" key={i}>
                                     <TableCell>
-                                        <PlaceContainer place={row.place} />
+                                        <PlaceContainer place={i + 1} />
                                     </TableCell>
                                     <TableCell>
                                         <div className="leaderBoard-img-container">
