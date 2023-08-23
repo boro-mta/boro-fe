@@ -63,7 +63,7 @@ const ItemsMapListContainer = () => {
       if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
         let coordinateToSearch: ICoordinateRadius = {
           ...myLocation,
-          radiusInMeters: 100000,
+          radiusInMeters: 20000,
         };
         let markers = await getItemsByRadius(coordinateToSearch);
         if (Array.isArray(markers)) setLocationsAroundMe(markers);

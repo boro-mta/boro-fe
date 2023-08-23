@@ -140,10 +140,26 @@ const Map = memo(({ myLocation, locationsAroundMe }: Props) => {
     }
   }, [map, center, myLocation]);
 
+  const getRadius = (): number => {
+    let radius;
+
+    if (map) {
+      const c = map.getCenter();
+      if (c) {
+        const bounds = map.getBounds();
+        if (bounds) {
+          const ne = bounds.getNorthEast();
+          radius = google.maps.geometry.spherical.computeDistanceBetween(c, ne);
+        }
+      }
+    }
+    return radius ? radius : 5000;
+  };
+
   async function fetchMarkers() {
     const response = await getItemsByRadius({
       ...center,
-      radiusInMeters: 100000,
+      radiusInMeters: getRadius(),
     });
     return response;
   }
