@@ -119,4 +119,7 @@ export interface ILeaderBoardRow {
   userId: string;
   userImg: string;
   score: number;
+  amountOfItems: number,
+  amountOfLendings: number,
+  amountOfBorrowings: number,
 }

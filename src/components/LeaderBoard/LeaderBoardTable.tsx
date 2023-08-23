@@ -20,6 +20,7 @@ import PlaceContainer from "./PlaceContainer/PlaceContainer";
 import NameContainer from "./NameContainer/NameContainer";
 import ScoreContainer from "./ScoreContainer/ScoreContainer";
 import { isCurrentUser } from "../../utils/authUtils";
+import DetailsContainer from "./DetailsContainer/DetailsContainer";
 
 type Props = {
     rows: ILeaderBoardRow[];
@@ -49,6 +50,18 @@ const LeaderBoardTable = ({ rows }: Props) => {
             {rows.length > 0 && (
                 <TableContainer className="leaderBoard-table-container" component={Paper}>
                     <Table className="leaderBoard-table" aria-label="simple table">
+                        <TableHead className="leaderBoard-head-table">
+                            <TableRow>
+                                <TableCell>Place</TableCell>
+                                <TableCell></TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Items</TableCell>
+                                <TableCell>Lends</TableCell>
+                                <TableCell>Borrows</TableCell>
+                                <TableCell>Total Points</TableCell>
+                            </TableRow>
+                        </TableHead>
+
 
                         <TableBody className="table-body-container">
                             {rows.map((row, i) => (
@@ -71,6 +84,15 @@ const LeaderBoardTable = ({ rows }: Props) => {
                                     </TableCell>
                                     <TableCell>
                                         <NameContainer name={row.userFullName} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <DetailsContainer details={row.amountOfItems} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <DetailsContainer details={row.amountOfBorrowings} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <DetailsContainer details={row.amountOfLendings} />
                                     </TableCell>
                                     <TableCell>
                                         <ScoreContainer score={row.score} />

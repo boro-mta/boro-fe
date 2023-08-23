@@ -26,7 +26,10 @@ const LeaderBoard = () => {
                         userFullName: serverFullUserName,
                         userId: serverUserDetails.userId,
                         userImg: formatImagesOnRecieve([serverUserDetails.image as IInputImage,])[0],
-                        score: user.totalScore
+                        score: user.totalScore,
+                        amountOfItems: user.amountOfItems,
+                        amountOfLendings: user.amountOfLendings,
+                        amountOfBorrowings: user.amountOfLendings
                     }
 
                     leaderBoardRowsToReturn.push(row);
