@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
     Table,
@@ -19,6 +19,7 @@ import "./LeaderBoardTable.css";
 import PlaceContainer from "./PlaceContainer/PlaceContainer";
 import NameContainer from "./NameContainer/NameContainer";
 import ScoreContainer from "./ScoreContainer/ScoreContainer";
+import { isCurrentUser } from "../../utils/authUtils";
 
 type Props = {
     rows: ILeaderBoardRow[];
@@ -26,7 +27,17 @@ type Props = {
 
 const LeaderBoardTable = ({ rows }: Props) => {
     const navigate = useNavigate();
-    //todo: check if I'm the user and make another background color, change the className accordingly
+
+    const [relevantClassName, setRelevantClassName] = useState<string>("leaderBoard-table-row-container");
+
+    const getRowClassName = (userId: string): string => {
+        if (isCurrentUser(userId)) {
+            return "my-row";
+        }
+        else {
+            return "leaderBoard-table-row-container";
+        }
+    }
 
     return (
         <div className="leaderBoard-div" style={{ marginBottom: "10px" }}>
@@ -41,7 +52,7 @@ const LeaderBoardTable = ({ rows }: Props) => {
 
                         <TableBody className="table-body-container">
                             {rows.map((row, i) => (
-                                <TableRow className="leaderBoard-table-row-container" key={i}>
+                                <TableRow className={getRowClassName(row.userId)} key={i}>
                                     <TableCell>
                                         <PlaceContainer place={i + 1} />
                                     </TableCell>
