@@ -8,8 +8,6 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Chip,
-    Container,
     Typography,
 } from "@mui/material";
 
@@ -21,6 +19,8 @@ import NameContainer from "./NameContainer/NameContainer";
 import ScoreContainer from "./ScoreContainer/ScoreContainer";
 import { isCurrentUser } from "../../utils/authUtils";
 import DetailsContainer from "./DetailsContainer/DetailsContainer";
+import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 type Props = {
     rows: ILeaderBoardRow[];
@@ -28,8 +28,6 @@ type Props = {
 
 const LeaderBoardTable = ({ rows }: Props) => {
     const navigate = useNavigate();
-
-    const [relevantClassName, setRelevantClassName] = useState<string>("leaderBoard-table-row-container");
 
     const getRowClassName = (userId: string): string => {
         if (isCurrentUser(userId)) {
@@ -55,10 +53,22 @@ const LeaderBoardTable = ({ rows }: Props) => {
                                 <TableCell>Place</TableCell>
                                 <TableCell></TableCell>
                                 <TableCell>Name</TableCell>
-                                <TableCell>Items</TableCell>
-                                <TableCell>Lends</TableCell>
-                                <TableCell>Borrows</TableCell>
-                                <TableCell>Total Points</TableCell>
+                                <TableCell> Items</TableCell>
+                                <TableCell>
+                                    <VolunteerActivismIcon />
+                                    Lends
+                                </TableCell>
+                                <TableCell>
+                                    <AutoAwesomeIcon />
+                                    Borrows
+                                </TableCell>
+                                <TableCell>
+                                    <img
+                                        className="points-img-data"
+                                        src="\src\components\PointsContainer\Star_icon_stylized.svg.png"
+                                    />
+                                    Total Points
+                                </TableCell>
                             </TableRow>
                         </TableHead>
 
