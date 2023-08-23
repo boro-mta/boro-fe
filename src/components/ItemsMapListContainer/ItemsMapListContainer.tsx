@@ -15,6 +15,7 @@ import { useNavigate } from "react-router";
 import { ICoordinate, ICoordinateRadius, IMarkerDetails } from "../../types";
 import { ListContainer } from "./ListContainer";
 import { getItemsByRadius } from "../../api/ItemService";
+import { IItemResponse } from "../../api/Models/IItemResponse";
 
 const ItemsMapListContainer = () => {
   const navigate = useNavigate();
@@ -66,12 +67,16 @@ const ItemsMapListContainer = () => {
           radiusInMeters: 20000,
         };
         let markers = await getItemsByRadius(coordinateToSearch);
-        if (Array.isArray(markers)) setLocationsAroundMe(markers);
+        if (Array.isArray(markers)) setLocationsAroundMe(markers as any);
       }
     };
 
     fetchAndSetMarkers();
   }, [myLocation]);
+
+  const handleSearchAreaClick = (items: IItemResponse[]) => {
+    setLocationsAroundMe(items as any);
+  };
 
   return (
     <>
@@ -93,7 +98,11 @@ const ItemsMapListContainer = () => {
         </div>
       ) : (
         <>
-          <Map myLocation={myLocation} locationsAroundMe={locationsAroundMe} />
+          <Map
+            myLocation={myLocation}
+            locationsAroundMe={locationsAroundMe}
+            onSearchAreaClick={handleSearchAreaClick}
+          />
           <ToggleButton
             endIcon={<FormatListBulletedIcon />}
             onClick={() => setToggle("List")}

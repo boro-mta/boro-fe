@@ -27,7 +27,7 @@ export const addItem = async (itemDetails: IInputItem) => {
 
 export const getItemsByRadius = async (coordinate: ICoordinateRadius) => {
   const endpoint = `Items/ByRadius?latitude=${coordinate.latitude}&longitude=${coordinate.longitude}&radiusInMeters=${coordinate.radiusInMeters}`;
-  const itemsInRadius = await requestAsync<IItemResponse>(
+  const itemsInRadius = await requestAsync<IItemResponse[]>(
     HttpOperation.GET,
     endpoint
   );
