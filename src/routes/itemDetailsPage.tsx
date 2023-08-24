@@ -106,8 +106,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-            getFormattedDate(loop) +
-            " is not available, please choose different dates."
+              getFormattedDate(loop) +
+              " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -336,11 +336,7 @@ const itemDetailsPage = (props: Props) => {
     <Container>
       <Card sx={{ marginBottom: "10px" }}>
         {itemDetails.images && (
-          <CardMedia component="div" style={{ height: "230px" }}>
-            <ImagesCarousel
-              images={formatImagesOnRecieve(itemDetails.images)}
-            />
-          </CardMedia>
+          <ImagesCarousel images={formatImagesOnRecieve(itemDetails.images)} />
         )}
       </Card>
       <Typography variant="h5">{itemDetails.title}</Typography>
@@ -357,8 +353,6 @@ const itemDetailsPage = (props: Props) => {
       </Typography>
 
       <Divider sx={{ marginTop: "10px", marginBottom: "5px" }} />
-
-
 
       <div>
         <Accordion expanded={expanded} onChange={handleExpandAccordion}>
@@ -548,8 +542,6 @@ const itemDetailsPage = (props: Props) => {
                     </Grid>
                   </Box>
                 </div>
-
-
 
                 {isValidDates === true && (
                   <Button
