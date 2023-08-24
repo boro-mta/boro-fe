@@ -12,19 +12,19 @@ const PlaceContainer = ({ place }: Props) => {
             {place === 1 && (
                 <img
                     className="place-img-data"
-                    src="\src\components\LeaderBoard\PlaceContainer\medal1.png"
+                    src="\src\components\LeaderBoard\PlaceContainer\medal11.png"
                 />
             )}
             {place === 2 && (
                 <img
                     className="place-img-data"
-                    src="\src\components\LeaderBoard\PlaceContainer\medal2.png"
+                    src="\src\components\LeaderBoard\PlaceContainer\medal22.png"
                 />
             )}
             {place === 3 && (
                 <img
                     className="place-img-data"
-                    src="\src\components\LeaderBoard\PlaceContainer\medal3.png"
+                    src="\src\components\LeaderBoard\PlaceContainer\medal33.png"
                 />
             )}
 

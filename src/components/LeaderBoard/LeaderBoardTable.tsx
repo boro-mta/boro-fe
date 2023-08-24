@@ -41,33 +41,61 @@ const LeaderBoardTable = ({ rows }: Props) => {
     return (
         <div className="leaderBoard-div" style={{ marginBottom: "10px" }}>
             <br />
-            <Typography variant="h6" gutterBottom style={{ margin: "10px 0px" }}>
-                Leader Board
-            </Typography>
+
+            <div className="header-img-data">
+                <img
+                    className="header-medal-img-data"
+                    src="\src\components\LeaderBoard\—Pngtree—vector award icon_3773685.png"
+                />
+                Leaderboard
+                <img
+                    className="header-medal-img-data"
+                    src="\src\components\LeaderBoard\—Pngtree—vector award icon_3773685.png"
+                />
+            </div>
 
             {rows.length > 0 && (
                 <TableContainer className="leaderBoard-table-container" component={Paper}>
                     <Table className="leaderBoard-table" aria-label="simple table">
-                        <TableHead className="leaderBoard-head-table">
-                            <TableRow>
-                                <TableCell>Place</TableCell>
+                        <TableHead>
+                            <TableRow >
+                                <TableCell>
+                                    <div style={{ display: "flex", marginLeft: "10px" }}>
+                                        Place
+                                    </div>
+                                </TableCell>
+
                                 <TableCell></TableCell>
-                                <TableCell>Name</TableCell>
-                                <TableCell> Items</TableCell>
                                 <TableCell>
-                                    <VolunteerActivismIcon />
-                                    Lends
+                                    <div style={{ display: "flex", marginLeft: "130px" }}>
+                                        Name
+                                    </div>
                                 </TableCell>
                                 <TableCell>
-                                    <AutoAwesomeIcon />
-                                    Borrows
+                                    <div style={{ display: "flex", marginLeft: "30px" }}>
+                                        Items
+                                    </div>
                                 </TableCell>
                                 <TableCell>
-                                    <img
-                                        className="points-img-data"
-                                        src="\src\components\PointsContainer\Star_icon_stylized.svg.png"
-                                    />
-                                    Total Points
+                                    <div style={{ display: "flex", marginRight: "10px" }}>
+                                        <VolunteerActivismIcon style={{ marginRight: "10px" }} />
+                                        Lends
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <div style={{ display: "flex", marginRight: "10px" }}>
+                                        <AutoAwesomeIcon style={{ marginRight: "10px" }} />
+                                        Borrows
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <div style={{ display: "flex", marginRight: "10px" }}>
+                                        <img
+                                            className="points-img-data"
+                                            src="\src\components\PointsContainer\Star_icon_stylized.svg.png"
+                                        />
+                                        Total Points
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         </TableHead>

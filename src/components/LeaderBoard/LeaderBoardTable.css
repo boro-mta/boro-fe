@@ -50,3 +50,16 @@
     width: 16x;
     padding: 4px;
 }
+
+.header-img-data {
+    display: flex;
+    font-size: 80px;
+    justify-content: center;
+    align-items: center;
+
+    .header-medal-img-data {
+        height: 100px;
+        width: 100x;
+        padding: 4px;
+    }
+}
