@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import React from "react";
 import { IUserItem } from "../../types";
 import Item from "../Item/Item";
@@ -19,24 +19,23 @@ const ItemsContainer = ({ containerTitle, items }: Props) => {
           {containerTitle}
         </Typography>
       </Box>
-      <Container
-        style={{
-          paddingLeft: 0,
-          display: "flex",
-          flexDirection: "row",
-          overflowX: "auto",
-        }}
+      <Grid
+        container
+        spacing={{ xs: 1, md: 1 }}
+        columns={{ xs: 1, sm: 8, md: 12 }}
       >
-        {items &&
-          items.length > 0 &&
-          items.map((item, i) => (
+        {items.map((item, i) => (
+          <Grid item xs={12} sm={4} md={4} key={i}>
             <Item
-              itemId={""} key={i}
-              imgID={(item.imageIds)}
+              itemId={""}
+              key={i}
+              imgID={item.imageIds}
               {...item}
-              onClick={() => navigate(`/item/${item.id}`)} />
-          ))}
-      </Container>
+              onClick={() => navigate(`/item/${item.id}`)}
+            />
+          </Grid>
+        ))}
+      </Grid>
     </Container>
   );
 };

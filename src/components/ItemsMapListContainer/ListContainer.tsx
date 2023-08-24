@@ -8,18 +8,12 @@ import { ICoordinate, IMarkerDetails, IUserItem } from "../../types";
 const buttonStyles = { width: "100%", margin: "10px 0" };
 
 interface ListContainerProps {
-  userName: string;
-  picture: string;
   navigate: any;
   userGuid: string;
   myLocation: ICoordinate;
   locationsAroundMe: IMarkerDetails[];
 }
-export const ListContainer = ({
-  userName,
-  picture,
-  locationsAroundMe,
-}: ListContainerProps) => {
+export const ListContainer = ({ locationsAroundMe }: ListContainerProps) => {
   const [itemsAroundMe, setItemsAroundMe] = useState<IUserItem[]>([]);
 
   useEffect(() => {
@@ -46,21 +40,11 @@ export const ListContainer = ({
   }, [locationsAroundMe]);
 
   return (
-    <>
-      <Typography variant="h4" gutterBottom sx={{ marginTop: "10px" }}>
-        Welcome, {userName}!
-      </Typography>
-      {picture && (
-        <Avatar component="div" style={{ height: "150px", width: "150px" }}>
-          <ImagesCarousel images={[picture]} />
-        </Avatar>
-      )}
-      <Box>
-        <ItemsContainer
-          containerTitle="Items Around Me 📍"
-          items={itemsAroundMe}
-        />
-      </Box>
-    </>
+    <Box>
+      <ItemsContainer
+        containerTitle="Items Around Me 📍"
+        items={itemsAroundMe}
+      />
+    </Box>
   );
 };

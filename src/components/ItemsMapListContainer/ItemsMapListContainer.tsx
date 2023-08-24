@@ -85,8 +85,6 @@ const ItemsMapListContainer = () => {
           <Container>
             <ListContainer
               navigate={navigate}
-              picture={picture}
-              userName={userName}
               userGuid={userGuid}
               myLocation={myLocation}
               locationsAroundMe={locationsAroundMe}
