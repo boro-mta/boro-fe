@@ -32,11 +32,7 @@ const Item = ({ itemId, title, imgID, onClick }: IProps) => {
   }, []);
 
   return (
-    <Box
-      style={{
-        minWidth: "300px",
-      }}
-    >
+    <Box style={{ minWidth: "300px" }}>
       <Card
         style={{
           margin: "10px",
