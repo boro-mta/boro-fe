@@ -24,7 +24,7 @@ import {
   AccordionDetails,
   AccordionSummary,
 } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { IUserDetails } from "../types";
@@ -46,11 +46,12 @@ import {
 } from "../api/ReservationService";
 import { getUserProfile } from "../api/UserService";
 import ILocationDetails from "../api/Models/ILocationDetails";
-import { libs } from "../utils/googleMapsUtils";
-import { useJsApiLoader } from "@react-google-maps/api";
+import { getReadableAddressAsync } from "../utils/locationUtils";
 import { IItemResponse } from "../api/Models/IItemResponse";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PointsContainer from "../components/PointsContainer/PointsContainer";
+import LocationLabel from "../components/LocationLabel/LocationLabel";
+import { useAppSelector } from "../app/hooks";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -59,11 +60,6 @@ type IFullItemDetailsParams = {
 type Props = {};
 
 const itemDetailsPage = (props: Props) => {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
-    libraries: libs,
-  });
-
   const navigate = useNavigate();
 
   const [itemDetails, setItemDetails] = useState<IItemResponse>({
@@ -177,25 +173,6 @@ const itemDetailsPage = (props: Props) => {
     return datesInStringArr;
   };
 
-  const getDatesInDateArr = (startDate: Date, endDate: Date): Date[] => {
-    let loop: Date = new Date(manageStartDate);
-    let datesInDateArr: Date[] = [];
-
-    while (loop <= manageEndDate) {
-      try {
-        console.log(loop);
-        datesInDateArr.push(loop);
-      } catch (e) {
-        console.log(e);
-      }
-
-      let newDate = loop.setDate(loop.getDate() + 1);
-      loop = new Date(newDate);
-    }
-
-    return datesInDateArr;
-  };
-
   const handleOpenModal = () => setOpen(true);
 
   const [openDialog, setOpennDialog] = React.useState(false);
@@ -205,10 +182,6 @@ const itemDetailsPage = (props: Props) => {
   };
 
   const handleClose = () => {
-    setOpennDialog(false);
-  };
-
-  const handleChange = () => {
     setOpennDialog(false);
   };
 
@@ -236,8 +209,7 @@ const itemDetailsPage = (props: Props) => {
       )) as IItemResponse;
       let serverLenderDetails: any;
 
-      const today: Date = new Date();
-      let toDate = new Date();
+      const toDate = new Date();
       toDate.setMonth(toDate.getMonth() + 3);
 
       const blockedDatesServer: Date[] = await getItemBlockedDates(
@@ -265,8 +237,11 @@ const itemDetailsPage = (props: Props) => {
           latitude: fullDetails.latitude,
           longitude: fullDetails.longitude,
         });
-        if (fullDetails.ownerId)
+
+        if (fullDetails.ownerId) {
           serverLenderDetails = await getUserProfile(fullDetails.ownerId);
+        }
+        
         setOwnerDetails(serverLenderDetails);
         if (
           serverLenderDetails &&
@@ -285,28 +260,22 @@ const itemDetailsPage = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    if (!isLoaded) {
-      return;
-    }
     const getItemAddress = async () => {
-      const geocoder = new google.maps.Geocoder();
       if (
         serverItemLocation &&
         serverItemLocation.latitude != 0 &&
         serverItemLocation.longitude != 0
       ) {
-        geocoder
-          .geocode({
-            location: { lat: itemDetails.latitude, lng: itemDetails.longitude },
-          })
-          .then((response) => {
-            setItemLocation(response.results[0].formatted_address);
-          });
+        const a = await getReadableAddressAsync({
+          latitude: serverItemLocation.latitude,
+          longitude: serverItemLocation.longitude,
+        });
+        setItemLocation(a);
       }
     };
 
     getItemAddress();
-  }, [isLoaded, serverItemLocation]);
+  }, [serverItemLocation]);
 
   const [expanded, setExpanded] = React.useState<boolean>(true);
 
@@ -332,13 +301,30 @@ const itemDetailsPage = (props: Props) => {
     scrollPageDown();
   }, [checked]);
 
+  const myCurrentLocation = useAppSelector(
+    (state) => state.user.currentAddress
+  );
+
   return (
     <Container>
       <Card sx={{ marginBottom: "10px" }}>
         {itemDetails.images && (
-          <ImagesCarousel images={formatImagesOnRecieve(itemDetails.images)} />
+          <CardMedia component="div" style={{ height: "230px" }}>
+            <ImagesCarousel
+              images={formatImagesOnRecieve(itemDetails.images)}
+            />
+          </CardMedia>
         )}
       </Card>
+      {itemDetails.latitude !== 0 && itemDetails.longitude !== 0 && (
+        <LocationLabel
+          itemLocation={{
+            latitude: itemDetails.latitude,
+            longitude: itemDetails.longitude,
+          }}
+          userLocation={myCurrentLocation}
+        />
+      )}
       <Typography variant="h5">{itemDetails.title}</Typography>
       {!isOwner && (
         <div>

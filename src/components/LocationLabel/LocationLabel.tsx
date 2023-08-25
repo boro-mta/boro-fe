@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { ICoordinate } from "../../types";
 import {
   getRadiusBetweenTwoPoints,
-  getReadableAddress,
-} from "../../utils/googleMapsUtils";
+  getReadableAddressAsync,
+} from "../../utils/locationUtils";
+import { Box, Typography } from "@mui/material";
+import PlaceIcon from "@mui/icons-material/Place";
 
 type Props = {
   itemLocation: ICoordinate;
@@ -11,57 +13,72 @@ type Props = {
 };
 
 const LocationLabel = ({ itemLocation, userLocation }: Props) => {
-  const [address, setAddress] = useState<string>("");
-  const [radius, setRadius] = useState(-1);
   const [distanceString, setDistanceString] = useState<string>("");
-  const [locationsValid, setLocationsValid] = useState<{
-    item: boolean;
-    user: boolean;
-  }>({
-    item: false,
-    user: false,
-  });
+  const [addressString, setAddressString] = useState<string>("");
+  const [finalLabel, setFinalLabel] = useState<string>("");
 
-  useEffect(() => {
-    const validItemLocation =
-      itemLocation.latitude !== 0 && itemLocation.longitude !== 0;
-    const validUserLocation =
-      userLocation.latitude !== 0 && userLocation.longitude !== 0;
+  const fetchAddress = async () => {
+    const address = await getReadableAddressAsync(itemLocation);
 
-    setLocationsValid({ user: validUserLocation, item: validItemLocation });
-  });
-
-  useEffect(() => {
-    getReadableAddress(itemLocation, (a) => {
-      if (a && a !== "") {
-        setAddress(a);
-      }
-    });
-
-    const r =
-      locationsValid.item && locationsValid.user
-        ? getRadiusBetweenTwoPoints(itemLocation, userLocation)
-        : -1;
-
-    setRadius(r);
-  }, [locationsValid]);
-
-  useEffect(() => {
-    let dString;
-    if (address !== "" && radius > -1) {
-      const unit = radius < 1000 ? "meters" : "km";
-      const distance = radius < 1000 ? radius : radius / 1000.0;
-      dString = `${address} - ${distance.toFixed(2)} ${unit} away from you`;
-    } else if (address !== "") {
-      dString = address;
-    } else {
-      dString = "";
+    if (address.trim().length > 0) {
+      setAddressString(address);
     }
+  };
 
-    setDistanceString(dString);
-  }, [address, radius]);
+  const fetchDistance = () => {
+    const radius = getRadiusBetweenTwoPoints(itemLocation, userLocation);
+    const unit = radius < 1000 ? "meters" : "km";
+    const distance = radius < 1000 ? radius : radius / 1000.0;
+    setDistanceString(`${distance.toFixed(2)} ${unit} away`);
+  };
 
-  return distanceString !== "" && <p>{distanceString}</p>;
+  useEffect(() => {
+    const itemLocationValid =
+      itemLocation.latitude !== 0 && itemLocation.longitude !== 0;
+
+    if (itemLocationValid) {
+      const userLocationValid =
+        userLocation.latitude !== 0 && userLocation.longitude !== 0;
+
+      fetchAddress();
+      if (userLocationValid) {
+        fetchDistance();
+      }
+    }
+  }, [itemLocation.latitude !== 0 && itemLocation.longitude !== 0]);
+
+  useEffect(() => {
+    const generateFinalLabel = () => {
+      let final = addressString !== "" ? addressString : "";
+
+      if (final !== "" && distanceString !== "") {
+        final += ` (${distanceString})`;
+      } else if (distanceString !== "") {
+        final = distanceString;
+      }
+      setFinalLabel(final);
+    };
+
+    if (addressString !== "" || distanceString !== "") {
+      generateFinalLabel();
+    }
+  }, [addressString !== "", distanceString !== ""]);
+
+  if (itemLocation.latitude !== 0 && itemLocation.longitude !== 0) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <PlaceIcon />
+        <Typography>{finalLabel}</Typography>
+      </Box>
+    );
+  } else {
+    return null;
+  }
 };
 
 export default LocationLabel;

@@ -41,6 +41,7 @@ import AddressField from "../components/AddressFieldComponent/AddressField";
 import { IItemResponse } from "../api/Models/IItemResponse";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { libs } from "../utils/googleMapsUtils";
+import { getReadableAddressAsync } from "../utils/locationUtils";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -220,17 +221,6 @@ const EditItemPage = (props: Props) => {
     return imagesForBody;
   };
 
-  const convertFromImageStringToImageBase64 = (
-    imageString: string
-  ): IInputImage => {
-    const imgProps = imageString.split(",");
-
-    return {
-      base64ImageData: imgProps[1],
-      base64ImageMetaData: imgProps[0],
-    };
-  };
-
   const onEditItem = () => {
     const forRequest: IInputItem = {
       condition,
@@ -383,18 +373,21 @@ const EditItemPage = (props: Props) => {
     if (!isLoaded) {
       return;
     }
-
-    const geocoder = new google.maps.Geocoder();
-    if (itemDetails.latitude && itemDetails.longitude) {
-      geocoder
-        .geocode({
-          location: { lat: itemDetails.latitude, lng: itemDetails.longitude },
-        })
-        .then((response) => {
-          setItemAddress(response.results[0].formatted_address);
+    const getItemAddress = async () => {
+      if (
+        itemDetails &&
+        itemDetails.latitude != 0 &&
+        itemDetails.longitude != 0
+      ) {
+        const a = await getReadableAddressAsync({
+          latitude: itemDetails.latitude,
+          longitude: itemDetails.longitude,
         });
-    }
-  }, [itemDetails, isLoaded]);
+        setItemAddress(a);
+      }
+    };
+    getItemAddress();
+  }, [isLoaded, itemDetails]);
 
   return (
     <Container>
