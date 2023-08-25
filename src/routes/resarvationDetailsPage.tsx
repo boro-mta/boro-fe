@@ -34,8 +34,8 @@ type IReservationDetailsParams = {
   reservationId: string;
 };
 
-import ChatIcon from "@mui/icons-material/Chat";
-import { startChat } from "../api/ChatService";
+import PointsContainer from "../components/PointsContainer/PointsContainer";
+import ContactUserButton from "../components/Chat/ContactUserButton";
 
 type Props = {};
 
@@ -199,19 +199,6 @@ const ReservationDetailsPage = (props: Props) => {
     }
   };
 
-  const handleStartChat = () => {
-    const openNewChat = async () => {
-      await startChat(
-        relevantPersonId,
-        isLender
-          ? `I saw you have requested to book my item. Let's chat.`
-          : `I have a question about ${itemDetails.title}.`
-      );
-    };
-    openNewChat();
-    navigate("/chat");
-  };
-
   return (
     <Container>
       <Typography component={"span"} variant="h3">
@@ -268,6 +255,14 @@ const ReservationDetailsPage = (props: Props) => {
                 <Typography gutterBottom variant="h5" component="div">
                   {itemDetails.title}
                 </Typography>
+                {isLender && (
+                  <Grid item>
+                    <PointsContainer
+                      title={"Earn 300 points by lending this item "}
+                      points={500}
+                    />
+                  </Grid>
+                )}
                 <Typography variant="body2" gutterBottom>
                   {itemDetails.description}
                 </Typography>
@@ -338,12 +333,15 @@ const ReservationDetailsPage = (props: Props) => {
                         }
                         partyId={relevantPersonDetails.userId}
                       />
-                      <Box
-                        onClick={handleStartChat}
-                        sx={{ marginLeft: "10px", cursor: "pointer" }}
-                      >
-                        <ChatIcon />
-                      </Box>
+                      <ContactUserButton
+                        templateMessage={
+                          isLender
+                            ? `I saw you have requested to book my item. Let's chat.`
+                            : `I have a question about ${itemDetails.title}.`
+                        }
+                        recepientUserId={relevantPersonId}
+                        afterSendHandler={() => navigate("/chat")}
+                      />
                     </div>
                   )}
               </Grid>

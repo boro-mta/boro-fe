@@ -36,6 +36,7 @@ import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import AddressField from "../components/AddressFieldComponent/AddressField";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { libs } from "../utils/googleMapsUtils";
+import { getReadableAddressAsync } from "../utils/locationUtils";
 
 type IUserDetailsParams = {
   userId: string;
@@ -242,27 +243,22 @@ const UserEditPage = (props: Props) => {
     }
   };
 
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
-    libraries: libs,
-  });
-
   useEffect(() => {
-    if (!isLoaded) {
-      return;
-    }
-
-    const geocoder = new google.maps.Geocoder();
-    if (userDetails.latitude != 0 && userDetails.longitude != 0) {
-      geocoder
-        .geocode({
-          location: { lat: userDetails.latitude, lng: userDetails.longitude },
-        })
-        .then((response) => {
-          setUserAddressString(response.results[0].formatted_address);
+    const getItemAddress = async () => {
+      if (
+        userDetails &&
+        userDetails.latitude != 0 &&
+        userDetails.longitude != 0
+      ) {
+        const a = await getReadableAddressAsync({
+          latitude: userDetails.latitude,
+          longitude: userDetails.longitude,
         });
-    }
-  }, [userDetails.latitude != 0, isLoaded]);
+        setUserAddressString(a);
+      }
+    };
+    getItemAddress();
+  }, [userDetails.latitude != 0]);
 
   return (
     <Container>

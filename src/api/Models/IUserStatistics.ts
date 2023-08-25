@@ -1,7 +1,7 @@
 export default interface IUserStatistics {
   userId: string;
-  amountOfItems: Number;
-  amountOfLendings: Number;
-  amountOfBorrowings: Number;
-  totalScore: Number;
+  amountOfItems: number;
+  amountOfLendings: number;
+  amountOfBorrowings: number;
+  totalScore: number;
 }

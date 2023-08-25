@@ -12,13 +12,14 @@ import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { IInputImage, IUserDetails, IUserItem } from "../types";
 import { allUserDetails } from "../mocks/userDetails";
 import ItemsContainer from "../components/ItemsContainer/ItemsContainer";
-import { getUserProfile } from "../api/UserService";
+import { getUserProfile, getUserStatistics } from "../api/UserService";
 import { getCurrentUserId } from "../utils/authUtils";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
-import ChatIcon from "@mui/icons-material/Chat";
-import { startChat } from "../api/ChatService";
 import { getUserItems } from "../api/ItemService";
 import { useAppSelector } from "../app/hooks";
+import PointsContainer from "../components/PointsContainer/PointsContainer";
+import IUserStatistics from "../api/Models/IUserStatistics";
+import ContactUserButton from "../components/Chat/ContactUserButton";
 
 type Props = {};
 
@@ -26,6 +27,9 @@ const userPage = (props: Props) => {
   const [userDetails, setUserDetails] = useState<IUserDetails>(
     allUserDetails[3]
   );
+
+  const [userPoints, setUserPoints] = useState<number>(-1);
+  const [userStats, setUserStats] = useState<IUserStatistics>();
 
   const [userItems, setUserItems] = useState<IUserItem[]>([]);
 
@@ -88,6 +92,9 @@ const userPage = (props: Props) => {
       }
 
       setUserDetails(userDetails);
+
+      const serverUserStats: IUserStatistics = await getUserStatistics(userId);
+      setUserStats(serverUserStats);
     } catch (error) {
       console.error(error);
     }
@@ -98,9 +105,34 @@ const userPage = (props: Props) => {
       setUserProfilePicture(currUserProfilePicture);
     }
   }, [currUserProfilePicture]);
+
   useEffect(() => {
     getUserDetails();
   }, [userId]);
+
+  useEffect(() => {
+    if (!userStats) {
+      return;
+    }
+
+    setUserPoints(calculateUserPoints(userStats));
+  }, [userStats]);
+
+  const calculateUserPoints = (userStats: IUserStatistics): number => {
+    let points: number = 0;
+
+    if (
+      userStats.amountOfBorrowings != 0 ||
+      userStats.amountOfItems != 0 ||
+      userStats.amountOfBorrowings != 0
+    ) {
+      points += userStats.amountOfItems * 100;
+      points += userStats.amountOfLendings * 500;
+      points += userStats.amountOfBorrowings * 300;
+    }
+
+    return points;
+  };
 
   const formatDate = (date: string) => {
     const formattedDate = new Date(date).toLocaleDateString("en-US", {
@@ -109,14 +141,6 @@ const userPage = (props: Props) => {
       day: "numeric",
     });
     return formattedDate;
-  };
-
-  const handleStartChat = () => {
-    const openNewChat = async () => {
-      await startChat(userId, "Hi! I have a general question.");
-    };
-    openNewChat();
-    navigate("/chat");
   };
 
   return (
@@ -134,16 +158,18 @@ const userPage = (props: Props) => {
             </Avatar>
           }
         </Grid>
+
         <Grid item>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Typography variant="h5">
               {"Hi! I am " + userDetails.firstName + " " + userDetails.lastName}{" "}
             </Typography>
-            <Box
-              onClick={handleStartChat}
-              sx={{ marginLeft: "10px", cursor: "pointer" }}
-            >
-              <ChatIcon />
+            <Box sx={{ marginLeft: "10px", cursor: "pointer" }}>
+              <ContactUserButton
+                templateMessage={"Hi! I have a general question."}
+                recepientUserId={userId}
+                afterSendHandler={() => navigate("/chat")}
+              />
             </Box>
           </div>
           <Typography
@@ -164,6 +190,12 @@ const userPage = (props: Props) => {
           )}
         </Grid>
       </Grid>
+      <br />
+      {userPoints !== -1 && (
+        <Grid item>
+          <PointsContainer title={"Points: "} points={userPoints} />
+        </Grid>
+      )}
       <br />
       <Typography variant="h5">{"About:"}</Typography>
       <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
