@@ -20,6 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { libs } from "../../utils/googleMapsUtils";
 import { IItemResponse } from "../../api/Models/IItemResponse";
+import { getRadiusBetweenTwoPoints } from "../../utils/locationUtils";
 
 type Props = {
   myLocation: ICoordinate;
@@ -154,9 +155,9 @@ const Map = memo(
           const bounds = map.getBounds();
           if (bounds) {
             const ne = bounds.getNorthEast();
-            radius = google.maps.geometry.spherical.computeDistanceBetween(
-              c,
-              ne
+            radius = getRadiusBetweenTwoPoints(
+              { latitude: c.lat(), longitude: c.lng() },
+              { latitude: ne.lat(), longitude: ne.lng() }
             );
           }
         }

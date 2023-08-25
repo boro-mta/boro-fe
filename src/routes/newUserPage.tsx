@@ -24,6 +24,7 @@ import AddressField from "../components/AddressFieldComponent/AddressField";
 import ILocationDetails from "../api/Models/ILocationDetails";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { libs } from "../utils/googleMapsUtils";
+import { getReadableAddressAsync } from "../utils/locationUtils";
 
 type Props = {};
 
@@ -214,18 +215,16 @@ const NewUserPage = (props: Props) => {
     if (!isLoaded) {
       return;
     }
-
-    const geocoder = new google.maps.Geocoder();
-
-    if (myLocation && myLocation.latitude != 0 && myLocation.longitude) {
-      geocoder
-        .geocode({
-          location: { lat: myLocation.latitude, lng: myLocation.longitude },
-        })
-        .then((response) => {
-          setCurrentLocationString(response.results[0].formatted_address);
+    const getItemAddress = async () => {
+      if (myLocation && myLocation.latitude != 0 && myLocation.longitude != 0) {
+        const a = await getReadableAddressAsync({
+          latitude: myLocation.latitude,
+          longitude: myLocation.longitude,
         });
-    }
+        setCurrentLocationString(a);
+      }
+    };
+    getItemAddress();
   }, [isLoaded, myLocation]);
 
   return (

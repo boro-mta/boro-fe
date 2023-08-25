@@ -50,6 +50,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 type Props = {};
 
 import * as yup from "yup";
+import { getReadableAddressAsync } from "../utils/locationUtils";
 
 interface FormValues {
   title: string;
@@ -360,18 +361,22 @@ const addItemPage = (props: Props) => {
     if (!isLoaded) {
       return;
     }
-
-    const geocoder = new google.maps.Geocoder();
-    if (homeAddress.latitude && homeAddress.longitude) {
-      geocoder
-        .geocode({
-          location: { lat: homeAddress.latitude, lng: homeAddress.longitude },
-        })
-        .then((response) => {
-          setItemInitialAddress(response.results[0].formatted_address);
+    const getItemAddress = async () => {
+      if (
+        homeAddress &&
+        homeAddress.latitude != 0 &&
+        homeAddress.longitude != 0
+      ) {
+        const a = await getReadableAddressAsync({
+          latitude: homeAddress.latitude,
+          longitude: homeAddress.longitude,
         });
-    }
-  }, [homeAddress, isLoaded]);
+        setItemInitialAddress(a);
+      }
+    };
+
+    getItemAddress();
+  }, [isLoaded, homeAddress]);
 
   return (
     <Container>
