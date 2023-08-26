@@ -5,6 +5,11 @@ import {
   Grid,
   Typography,
   Button,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Divider,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +25,7 @@ import { useAppSelector } from "../app/hooks";
 import PointsContainer from "../components/PointsContainer/PointsContainer";
 import IUserStatistics from "../api/Models/IUserStatistics";
 import ContactUserButton from "../components/Chat/ContactUserButton";
+import { BorderAll } from "@mui/icons-material";
 
 type Props = {};
 
@@ -145,40 +151,39 @@ const userPage = (props: Props) => {
 
   return (
     <Container>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item>
-          {
-            <Avatar component="div" style={{ height: "150px", width: "150px" }}>
-              <ImagesCarousel
-                images={[
-                  userProfilePicture ||
-                    "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png",
-                ]}
-              />
-            </Avatar>
-          }
-        </Grid>
+      <Card sx={{ maxWidth: 345, boxShadow: '-5px 4px 10px rgba(0, 10, 0, 0.2)', border: '1px solid lightgray' }}>
+        <CardContent style={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar component="div" style={{ height: "150px", width: "150px", marginRight: '20px' }}>
+            <ImagesCarousel
+              images={[
+                userProfilePicture ||
+                "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png",
+              ]}
+            />
+          </Avatar>
 
-        <Grid item>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div>
             <Typography variant="h5">
-              {"Hi! I am " + userDetails.firstName + " " + userDetails.lastName}{" "}
+              {userDetails.firstName + " " + userDetails.lastName}{" "}
             </Typography>
-            <Box sx={{ marginLeft: "10px", cursor: "pointer" }}>
-              <ContactUserButton
-                templateMessage={"Hi! I have a general question."}
-                recepientUserId={userId}
-                afterSendHandler={() => navigate("/chat")}
-              />
-            </Box>
+            <Typography
+              variant="subtitle2"
+              style={{ color: "gray" }}
+              gutterBottom
+            >
+              {"A Boro friend since: " + formatDate(userDetails.dateJoined)}
+            </Typography>
+            <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
+              {userDetails.about}
+            </Typography>
           </div>
-          <Typography
-            variant="subtitle2"
-            style={{ color: "gray" }}
-            gutterBottom
-          >
-            {"A Boro friend since: " + formatDate(userDetails.dateJoined)}
-          </Typography>
+        </CardContent>
+        <CardActions>
+          <ContactUserButton
+            templateMessage={"Hi! I have a general question."}
+            recepientUserId={userId}
+            afterSendHandler={() => navigate("/chat")}
+          />
           {!isOwner && (
             <Button
               variant="outlined"
@@ -188,6 +193,12 @@ const userPage = (props: Props) => {
               Edit Profile
             </Button>
           )}
+        </CardActions>
+      </Card>
+      <br />
+      <Divider />
+      <Grid container spacing={2} alignItems="center">
+        <Grid item>
         </Grid>
       </Grid>
       <br />
@@ -196,12 +207,6 @@ const userPage = (props: Props) => {
           <PointsContainer title={"Points: "} points={userPoints} />
         </Grid>
       )}
-      <br />
-      <Typography variant="h5">{"About:"}</Typography>
-      <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
-        {userDetails.about}
-      </Typography>
-      <br />
       <Box>
         <ItemsContainer
           containerTitle={userDetails.firstName + " 's items"}
@@ -210,6 +215,6 @@ const userPage = (props: Props) => {
       </Box>
     </Container>
   );
-};
 
+}
 export default userPage;
