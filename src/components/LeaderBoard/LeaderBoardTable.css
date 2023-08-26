@@ -54,7 +54,8 @@
 .header-img-data {
     display: flex;
     font-size: 80px;
-    align-items: center;
+    align-content: center;
+    justify-content: center;
 
     .header-medal-img-data {
         height: 100px;

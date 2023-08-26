@@ -20,6 +20,7 @@ import { isCurrentUser } from "../../utils/authUtils";
 import DetailsContainer from "./DetailsContainer/DetailsContainer";
 import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { Box, Container } from "@mui/system";
 
 type Props = {
     rows: ILeaderBoardRow[];
@@ -38,9 +39,9 @@ const LeaderBoardTable = ({ rows }: Props) => {
     }
 
     return (
-        <div>
+        <Container>
             <TableContainer component={Paper} className="leaderBoard-table-container">
-                <div className="header-img-data" style={{ marginLeft: "350px" }}>
+                <Box className="header-img-data">
                     <img
                         className="header-medal-img-data"
                         src="\src\components\LeaderBoard\—Pngtree—vector award icon_3773685.png"
@@ -50,7 +51,8 @@ const LeaderBoardTable = ({ rows }: Props) => {
                         className="header-medal-img-data"
                         src="\src\components\LeaderBoard\—Pngtree—vector award icon_3773685.png"
                     />
-                </div>
+                </Box>
+
                 <Table sx={{ minWidth: 650 }} aria-label="simple table" className="leaderBoard-table">
                     <TableHead>
                         <TableRow>
@@ -136,7 +138,7 @@ const LeaderBoardTable = ({ rows }: Props) => {
                 </Table>
             </TableContainer>
 
-        </div>
+        </Container>
     );
 };
 
