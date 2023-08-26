@@ -34,6 +34,7 @@ import { addReservationRequest } from "../api/ReservationService";
 import { tableCellClasses } from "@mui/material/TableCell";
 
 import { startChat } from "../api/ChatService";
+import DateRangeSummary from "../components/DateRangeSummary/DateRangeSummary";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -240,27 +241,7 @@ const RequestToBookPage = (props: Props) => {
           </div>
         </div>
       )}
-
-      {itemDetails.title != "" && (
-        <TableContainer
-          component={Paper}
-          sx={{ marginTop: "20px", marginBottom: "20px" }}
-        >
-          <Table aria-label="customized table">
-            <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.key}>
-                  <StyledTableCell component="th" scope="row">
-                    {row.key}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">{row.value}</StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-
+      <DateRangeSummary startDate={requestStartDate} endDate={requestEndDate} />
       <div
         style={{
           display: "flex",

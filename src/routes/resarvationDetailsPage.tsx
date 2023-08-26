@@ -36,6 +36,7 @@ type IReservationDetailsParams = {
 
 import PointsContainer from "../components/PointsContainer/PointsContainer";
 import ContactUserButton from "../components/Chat/ContactUserButton";
+import DateRangeSummary from "../components/DateRangeSummary/DateRangeSummary";
 
 type Props = {};
 
@@ -272,21 +273,10 @@ const ReservationDetailsPage = (props: Props) => {
                 </Typography>
 
                 {reservationDetails.startDate && reservationDetails.endDate && (
-                  <Typography variant="body2">
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-around",
-                      }}
-                    >
-                      <DateContainer
-                        date={new Date(reservationDetails.startDate)}
-                      />
-                      <DateContainer
-                        date={new Date(reservationDetails.endDate)}
-                      />
-                    </div>
-                  </Typography>
+                  <DateRangeSummary
+                    startDate={new Date(reservationDetails.startDate)}
+                    endDate={new Date(reservationDetails.endDate)}
+                  />
                 )}
                 <Typography variant="body2" gutterBottom>
                   {""}
