@@ -239,7 +239,7 @@ const userPage = (props: Props) => {
       <br />
       <Box>
         <ItemsContainer
-          containerTitle={userDetails.firstName + " 's items"}
+          containerTitle={userDetails.firstName + "'s items"}
           items={userItems}
         />
       </Box>
