@@ -17,6 +17,7 @@ import { getUserProfile } from "../../api/UserService";
 import { getCurrentUserId } from "../../utils/authUtils";
 import AppBarMenu from "./AppBarMenu/AppBarMenu";
 import * as Styles from "./Appbar.style";
+import SearchBar from "../SearchBar/SearchBar";
 
 function ResponsiveAppBar() {
   const userName = useAppSelector((state) => state.user.name);
@@ -76,6 +77,13 @@ function ResponsiveAppBar() {
               </a>
             </Box>
           </Box>
+
+          <Box sx={{ flex: 1 }} /> {/* Flexible space to push the search bar to the middle */}
+
+          <Box>
+            <SearchBar />
+          </Box>
+
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton
@@ -117,6 +125,6 @@ function ResponsiveAppBar() {
       </Container>
     </AppBar>
   );
-
 }
+
 export default React.memo(ResponsiveAppBar);
