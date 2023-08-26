@@ -38,5 +38,27 @@
 
 .leaderBoard-table-row-container {
     border: 5px solid rgb(172, 241, 241);
-    /* background-color: blue; */
+}
+
+.my-row {
+    background-color: rgb(248, 198, 123);
+}
+
+.points-img-data {
+    border-radius: 50%;
+    height: 16px;
+    width: 16x;
+    padding: 4px;
+}
+
+.header-img-data {
+    display: flex;
+    font-size: 80px;
+    align-items: center;
+
+    .header-medal-img-data {
+        height: 100px;
+        width: 100x;
+        padding: 4px;
+    }
 }

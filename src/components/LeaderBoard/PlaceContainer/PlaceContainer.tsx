@@ -9,7 +9,28 @@ type Props = {
 const PlaceContainer = ({ place }: Props) => {
     return (
         <div className="place-container">
-            <Typography className="place-item">{place}</Typography>
+            {place === 1 && (
+                <img
+                    className="place-img-data"
+                    src="\src\components\LeaderBoard\PlaceContainer\medal11.png"
+                />
+            )}
+            {place === 2 && (
+                <img
+                    className="place-img-data"
+                    src="\src\components\LeaderBoard\PlaceContainer\medal22.png"
+                />
+            )}
+            {place === 3 && (
+                <img
+                    className="place-img-data"
+                    src="\src\components\LeaderBoard\PlaceContainer\medal33.png"
+                />
+            )}
+
+            {place >= 4 && (
+                <Typography className="place-item">{place}</Typography>
+            )}
         </div>
     );
 };

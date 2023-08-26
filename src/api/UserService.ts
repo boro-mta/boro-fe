@@ -78,9 +78,7 @@ export const getUserStatistics = async (
   )) as IUserStatistics;
 };
 
-export const getTop10Statistics = async (
-  userId: string
-): Promise<IUserStatistics[]> => {
+export const getTop10Statistics = async (): Promise<IUserStatistics[]> => {
   const endpoint = `Users/Leaderboard`;
   return (await requestAsync<IUserStatistics[]>(
     HttpOperation.GET,
