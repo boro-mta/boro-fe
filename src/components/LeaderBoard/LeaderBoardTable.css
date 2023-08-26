@@ -54,7 +54,6 @@
 .header-img-data {
     display: flex;
     font-size: 80px;
-    justify-content: center;
     align-items: center;
 
     .header-medal-img-data {

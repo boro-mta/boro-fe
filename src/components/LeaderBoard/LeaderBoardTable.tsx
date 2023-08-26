@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import {
     Table,
@@ -8,7 +8,6 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Typography,
 } from "@mui/material";
 
 import { useNavigate } from "react-router";
@@ -39,75 +38,70 @@ const LeaderBoardTable = ({ rows }: Props) => {
     }
 
     return (
-        <div className="leaderBoard-div" style={{ marginBottom: "10px" }}>
-            <br />
+        <div>
+            <TableContainer component={Paper} className="leaderBoard-table-container">
+                <div className="header-img-data" style={{ marginLeft: "350px" }}>
+                    <img
+                        className="header-medal-img-data"
+                        src="\src\components\LeaderBoard\—Pngtree—vector award icon_3773685.png"
+                    />
+                    Leaderboard
+                    <img
+                        className="header-medal-img-data"
+                        src="\src\components\LeaderBoard\—Pngtree—vector award icon_3773685.png"
+                    />
+                </div>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table" className="leaderBoard-table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>
+                                <div style={{ display: "flex", marginLeft: "10px" }}>
+                                    Place
+                                </div>
+                            </TableCell>
+                            <TableCell align="right"></TableCell>
+                            <TableCell align="right">
+                                <div style={{ display: "flex", marginLeft: "130px" }}>
+                                    Name
+                                </div>
+                            </TableCell>
+                            <TableCell align="right">
+                                <div style={{ display: "flex", marginLeft: "30px" }}>
+                                    Items
+                                </div>
+                            </TableCell>
+                            <TableCell align="right">
+                                <div style={{ display: "flex", marginRight: "10px" }}>
+                                    <VolunteerActivismIcon style={{ marginRight: "10px" }} />
+                                    Lends
+                                </div>
+                            </TableCell>
+                            <TableCell align="right">
+                                <div style={{ display: "flex", marginRight: "10px" }}>
+                                    <AutoAwesomeIcon style={{ marginRight: "10px" }} />
+                                    Borrows
+                                </div>
+                            </TableCell>
+                            <TableCell align="right">
+                                <div style={{ display: "flex", marginRight: "10px" }}>
+                                    <img
+                                        className="points-img-data"
+                                        src="\src\components\PointsContainer\Star_icon_stylized.svg.png"
+                                    />
+                                    Total Points
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
 
-            <div className="header-img-data">
-                <img
-                    className="header-medal-img-data"
-                    src="\src\components\LeaderBoard\—Pngtree—vector award icon_3773685.png"
-                />
-                Leaderboard
-                <img
-                    className="header-medal-img-data"
-                    src="\src\components\LeaderBoard\—Pngtree—vector award icon_3773685.png"
-                />
-            </div>
-
-            {rows.length > 0 && (
-                <TableContainer className="leaderBoard-table-container" component={Paper}>
-                    <Table className="leaderBoard-table" aria-label="simple table">
-                        <TableHead>
-                            <TableRow >
-                                <TableCell>
-                                    <div style={{ display: "flex", marginLeft: "10px" }}>
-                                        Place
-                                    </div>
-                                </TableCell>
-
-                                <TableCell></TableCell>
-                                <TableCell>
-                                    <div style={{ display: "flex", marginLeft: "130px" }}>
-                                        Name
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div style={{ display: "flex", marginLeft: "30px" }}>
-                                        Items
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div style={{ display: "flex", marginRight: "10px" }}>
-                                        <VolunteerActivismIcon style={{ marginRight: "10px" }} />
-                                        Lends
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div style={{ display: "flex", marginRight: "10px" }}>
-                                        <AutoAwesomeIcon style={{ marginRight: "10px" }} />
-                                        Borrows
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div style={{ display: "flex", marginRight: "10px" }}>
-                                        <img
-                                            className="points-img-data"
-                                            src="\src\components\PointsContainer\Star_icon_stylized.svg.png"
-                                        />
-                                        Total Points
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-
-
+                    {rows.length > 0 && (
                         <TableBody className="table-body-container">
                             {rows.map((row, i) => (
                                 <TableRow className={getRowClassName(row.userId)} key={i}>
-                                    <TableCell>
+                                    <TableCell component="th" scope="row">
                                         <PlaceContainer place={i + 1} />
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell align="center">
                                         <div className="leaderBoard-img-container">
                                             <img
                                                 className="leaderBoard-img-data"
@@ -120,27 +114,28 @@ const LeaderBoardTable = ({ rows }: Props) => {
                                         </div>
 
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell align="center">
                                         <NameContainer name={row.userFullName} />
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell align="center">
                                         <DetailsContainer details={row.amountOfItems} />
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell align="center">
                                         <DetailsContainer details={row.amountOfBorrowings} />
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell align="center">
                                         <DetailsContainer details={row.amountOfLendings} />
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell align="center">
                                         <ScoreContainer score={row.score} />
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
-                    </Table>
-                </TableContainer>
-            )}
+                    )}
+                </Table>
+            </TableContainer>
+
         </div>
     );
 };
