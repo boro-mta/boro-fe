@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { ArrowForward as ArrowForwardIcon } from "@mui/icons-material";
 import DateContainer from "../../../components/DateContainer/DateContainer";
-import MinimizedUserDetails from "../MinimizedUserDetails/MinimizedUserDetails";
+import MinimizedUserDetails from "../../MinimizedUserDetails/MinimizedUserDetails";
 import MinimizedItemDetails from "../MinimizedItemDetails/MinimizedItemDetails";
 import { ReservationStatus } from "../../../utils/reservationsUtils";
 import { useNavigate } from "react-router";
@@ -80,9 +80,9 @@ const DashboardTableSection = ({ sectionTitle, rows }: Props) => {
                   </TableCell>
                   <TableCell>
                     <MinimizedUserDetails
-                      fullName={row.partyName}
-                      profileImg={row.partyImg}
-                      partyId={row.partyId}
+                      userFullName={row.partyName}
+                      profilePictureData={row.partyImg}
+                      userId={row.partyId}
                     />
                   </TableCell>
                   <TableCell>

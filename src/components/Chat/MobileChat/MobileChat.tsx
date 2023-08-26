@@ -1,6 +1,6 @@
 import { Channel, ChannelList } from "@sendbird/uikit-react";
 import React from "react";
-import MinimizedUserDetails from "../../Dashboard/MinimizedUserDetails/MinimizedUserDetails";
+import MinimizedUserDetails from "../../MinimizedUserDetails/MinimizedUserDetails";
 import { IMinifiedUserDetails } from "../Chat";
 import { GroupChannel } from "@sendbird/chat/groupChannel";
 import { useNavigate, useParams } from "react-router";

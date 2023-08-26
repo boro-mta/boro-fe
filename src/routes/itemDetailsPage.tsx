@@ -36,7 +36,7 @@ import {
 } from "../utils/calendarUtils";
 import ErrorIcon from "@mui/icons-material/Error";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import { isCurrentUser } from "../utils/authUtils";
+import { isCurrentUser, isLoggedIn } from "../utils/authUtils";
 import { Row } from "../components/ItemDetailsTable/ItemDetailsTable";
 import { getItem } from "../api/ItemService";
 import {
@@ -52,6 +52,9 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PointsContainer from "../components/PointsContainer/PointsContainer";
 import LocationLabel from "../components/LocationLabel/LocationLabel";
 import { useAppSelector } from "../app/hooks";
+import MinimizedUserDetails from "../components/MinimizedUserDetails/MinimizedUserDetails";
+import IUserProfile from "../api/Models/IUserProfile";
+import ContactUserButton from "../components/Chat/ContactUserButton";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -190,7 +193,7 @@ const itemDetailsPage = (props: Props) => {
   }));
 
   const [dense, setDense] = React.useState(false);
-  const [ownerDetails, setOwnerDetails] = useState<IUserDetails>();
+  const [ownerDetails, setOwnerDetails] = useState<IUserProfile>();
   const [ownerFullName, setOwnerFullName] = useState<string>("");
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [serverItemLocation, setServerItemLocation] = useState<
@@ -207,7 +210,6 @@ const itemDetailsPage = (props: Props) => {
       const fullDetails: IItemResponse = (await getItem(
         itemId
       )) as IItemResponse;
-      let serverLenderDetails: any;
 
       const toDate = new Date();
       toDate.setMonth(toDate.getMonth() + 3);
@@ -239,19 +241,19 @@ const itemDetailsPage = (props: Props) => {
         });
 
         if (fullDetails.ownerId) {
-          serverLenderDetails = await getUserProfile(fullDetails.ownerId);
-        }
-        
-        setOwnerDetails(serverLenderDetails);
-        if (
-          serverLenderDetails &&
-          serverLenderDetails.firstName &&
-          serverLenderDetails.lastName
-        ) {
-          let fullLenderName: string = serverLenderDetails.firstName.concat(
-            " " + serverLenderDetails.lastName
+          const serverLenderDetails: IUserProfile = await getUserProfile(
+            fullDetails.ownerId
           );
-          setOwnerFullName(fullLenderName);
+          if (
+            serverLenderDetails &&
+            serverLenderDetails.firstName &&
+            serverLenderDetails.lastName
+          ) {
+            setOwnerDetails(serverLenderDetails);
+            setOwnerFullName(
+              `${serverLenderDetails.firstName} ${serverLenderDetails.lastName}`
+            );
+          }
         }
       }
     };
@@ -316,15 +318,49 @@ const itemDetailsPage = (props: Props) => {
           </CardMedia>
         )}
       </Card>
-      {itemDetails.latitude !== 0 && itemDetails.longitude !== 0 && (
-        <LocationLabel
-          itemLocation={{
-            latitude: itemDetails.latitude,
-            longitude: itemDetails.longitude,
-          }}
-          userLocation={myCurrentLocation}
-        />
-      )}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+        }}
+      >
+        {itemDetails.latitude !== 0 && itemDetails.longitude !== 0 && (
+          <LocationLabel
+            itemLocation={{
+              latitude: itemDetails.latitude,
+              longitude: itemDetails.longitude,
+            }}
+            userLocation={myCurrentLocation}
+          />
+        )}
+        {ownerDetails && !isOwner && isLoggedIn() && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <MinimizedUserDetails
+              userId={ownerDetails.userId}
+              userFullName={ownerFullName}
+              profilePictureData={
+                ownerDetails.image &&
+                formatImagesOnRecieve([
+                  {
+                    ...ownerDetails.image,
+                  },
+                ])[0]
+              }
+            />
+            <ContactUserButton
+              recepientUserId={ownerDetails.userId}
+              templateMessage={`Hi! I have a question about ${itemDetails.title}.`}
+              afterSendHandler={() => navigate("/chat")}
+            />
+          </Box>
+        )}
+      </Box>
       <Typography variant="h5">{itemDetails.title}</Typography>
       {!isOwner && (
         <div>
@@ -355,20 +391,6 @@ const itemDetailsPage = (props: Props) => {
             {itemLocation && itemLocation.length > 0 && (
               <Row
                 tableData={[
-                  {
-                    key: "Lender Name",
-                    value:
-                      ownerDetails && ownerFullName
-                        ? ownerFullName
-                        : "No info about the lender!",
-                  },
-                  {
-                    key: "About the lender",
-                    value:
-                      ownerDetails && ownerDetails.about
-                        ? ownerDetails.about
-                        : "No info about the lender!",
-                  },
                   {
                     key: "Condition",
                     value: itemDetails.condition

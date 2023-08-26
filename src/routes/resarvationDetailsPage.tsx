@@ -28,15 +28,15 @@ import {
   getBodyByStatus,
   statusFromNumToString,
 } from "../utils/reservationsUtils";
-import MinimizedUserDetails from "../components/Dashboard/MinimizedUserDetails/MinimizedUserDetails";
+import MinimizedUserDetails from "../components/MinimizedUserDetails/MinimizedUserDetails";
 "@sendbird/uikit-react/react/";
 type IReservationDetailsParams = {
   reservationId: string;
 };
 
 import PointsContainer from "../components/PointsContainer/PointsContainer";
-import ContactUserButton from "../components/Chat/ContactUserButton";
 import DateRangeSummary from "../components/DateRangeSummary/DateRangeSummary";
+import ContactUserButton from "../components/Chat/ContactUserButton";
 
 type Props = {};
 
@@ -303,71 +303,37 @@ const ReservationDetailsPage = (props: Props) => {
                 )}
               </Grid>
               <Grid item>
-                {!isLender && (
-                  <Typography variant="body2" sx={{ marginBottom: "5px" }}>
-                    The lender:{" "}
-                  </Typography>
-                )}
-                {isLender && (
-                  <Typography variant="body2" sx={{ marginBottom: "5px" }}>
-                    The borrower:{" "}
-                  </Typography>
-                )}
                 {userProfilePicture.base64ImageData !== "" &&
                   relevantPersonDetails && (
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
                       <MinimizedUserDetails
-                        fullName={relevantPersonFullName}
-                        profileImg={
+                        userId={relevantPersonId}
+                        userFullName={relevantPersonFullName}
+                        profilePictureData={
                           formatImagesOnRecieve([userProfilePicture])[0]
                         }
-                        partyId={relevantPersonDetails.userId}
                       />
                       <ContactUserButton
+                        recepientUserId={relevantPersonId}
                         templateMessage={
                           isLender
                             ? `I saw you have requested to book my item. Let's chat.`
                             : `I have a question about ${itemDetails.title}.`
                         }
-                        recepientUserId={relevantPersonId}
                         afterSendHandler={() => navigate("/chat")}
                       />
-                    </div>
+                    </Box>
                   )}
               </Grid>
             </Grid>
           </Grid>
         </Grid>
       </Paper>
-
-      {/* {!isLender && (
-            <Grid item xs={12}>
-              <Item>
-                <Dialog
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="Are-you-sure-title"
-                  aria-describedby="Are-you-sure-description"
-                >
-                  <DialogTitle id="alert-dialog-title">
-                    {"Are you sure you want to cancel this reservation?"}
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText id="Are-you-sure-description">
-                      Choosing Yes will delete this reservation from your reservation list forever.
-                      Delete the reservation?
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleClose}>No</Button>
-                    <Button onClick={handleClose} autoFocus>
-                      Yes
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-              </Item>
-            </Grid>
-          )} */}
 
       <Button
         variant="contained"
