@@ -501,7 +501,7 @@ const itemDetailsPage = (props: Props) => {
         </>
       )}
 
-      {!isOwner && (
+      {!isOwner && isLoggedIn() && (
         <Box>
           <Box>
             <OpenReserveButton onClick={handleCheck} />
@@ -590,6 +590,13 @@ const itemDetailsPage = (props: Props) => {
             </Slide>
           </Box>
         </Box>
+      )}
+
+      {!isLoggedIn() && (
+        <div>
+          <br />
+          Please log in to reserve this item!
+        </div>
       )}
     </Container>
   );
