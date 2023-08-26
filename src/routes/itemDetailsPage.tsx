@@ -55,6 +55,8 @@ import { useAppSelector } from "../app/hooks";
 import MinimizedUserDetails from "../components/MinimizedUserDetails/MinimizedUserDetails";
 import IUserProfile from "../api/Models/IUserProfile";
 import ContactUserButton from "../components/Chat/ContactUserButton";
+import OpenReserveButton from "../components/ItemDetailsTable/OpenReserveButton/OpenReserveButton";
+import DatesContainer from "../components/DatesContainer/DatesContainer";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -105,8 +107,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -502,18 +504,12 @@ const itemDetailsPage = (props: Props) => {
       {!isOwner && (
         <Box>
           <Box>
-            <FormControlLabel
-              control={<Switch checked={checked} onChange={handleCheck} />}
-              label="Reserve"
-            />
+            <OpenReserveButton onClick={handleCheck} />
+
             <Slide direction="up" in={checked} mountOnEnter unmountOnExit>
               <div>
-                <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-                  Find available dates:
-                </Typography>
-
                 <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
+                  style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}
                 >
                   <DateRangePicker
                     startDate={startDate}
@@ -522,33 +518,9 @@ const itemDetailsPage = (props: Props) => {
                     datesToExclude={excludedDates}
                     datesToHighlight={[]}
                   />
-
-                  <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
-                        <Demo>
-                          <List dense={dense}>
-                            <ListItem>
-                              {startDate && (
-                                <ListItemText
-                                  primary="Start Date:"
-                                  secondary={startDate.toDateString()}
-                                />
-                              )}
-                            </ListItem>
-                            <ListItem>
-                              {endDate && (
-                                <ListItemText
-                                  primary="End Date:"
-                                  secondary={endDate.toDateString()}
-                                />
-                              )}
-                            </ListItem>
-                          </List>
-                        </Demo>
-                      </Grid>
-                    </Grid>
-                  </Box>
+                  <br />
+                  <DatesContainer startDate={startDate} endDate={endDate} />
+                  <br />
                 </div>
 
                 {isValidDates === true && (
