@@ -33,6 +33,21 @@ const userPage = (props: Props) => {
   const [userDetails, setUserDetails] = useState<IUserDetails>(
     allUserDetails[3]
   );
+  const [isMobileView, setIsMobileView] = useState<boolean>(
+    window.innerWidth <= 1024
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth <= 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const [userPoints, setUserPoints] = useState<number>(-1);
   const [userStats, setUserStats] = useState<IUserStatistics>();
@@ -150,51 +165,71 @@ const userPage = (props: Props) => {
   };
 
   return (
-    <Container>
-      <Card sx={{ maxWidth: 345, boxShadow: '-5px 4px 10px rgba(0, 10, 0, 0.2)', border: '1px solid lightgray' }}>
-        <CardContent style={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar component="div" style={{ height: "150px", width: "150px", marginRight: '20px' }}>
-            <ImagesCarousel
-              images={[
-                userProfilePicture ||
-                "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png",
-              ]}
-            />
-          </Avatar>
+    <Container sx={{ paddingTop: '35px' }}>
+      <Box sx={{ alignItems: isMobileView ? 'inherit' : 'center', display: 'flex', flexDirection: isMobileView ? 'column' : 'row' }} >
+        <Card sx={{ maxWidth: 345, maxHeight: 280, boxShadow: '-5px 4px 10px rgba(0, 10, 0, 0.2)', border: '1px solid lightgray', borderRadius: '20px', flexShrink: 0 }}>
+          <CardContent style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
+            <Avatar component="div" style={{ height: "150px", width: "150px", marginRight: '20px' }}>
+              <ImagesCarousel
+                images={[
+                  userProfilePicture ||
+                  "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png",
+                ]}
+              />
+            </Avatar>
 
-          <div>
-            <Typography variant="h5">
-              {userDetails.firstName + " " + userDetails.lastName}{" "}
-            </Typography>
-            <Typography
-              variant="subtitle2"
-              style={{ color: "gray" }}
-              gutterBottom
-            >
-              {"A Boro friend since: " + formatDate(userDetails.dateJoined)}
-            </Typography>
-            <Typography variant="subtitle2" style={{ color: "gray" }} gutterBottom>
-              {userDetails.about}
-            </Typography>
-          </div>
-        </CardContent>
-        <CardActions>
-          <ContactUserButton
-            templateMessage={"Hi! I have a general question."}
-            recepientUserId={userId}
-            afterSendHandler={() => navigate("/chat")}
-          />
-          {!isOwner && (
-            <Button
-              variant="outlined"
-              disabled={isOwner}
-              onClick={handleEditClick}
-            >
-              Edit Profile
-            </Button>
-          )}
-        </CardActions>
-      </Card>
+            <div>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                <Typography variant="h5" >
+                  {userDetails.firstName + " " + userDetails.lastName}{" "}
+                </Typography>
+                <Typography
+                  variant="subtitle2"
+                  style={{ color: "gray" }}
+                  gutterBottom
+                >
+                  {"Joined: " + formatDate(userDetails.dateJoined)}
+                </Typography>
+                {userPoints !== -1 && (
+                  <Grid item>
+                    <PointsContainer title={"Points: "} points={userPoints} />
+                  </Grid>
+                )}
+              </Box>
+            </div>
+          </CardContent>
+          <Box sx={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
+            <CardActions>
+              <ContactUserButton
+                templateMessage={"Hi! I have a general question."}
+                recepientUserId={userId}
+                afterSendHandler={() => navigate("/chat")}
+              />
+
+              {!isOwner && (
+                <Button
+                  variant="outlined"
+                  disabled={isOwner}
+                  onClick={handleEditClick}
+                >
+                  Edit Profile
+                </Button>
+              )}
+            </CardActions>
+          </Box>
+        </Card>
+
+        <br />
+        <br />
+
+        <Box sx={{ padding: isMobileView ? '0px' : '50px' }}>
+          {!isMobileView && <Typography variant="h3">About {userDetails.firstName} {userDetails.lastName} </Typography>}
+          <Box sx={{ fontSize: isMobileView ? '16px' : '24px', lineHeight: isMobileView ? '24px' : 'inherit', marginTop: isMobileView ? '0' : '40px' }}>
+            {userDetails.about}
+          </Box>
+        </Box>
+
+      </Box>
       <br />
       <Divider />
       <Grid container spacing={2} alignItems="center">
@@ -202,18 +237,13 @@ const userPage = (props: Props) => {
         </Grid>
       </Grid>
       <br />
-      {userPoints !== -1 && (
-        <Grid item>
-          <PointsContainer title={"Points: "} points={userPoints} />
-        </Grid>
-      )}
       <Box>
         <ItemsContainer
           containerTitle={userDetails.firstName + " 's items"}
           items={userItems}
         />
       </Box>
-    </Container>
+    </Container >
   );
 
 }
