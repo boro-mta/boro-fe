@@ -11,9 +11,11 @@ const EndDateContainer = ({ endDate }: Props) => {
             <div style={{ fontWeight: 700 }}>
                 End Date:
             </div>
-            <div>
-                {endDate.toDateString()}
-            </div>
+            {endDate && (
+                <div>
+                    {endDate.toDateString()}
+                </div>
+            )}
         </div>
     );
 };

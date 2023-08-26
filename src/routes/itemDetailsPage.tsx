@@ -519,7 +519,9 @@ const itemDetailsPage = (props: Props) => {
                     datesToHighlight={[]}
                   />
                   <br />
-                  <DatesContainer startDate={startDate} endDate={endDate} />
+                  {manageStartDate && manageEndDate && (
+                    <DatesContainer startDate={startDate} endDate={endDate} />
+                  )}
                   <br />
                 </div>
 
