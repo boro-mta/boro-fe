@@ -37,6 +37,7 @@ import PointsContainer from "../components/PointsContainer/PointsContainer";
 import DateRangeSummary from "../components/DateRangeSummary/DateRangeSummary";
 import ContactUserButton from "../components/Chat/ContactUserButton";
 import ReservationStatusChip from "../components/ReservationStatusChip/ReservationStatusChip";
+import MinimalItemInfoContainer from "../components/MinimalItemInfoContainer/MinimalItemInfoContainer";
 
 type Props = {};
 
@@ -170,13 +171,6 @@ const ReservationDetailsPage = ({}: Props) => {
 
   console.log(reservationDetails);
 
-  const Img = styled("img")({
-    margin: "auto",
-    display: "block",
-    maxWidth: "100%",
-    maxHeight: "100%",
-  });
-
   const handleItemPictureClicked = () => {
     navigate(`/Item/${reservationDetails.itemId}`);
   };
@@ -198,50 +192,6 @@ const ReservationDetailsPage = ({}: Props) => {
       <Typography component={"span"} variant="h4">
         Reservation Summary
       </Typography>
-    </Paper>
-  );
-  const ItemInfoContainer = () => (
-    <Paper
-      sx={{
-        p: 2,
-        margin: "auto",
-        marginBottom: 1,
-        maxWidth: 500,
-        maxHeight: 150,
-        flexGrow: 1,
-        display: "flex",
-        backgroundColor: (theme) =>
-          theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-      }}
-    >
-      <ButtonBase
-        onClick={handleItemPictureClicked}
-        sx={{
-          maxWidth: 128,
-          maxHeight: 128,
-        }}
-      >
-        {itemDetails.images && (
-          <Img
-            alt="complex"
-            src={formatImagesOnRecieve(itemDetails.images)[0]}
-          />
-        )}
-      </ButtonBase>
-      <Box>
-        <Typography gutterBottom variant="h5">
-          {itemDetails.title}
-        </Typography>
-        <Typography variant="body2" gutterBottom>
-          {itemDetails.description}
-        </Typography>
-        {isCurrentUserLender && (
-          <PointsContainer title={"Earn 500 points by lending this item "} />
-        )}
-        {!isCurrentUserLender && (
-          <PointsContainer title={"Earn 300 points by borrowing this item "} />
-        )}
-      </Box>
     </Paper>
   );
   const StatusMessage = () => (
@@ -362,7 +312,14 @@ const ReservationDetailsPage = ({}: Props) => {
   return (
     <Container sx={{ alignItems: "center", alignContent: "center" }}>
       <HeaderContainer />
-      <ItemInfoContainer />
+      <MinimalItemInfoContainer
+        onClick={handleItemPictureClicked}
+        imageData={
+          itemDetails.images && formatImagesOnRecieve(itemDetails.images)[0]
+        }
+        itemTitle={itemDetails.title}
+        itemDescription={itemDetails.description}
+      />
       <StatusMessage />
       <ReservationInfo />
       <UserInfo />
