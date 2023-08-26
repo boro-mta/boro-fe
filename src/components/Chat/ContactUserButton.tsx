@@ -7,6 +7,7 @@ type props = {
   templateMessage: string;
   afterSendHandler: () => void | undefined;
   sx?: SxProps<Theme> | undefined;
+  alternativeCaption?: string | null | undefined;
 };
 
 const ContactUserButton = ({
@@ -14,6 +15,7 @@ const ContactUserButton = ({
   templateMessage,
   afterSendHandler,
   sx,
+  alternativeCaption,
 }: props) => {
   const handleStartChat = () => {
     const openNewChat = async () => {
@@ -33,7 +35,7 @@ const ContactUserButton = ({
       onClick={handleStartChat}
       sx={{ marginLeft: 1, ...sx }}
     >
-      Contact user
+      {alternativeCaption || "Contact user"}
     </Button>
   );
 };

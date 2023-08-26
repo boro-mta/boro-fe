@@ -18,6 +18,7 @@ import MinimizedUserDetails from "../../MinimizedUserDetails/MinimizedUserDetail
 import MinimizedItemDetails from "../MinimizedItemDetails/MinimizedItemDetails";
 import { ReservationStatus } from "../../../utils/reservationsUtils";
 import { useNavigate } from "react-router";
+import ReservationStatusChip from "../../ReservationStatusChip/ReservationStatusChip";
 
 type Props = {
   sectionTitle: string;
@@ -26,24 +27,6 @@ type Props = {
 
 const DashboardTableSection = ({ sectionTitle, rows }: Props) => {
   const navigate = useNavigate();
-
-  const getStatusChipColor = (status: ReservationStatus) => {
-    switch (status) {
-      case ReservationStatus.Canceled:
-        return "default";
-      case ReservationStatus.Returned:
-        return "secondary";
-      case ReservationStatus.Declined:
-        return "error";
-      case ReservationStatus.Pending:
-        return "primary";
-      case ReservationStatus.Approved:
-      case ReservationStatus.Borrowed:
-        return "success";
-      default:
-        return "default";
-    }
-  };
 
   return (
     <div style={{ marginBottom: "10px" }}>
@@ -92,11 +75,7 @@ const DashboardTableSection = ({ sectionTitle, rows }: Props) => {
                     <DateContainer date={row.endDate} />
                   </TableCell>
                   <TableCell>
-                    <Chip
-                      label={ReservationStatus[row.status]}
-                      variant="outlined"
-                      color={getStatusChipColor(row.status)}
-                    />
+                    <ReservationStatusChip reservationStatus={row.status} />
                   </TableCell>
                   <TableCell>
                     <ArrowForwardIcon
