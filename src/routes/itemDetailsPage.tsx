@@ -252,7 +252,7 @@ const itemDetailsPage = (props: Props) => {
     };
 
     getFullDetails();
-  }, []);
+  }, [itemId]);
 
   useEffect(() => {
     const getItemAddress = async () => {

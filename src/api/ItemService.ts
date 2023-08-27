@@ -63,12 +63,11 @@ export const searchByTitle = async (
   radiusInMeters: number,
   resultLimit: number
 ): Promise<ISearchResult[]> => {
-  const endpoint = `Items/Search/ByTitle?partialTitle=${title}&latitude=${latitude}&longitude=${longitude}&radiusInMeters=${radiusInMeters}&limit=${resultLimit}}`;
+  const endpoint = `Items/Search/ByTitle?partialTitle=${title}&latitude=${latitude}&longitude=${longitude}&radiusInMeters=${radiusInMeters}&limit=${resultLimit}`;
 
   const items = (await requestAsync<ISearchResult[]>(
     HttpOperation.GET,
     endpoint
   )) as ISearchResult[];
-
   return items;
 };
