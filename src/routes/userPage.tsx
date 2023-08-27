@@ -169,13 +169,9 @@ const userPage = (props: Props) => {
       <Box sx={{ alignItems: isMobileView ? 'inherit' : 'center', display: 'flex', flexDirection: isMobileView ? 'column' : 'row' }} >
         <Card sx={{ maxWidth: 345, maxHeight: 280, boxShadow: '-5px 4px 10px rgba(0, 10, 0, 0.2)', border: '1px solid lightgray', borderRadius: '20px', flexShrink: 0 }}>
           <CardContent style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
-            <Avatar component="div" style={{ height: "150px", width: "150px", marginRight: '20px' }}>
-              <ImagesCarousel
-                images={[
-                  userProfilePicture ||
-                  "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png",
-                ]}
-              />
+            <Avatar style={{ height: "150px", width: "150px", marginRight: '20px' }}
+              src={userProfilePicture ||
+                "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png"}>
             </Avatar>
 
             <div>
