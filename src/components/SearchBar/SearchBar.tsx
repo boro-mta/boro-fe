@@ -6,6 +6,7 @@ import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
 import SearchResultView from "./SearchResultView";
 import { useNavigate } from "react-router";
 import SearchIcon from "@mui/icons-material/Search";
+import "./searchbar.style.css";
 
 const SearchBar = () => {
   const navigate = useNavigate();
@@ -87,11 +88,7 @@ const SearchBar = () => {
                 borderRadius: "15px",
               },
               ...params.InputProps,
-              endAdornment: (
-                <React.Fragment>
-                  {params.InputProps.endAdornment}
-                </React.Fragment>
-              ),
+              endAdornment: <SearchIcon />,
             }}
             InputLabelProps={{
               shrink: showDropdown || selectedResultTitle !== "",
