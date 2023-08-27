@@ -129,6 +129,7 @@ const userPage = (props: Props) => {
 
   useEffect(() => {
     getUserDetails();
+    handleSomeEventThatTriggersRerender();
   }, [userId]);
 
   useEffect(() => {
@@ -162,6 +163,11 @@ const userPage = (props: Props) => {
       day: "numeric",
     });
     return formattedDate;
+  };
+
+  const [itemsContainerKey, setItemsContainerKey] = useState(0);
+  const handleSomeEventThatTriggersRerender = () => {
+    setItemsContainerKey(prevKey => prevKey + 1);
   };
 
   return (
@@ -235,6 +241,7 @@ const userPage = (props: Props) => {
       <br />
       <Box>
         <ItemsContainer
+          key={itemsContainerKey}
           containerTitle={userDetails.firstName + "'s items"}
           items={userItems}
         />
