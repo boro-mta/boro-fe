@@ -107,8 +107,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-            getFormattedDate(loop) +
-            " is not available, please choose different dates."
+              getFormattedDate(loop) +
+              " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -261,7 +261,7 @@ const itemDetailsPage = (props: Props) => {
     };
 
     getFullDetails();
-  }, []);
+  }, [itemId]);
 
   useEffect(() => {
     const getItemAddress = async () => {
@@ -509,7 +509,12 @@ const itemDetailsPage = (props: Props) => {
             <Slide direction="up" in={checked} mountOnEnter unmountOnExit>
               <div>
                 <div
-                  style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
                 >
                   <DateRangePicker
                     startDate={startDate}
