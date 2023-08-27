@@ -31,9 +31,9 @@ const MobileChat = ({
         >
           <div style={{ marginLeft: "15px", marginTop: "10px" }}>
             <MinimizedUserDetails
-              fullName={fullName}
-              profileImg={profileImg}
-              partyId={partyId}
+              userFullName={fullName}
+              profilePictureData={profileImg}
+              userId={partyId || ""}
             />
           </div>
         </div>
