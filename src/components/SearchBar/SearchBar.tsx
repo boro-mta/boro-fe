@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { searchByTitle } from "../../api/ItemService";
 import ISearchResult from "../../api/Models/ISearchResult";
 import { useAppSelector } from "../../app/hooks";
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
 import SearchResultView from "./SearchResultView";
 import { useNavigate } from "react-router";
+import SearchIcon from "@mui/icons-material/Search";
 
 const SearchBar = () => {
   const navigate = useNavigate();
@@ -31,7 +32,6 @@ const SearchBar = () => {
         );
         setResults(response as ISearchResult[]);
       } else {
-        setShowDropdown(false);
         setResults([]);
       }
     } catch (error) {
@@ -46,9 +46,14 @@ const SearchBar = () => {
     navigate(`/item/${id}`);
   };
 
-  const handleInputChanged = (value: string) => {
-    sendSearchRequest(value);
-    setSelectedResultTitle(value);
+  const handleInputChanged = (
+    event: React.SyntheticEvent<Element, Event>,
+    value: string
+  ) => {
+    if (event && event.type !== "blur") {
+      sendSearchRequest(value);
+      setSelectedResultTitle(value);
+    }
   };
   return (
     <div style={{ flex: 1 }}>
@@ -56,11 +61,15 @@ const SearchBar = () => {
         open={showDropdown}
         inputValue={selectedResultTitle}
         noOptionsText=""
-        sx={{ width: "200px" }}
+        sx={{ width: "300px" }}
         getOptionLabel={(option) => option.title}
-        onInputChange={(event, value) => handleInputChanged(value)}
+        onInputChange={(event, value) => handleInputChanged(event, value)}
         filterOptions={(result) => result}
         placeholder="Search..."
+        onFocus={() => {
+          setShowDropdown(true);
+          sendSearchRequest(selectedResultTitle);
+        }}
         onBlur={() => setShowDropdown(false)}
         renderOption={(props, option) => (
           <SearchResultView
@@ -74,12 +83,18 @@ const SearchBar = () => {
             {...params}
             label="Search"
             InputProps={{
+              sx: {
+                borderRadius: "15px",
+              },
               ...params.InputProps,
               endAdornment: (
                 <React.Fragment>
                   {params.InputProps.endAdornment}
                 </React.Fragment>
               ),
+            }}
+            InputLabelProps={{
+              shrink: showDropdown || selectedResultTitle !== "",
             }}
           />
         )}
