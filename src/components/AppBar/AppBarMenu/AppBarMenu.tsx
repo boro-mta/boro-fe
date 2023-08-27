@@ -6,6 +6,7 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 import { useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -47,6 +48,11 @@ const AppBarMenu = ({ afterClick }: Props) => {
       title: "Chats",
       icon: <ChatIcon />,
       onItemSelect: () => navigate("/chat"),
+    },
+    {
+      title: "Leaderboard",
+      icon: <WorkspacePremiumIcon />,
+      onItemSelect: () => navigate("/leaderBoard"),
     },
     {
       isDivider: true,

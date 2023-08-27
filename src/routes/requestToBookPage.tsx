@@ -1,25 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Button,
-  Typography,
-  Divider,
-  Card,
-  CardMedia,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Paper,
-  styled,
 } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import BackspaceSharpIcon from "@mui/icons-material/BackspaceSharp";
+import EditCalendarSharpIcon from "@mui/icons-material/EditCalendarSharp";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IFullItemDetailsNew } from "../types";
 import DateRangePicker from "../components/DateRangePicker/DateRangePicker";
@@ -31,9 +23,10 @@ import {
 } from "../utils/calendarUtils";
 import { getItem } from "../api/ItemService";
 import { addReservationRequest } from "../api/ReservationService";
-import { tableCellClasses } from "@mui/material/TableCell";
 
 import { startChat } from "../api/ChatService";
+import DateRangeSummary from "../components/DateRangeSummary/DateRangeSummary";
+import MinimalItemInfoContainer from "../components/MinimalItemInfoContainer/MinimalItemInfoContainer";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -181,154 +174,105 @@ const RequestToBookPage = (props: Props) => {
     }
   };
 
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
+  const handleItemPictureClicked = () => {
+    navigate(`/Item/${itemDetails.itemId}`);
+  };
 
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    "&:last-child td, &:last-child th": {
-      border: 0,
-    },
-  }));
-
-  function createData(key: string, value: string) {
-    return { key, value };
-  }
-
-  const rows = [
-    createData("Start Date", requestStartDate.toDateString()),
-    createData("End Date", requestEndDate.toDateString()),
-  ];
+  const DatesSection = () => (
+    <Paper
+      sx={{
+        p: 2,
+        margin: "auto",
+        marginBottom: 1,
+        maxWidth: 500,
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        backgroundColor: (theme) =>
+          theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+      }}
+    >
+      <DateRangeSummary startDate={requestStartDate} endDate={requestEndDate} />
+      <Button
+        variant="contained"
+        sx={{ mt: 1, mr: 1, backgroundColor: "#007bff" }}
+        onClick={handleClickOpen}
+        // endIcon={<EditCalendarSharpIcon />}
+        endIcon={<EditCalendarSharpIcon />}
+      >
+        Edit Dates
+      </Button>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Edit Dates</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please choose your desired dates:
+          </DialogContentText>
+          <DateRangePicker
+            startDate={calendarStartDate}
+            endDate={calendarEndDate}
+            onChange={handleChangeDates}
+            datesToExclude={excludedDates}
+            datesToHighlight={[]}
+          />
+          {calendarStartDate && (
+            <p>start date: {calendarStartDate.toDateString()}</p>
+          )}
+          {calendarEndDate && <p>end date: {calendarEndDate.toDateString()}</p>}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleChange}>change</Button>
+        </DialogActions>
+      </Dialog>
+    </Paper>
+  );
+  const ButtonsSection = () => (
+    <Paper
+      sx={{
+        p: 2,
+        margin: "auto",
+        marginBottom: 1,
+        maxWidth: 500,
+        flexGrow: 1,
+        display: "flex",
+        justifyContent: "center",
+        backgroundColor: (theme) =>
+          theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+      }}
+    >
+      <Button
+        variant="contained"
+        sx={{ mt: 1, mr: 1, backgroundColor: "red" }}
+        onClick={() => navigate(`/item/${itemId}`)}
+        startIcon={<BackspaceSharpIcon />}
+      >
+        Back
+      </Button>
+      <Button
+        variant="contained"
+        sx={{ mt: 1, mr: 1, backgroundColor: "green" }}
+        onClick={handleConfirmRequest}
+        endIcon={<CheckCircleIcon />}
+      >
+        Confirm
+      </Button>
+    </Paper>
+  );
 
   return (
     <Container>
-      <Typography component={"span"} variant="h3">
-        Request To Book
-      </Typography>
-
-      {itemDetails.title != "" && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            flexDirection: "row",
-          }}
-        >
-          <Card sx={{ marginBottom: "10px", marginRight: "10px" }}>
-            {itemDetails.images && (
-              <CardMedia
-                component="img"
-                style={{ height: "130px", width: "130px" }}
-                image={formatImagesOnRecieve(itemDetails.images)[0]}
-              ></CardMedia>
-            )}
-          </Card>
-
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Typography variant="h5">{itemDetails.title}</Typography>
-            <Typography variant="body1">{itemDetails.description}</Typography>
-          </div>
-        </div>
-      )}
-
-      {itemDetails.title != "" && (
-        <TableContainer
-          component={Paper}
-          sx={{ marginTop: "20px", marginBottom: "20px" }}
-        >
-          <Table aria-label="customized table">
-            <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.key}>
-                  <StyledTableCell component="th" scope="row">
-                    {row.key}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">{row.value}</StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <DateRangePicker
-          startDate={requestStartDate}
-          endDate={requestEndDate}
-          onChange={() => {}}
-          datesToExclude={excludedDates}
-          datesToHighlight={[]}
-        />
-
-        <div>
-          <Button
-            variant="contained"
-            sx={{ mt: 1, mr: 1 }}
-            onClick={handleClickOpen}
-          >
-            Edit Dates
-          </Button>
-          <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Edit Dates</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Please choose your desired dates:
-              </DialogContentText>
-              <DateRangePicker
-                startDate={calendarStartDate}
-                endDate={calendarEndDate}
-                onChange={handleChangeDates}
-                datesToExclude={excludedDates}
-                datesToHighlight={[]}
-              />
-              {calendarStartDate && (
-                <p>start date: {calendarStartDate.toDateString()}</p>
-              )}
-              {calendarEndDate && (
-                <p>end date: {calendarEndDate.toDateString()}</p>
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleChange}>change</Button>
-            </DialogActions>
-          </Dialog>
-        </div>
-      </div>
-
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Button
-          variant="contained"
-          sx={{ mt: 1, mr: 1 }}
-          onClick={() => navigate(`/item/${itemId}`)}
-        >
-          Back
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ mt: 1, mr: 1 }}
-          onClick={handleConfirmRequest}
-        >
-          Confirm
-        </Button>
-      </div>
+      <MinimalItemInfoContainer
+        onClick={handleItemPictureClicked}
+        imageData={
+          itemDetails.images && formatImagesOnRecieve(itemDetails.images)[0]
+        }
+        itemTitle={itemDetails.title}
+        itemDescription={itemDetails.description}
+      />
+      <DatesSection />
+      <ButtonsSection />
     </Container>
   );
 };

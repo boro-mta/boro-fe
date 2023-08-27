@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChannelList, Channel, ChannelSettings } from "@sendbird/uikit-react";
-import MinimizedUserDetails from "../../Dashboard/MinimizedUserDetails/MinimizedUserDetails";
+import MinimizedUserDetails from "../../MinimizedUserDetails/MinimizedUserDetails";
 import { GroupChannel } from "@sendbird/chat/groupChannel";
 import { IMinifiedUserDetails } from "../Chat";
 import "./desktopChat.css";
@@ -37,11 +37,13 @@ const DesktopChat = ({
           onChannelSelect={setCurrentChannel}
           renderHeader={() => (
             <div style={{ marginLeft: "15px" }}>
-              <MinimizedUserDetails
-                fullName={fullName}
-                profileImg={profileImg}
-                partyId={partyId}
-              />
+              {partyId && (
+                <MinimizedUserDetails
+                  userFullName={fullName}
+                  profilePictureData={profileImg}
+                  userId={partyId}
+                />
+              )}
             </div>
           )}
         />

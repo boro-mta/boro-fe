@@ -1,17 +1,21 @@
 import SendIcon from "@mui/icons-material/Send";
 import { startChat } from "../../api/ChatService";
-import { Button } from "@mui/material";
+import { Button, SxProps, Theme } from "@mui/material";
 
 type props = {
   recepientUserId: string;
   templateMessage: string;
   afterSendHandler: () => void | undefined;
+  sx?: SxProps<Theme> | undefined;
+  alternativeCaption?: string | null | undefined;
 };
 
 const ContactUserButton = ({
   recepientUserId,
   templateMessage,
   afterSendHandler,
+  sx,
+  alternativeCaption,
 }: props) => {
   const handleStartChat = () => {
     const openNewChat = async () => {
@@ -29,8 +33,9 @@ const ContactUserButton = ({
       variant="outlined"
       startIcon={<SendIcon />}
       onClick={handleStartChat}
+      sx={{ marginLeft: 1, ...sx }}
     >
-      Contact user
+      {alternativeCaption || "Contact user"}
     </Button>
   );
 };
