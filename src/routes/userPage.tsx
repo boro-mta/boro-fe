@@ -87,7 +87,6 @@ const userPage = (props: Props) => {
       const userProfile = await getUserProfile(userId as string);
       console.log("Got a user: ");
       console.log(userProfile);
-
       let userDetails: IUserDetails = {
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
@@ -116,6 +115,8 @@ const userPage = (props: Props) => {
 
       const serverUserStats: IUserStatistics = await getUserStatistics(userId);
       setUserStats(serverUserStats);
+      handleSomeEventThatTriggersRerender();
+
     } catch (error) {
       console.error(error);
     }
@@ -129,7 +130,6 @@ const userPage = (props: Props) => {
 
   useEffect(() => {
     getUserDetails();
-    handleSomeEventThatTriggersRerender();
   }, [userId]);
 
   useEffect(() => {
@@ -162,6 +162,7 @@ const userPage = (props: Props) => {
       month: "long",
       day: "numeric",
     });
+
     return formattedDate;
   };
 
