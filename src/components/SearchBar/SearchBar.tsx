@@ -6,9 +6,13 @@ import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
 import SearchResultView from "./SearchResultView";
 import { useNavigate } from "react-router";
 import SearchIcon from "@mui/icons-material/Search";
-import "./searchbar.style.css";
 
-const SearchBar = () => {
+type Props = {
+  containerStyles: any;
+  isMobileView: boolean;
+};
+
+const SearchBar = ({ containerStyles, isMobileView }: Props) => {
   const navigate = useNavigate();
   const [selectedResultTitle, setSelectedResultTitle] = useState<string>("");
 
@@ -62,7 +66,7 @@ const SearchBar = () => {
         open={showDropdown}
         inputValue={selectedResultTitle}
         noOptionsText=""
-        sx={{ width: "300px" }}
+        sx={{ ...containerStyles }}
         getOptionLabel={(option) => option.title}
         onInputChange={(event, value) => handleInputChanged(event, value)}
         filterOptions={(result) => result}
@@ -88,7 +92,7 @@ const SearchBar = () => {
                 borderRadius: "15px",
               },
               ...params.InputProps,
-              endAdornment: <SearchIcon />,
+              endAdornment: !isMobileView && <SearchIcon />,
             }}
             InputLabelProps={{
               shrink: showDropdown || selectedResultTitle !== "",

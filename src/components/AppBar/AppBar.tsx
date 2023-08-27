@@ -54,10 +54,34 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const [isMobileView, setIsMobileView] = React.useState<boolean>(
+    window.innerWidth <= 1024
+  );
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth <= 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <AppBar position="static" sx={Styles.appBarStyles}>
       <Container maxWidth="xl" sx={Styles.containerStyles}>
-        <Toolbar disableGutters>
+        <Toolbar
+          disableGutters
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          {/* Logo */}
           <Box sx={Styles.logoContainerStyles}>
             <Box sx={Styles.logoBoxStyles}>
               <a
@@ -68,22 +92,38 @@ function ResponsiveAppBar() {
                 }}
               >
                 <Box sx={Styles.logoBoxStyles}>
-                  <img
-                    src="/assets/logo.png"
-                    alt="Logo"
-                    style={{ maxHeight: "150px", width: "auto" }}
-                  />
+                  {isMobileView ? (
+                    <img
+                      src="/assets/mobileLogo.png"
+                      alt="Logo"
+                      style={{ maxHeight: "50px", width: "auto" }}
+                    />
+                  ) : (
+                    <img
+                      src="/assets/logo.png"
+                      alt="Logo"
+                      style={{ maxHeight: "150px", width: "auto" }}
+                    />
+                  )}
                 </Box>
               </a>
             </Box>
           </Box>
 
-          <Box sx={{ flex: 1 }} /> {/* Flexible space to push the search bar to the middle */}
-
-          <Box>
-            <SearchBar />
+          {/* SearchBar */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <SearchBar
+              containerStyles={{ width: isMobileView ? "160px" : "400px" }}
+              isMobileView={isMobileView}
+            />
           </Box>
-
+          {/* Name + Menu */}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton
@@ -91,7 +131,7 @@ function ResponsiveAppBar() {
                 sx={Styles.avatarButtonStyles}
               >
                 <Typography sx={Styles.avatarTypographyStyles}>
-                  {userName}
+                  {isMobileView ? userName.split(" ")[0] : userName}
                 </Typography>
                 <Avatar
                   alt="Remy Sharp"
