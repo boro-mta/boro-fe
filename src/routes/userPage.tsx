@@ -87,7 +87,6 @@ const userPage = (props: Props) => {
       const userProfile = await getUserProfile(userId as string);
       console.log("Got a user: ");
       console.log(userProfile);
-
       let userDetails: IUserDetails = {
         firstName: userProfile.firstName,
         lastName: userProfile.lastName,
@@ -116,6 +115,8 @@ const userPage = (props: Props) => {
 
       const serverUserStats: IUserStatistics = await getUserStatistics(userId);
       setUserStats(serverUserStats);
+      handleSomeEventThatTriggersRerender();
+
     } catch (error) {
       console.error(error);
     }
@@ -129,6 +130,7 @@ const userPage = (props: Props) => {
 
   useEffect(() => {
     getUserDetails();
+    handleSomeEventThatTriggersRerender();
   }, [userId]);
 
   useEffect(() => {
@@ -161,7 +163,13 @@ const userPage = (props: Props) => {
       month: "long",
       day: "numeric",
     });
+
     return formattedDate;
+  };
+
+  const [itemsContainerKey, setItemsContainerKey] = useState(0);
+  const handleSomeEventThatTriggersRerender = () => {
+    setItemsContainerKey(prevKey => prevKey + 1);
   };
 
   return (
@@ -169,13 +177,9 @@ const userPage = (props: Props) => {
       <Box sx={{ alignItems: isMobileView ? 'inherit' : 'center', display: 'flex', flexDirection: isMobileView ? 'column' : 'row' }} >
         <Card sx={{ maxWidth: 345, maxHeight: 280, boxShadow: '-5px 4px 10px rgba(0, 10, 0, 0.2)', border: '1px solid lightgray', borderRadius: '20px', flexShrink: 0 }}>
           <CardContent style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
-            <Avatar component="div" style={{ height: "150px", width: "150px", marginRight: '20px' }}>
-              <ImagesCarousel
-                images={[
-                  userProfilePicture ||
-                  "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png",
-                ]}
-              />
+            <Avatar style={{ height: "150px", width: "150px", marginRight: '20px' }}
+              src={userProfilePicture ||
+                "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png"}>
             </Avatar>
 
             <div>
@@ -239,6 +243,7 @@ const userPage = (props: Props) => {
       <br />
       <Box>
         <ItemsContainer
+          key={itemsContainerKey}
           containerTitle={userDetails.firstName + "'s items"}
           items={userItems}
         />
