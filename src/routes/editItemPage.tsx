@@ -157,14 +157,14 @@ const EditItemPage = (props: Props) => {
         newImagesNamesInBase64Format
       );
 
-      newImagesNamesInStringFormat.map(function(fileName) {
+      newImagesNamesInStringFormat.map(function (fileName) {
         setImagesNames((oldArray) => [...oldArray, fileName]);
       });
 
       //images for server update:
       let newImagesInStringormat: string[] = [];
 
-      filesInBase64.map(function(file) {
+      filesInBase64.map(function (file) {
         newImagesInStringormat.push(file);
       });
 
@@ -324,7 +324,7 @@ const EditItemPage = (props: Props) => {
 
   const getConditionFronItemDetails = (conditionFromServer: any): any => {
     let contiditionToReturn: any = "";
-    conditionArr.forEach(function(value) {
+    conditionArr.forEach(function (value) {
       if (value.text === conditionFromServer) {
         contiditionToReturn = value;
       }
@@ -640,9 +640,8 @@ const EditItemPage = (props: Props) => {
 
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
-            {/* todo: change message */}
             <Typography component={"span"}>
-              All steps completed - you&apos;re finished
+              All steps completed
             </Typography>
           </Paper>
         )}
