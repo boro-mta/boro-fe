@@ -141,7 +141,6 @@ const RequestToBookPage = (props: Props) => {
   const [selectedDatesError, setSelectedDatesError] = useState<string>("");
   const [isValidDates, setIsValidDates] = useState<boolean>();
 
-  //todo: add the invalid dates flow
   const handleChangeDates = (dates: Date[]) => {
     const [selectedStartDate, selectedEndDate] = dates;
     setCalendarStartDate(selectedStartDate);
@@ -156,14 +155,15 @@ const RequestToBookPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
         } else {
           setCalendarStartDate(selectedStartDate);
           setCalendarEndDate(selectedEndDate);
+          //todo: change error and show it:
           setSelectedDatesError("");
           setIsValidDates(true);
         }
