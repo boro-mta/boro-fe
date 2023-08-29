@@ -6,11 +6,15 @@ import { IItemResponse } from "./Models/IItemResponse";
 import ISearchResult from "./Models/ISearchResult";
 
 export const getItem = async (itemId: string) => {
-  console.log("getItem - entry with " + itemId);
   const endpoint = `Items/${itemId}`;
   const item = await requestAsync<IItemResponse>(HttpOperation.GET, endpoint);
 
   return { ...item };
+};
+
+export const deleteItem = async (itemId: string) => {
+  const endpoint = `Items/${itemId}`;
+  await requestAsync<void>(HttpOperation.DELETE, endpoint);
 };
 
 export const addItem = async (itemDetails: IInputItem) => {
