@@ -4,6 +4,7 @@ import { IReservationRow } from "../types";
 import DashboardTableSection from "../components/Dashboard/DashboardTableSection/DashboardTableSection";
 import { getAllReservationsData } from "../api/ReservationService";
 import { ReservationStatus } from "../utils/reservationsUtils";
+import EmptyDashboardContainer from "../components/Dashboard/EmptyDashboardContainer/EmptyDashboardContainer";
 
 type Props = {};
 
@@ -47,14 +48,25 @@ const lenderDashboard = (props: Props) => {
       row.status !== ReservationStatus.Declined
   );
 
-  return (
-    <Container>
-      <DashboardTableSection rows={completedRows} sectionTitle={"Completed"} />
-      <DashboardTableSection rows={pendingRows} sectionTitle={"Pending"} />
-      <DashboardTableSection rows={ongoingRows} sectionTitle={"Ongoing"} />
-      <DashboardTableSection rows={upcomingRows} sectionTitle={"Upcoming"} />
-    </Container>
-  );
+  if (completedRows.length === 0 &&
+    pendingRows.length === 0 &&
+    ongoingRows.length === 0 &&
+    upcomingRows.length === 0) {
+    return (
+      <EmptyDashboardContainer backgroundImg="\assets\investor_7331026.png" buttonImg="\assets\add-product_7466065.png"
+        navigateAddress={"/addItem"} generalText="There are no lendings yet." linkText="You can always add a new item to lend to others:" />
+    );
+  }
+  else {
+    return (
+      <Container>
+        <DashboardTableSection rows={completedRows} sectionTitle={"Completed"} />
+        <DashboardTableSection rows={pendingRows} sectionTitle={"Pending"} />
+        <DashboardTableSection rows={ongoingRows} sectionTitle={"Ongoing"} />
+        <DashboardTableSection rows={upcomingRows} sectionTitle={"Upcoming"} />
+      </Container>
+    );
+  }
 };
 
 export default lenderDashboard;

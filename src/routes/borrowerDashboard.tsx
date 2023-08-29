@@ -4,6 +4,7 @@ import { IReservationRow } from "../types";
 import DashboardTableSection from "../components/Dashboard/DashboardTableSection/DashboardTableSection";
 import { getAllReservationsData } from "../api/ReservationService";
 import { ReservationStatus } from "../utils/reservationsUtils";
+import EmptyDashboardContainer from "../components/Dashboard/EmptyDashboardContainer/EmptyDashboardContainer";
 
 type Props = {};
 
@@ -42,17 +43,28 @@ const borrowerDashboard = (props: Props) => {
     (row) =>
       row.startDate > new Date() &&
       row.status !== ReservationStatus.Canceled &&
-        row.status !== ReservationStatus.Declined
+      row.status !== ReservationStatus.Declined
   );
 
-  return (
-    <Container>
-      <DashboardTableSection rows={completedRows} sectionTitle={"Completed"} />
-      <DashboardTableSection rows={pendingRows} sectionTitle={"Pending"} />
-      <DashboardTableSection rows={ongoingRows} sectionTitle={"Ongoing"} />
-      <DashboardTableSection rows={upcomingRows} sectionTitle={"Upcoming"} />
-    </Container>
-  );
+  if (completedRows.length === 0 &&
+    pendingRows.length === 0 &&
+    ongoingRows.length === 0 &&
+    upcomingRows.length === 0) {
+    return (
+      <EmptyDashboardContainer backgroundImg="\assets\borrow_2417787.png" buttonImg="\assets\transaction_4504239.png"
+        navigateAddress={"/"} generalText="There are no borrow yet." linkText="You can visit our home page and choose any item to borrow:" />
+    );
+  }
+  else {
+    return (
+      <Container>
+        <DashboardTableSection rows={completedRows} sectionTitle={"Completed"} />
+        <DashboardTableSection rows={pendingRows} sectionTitle={"Pending"} />
+        <DashboardTableSection rows={ongoingRows} sectionTitle={"Ongoing"} />
+        <DashboardTableSection rows={upcomingRows} sectionTitle={"Upcoming"} />
+      </Container>
+    );
+  }
 };
 
 export default borrowerDashboard;
