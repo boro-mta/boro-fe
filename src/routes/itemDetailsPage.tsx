@@ -103,8 +103,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;
@@ -576,41 +576,44 @@ const itemDetailsPage = (props: Props) => {
               </Button>
             )}
             {isValidDates === false && (
-              <Button
-                variant="contained"
-                color="error"
-                endIcon={<ErrorIcon />}
-                sx={{
-                  marginTop: "10px",
-                  position: "sticky",
-                  bottom: "10px",
-                  right: "2%",
-                  width: "96%",
-                }}
-                onClick={handleOpenModal}
-              >
-                Invalid dates
-              </Button>
+              <>
+                <Button
+                  variant="contained"
+                  color="error"
+                  endIcon={<ErrorIcon />}
+                  sx={{
+                    marginTop: "10px",
+                    position: "sticky",
+                    bottom: "10px",
+                    right: "2%",
+                    width: "96%",
+                  }}
+                  onClick={handleOpenModal}
+                >
+                  Invalid dates
+                </Button>
+
+                <Modal open={open} onClose={() => setOpen(false)}>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      width: "80%",
+                      bgcolor: "background.paper",
+                      border: "2px solid #000",
+                      boxShadow: 24,
+                      p: 4,
+                    }}
+                  >
+                    <Typography component={"span"} variant="body1">
+                      {selectedDatesError}
+                    </Typography>
+                  </Box>
+                </Modal>
+              </>
             )}
-            <Modal open={open} onClose={() => setOpen(false)}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "80%",
-                  bgcolor: "background.paper",
-                  border: "2px solid #000",
-                  boxShadow: 24,
-                  p: 4,
-                }}
-              >
-                <Typography component={"span"} variant="body1">
-                  {selectedDatesError}
-                </Typography>
-              </Box>
-            </Modal>
           </div>
         </Slide>
       </Box>
