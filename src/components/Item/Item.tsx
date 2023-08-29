@@ -43,7 +43,7 @@ const Item = ({ itemId, title, imgID, onClick }: IProps) => {
         <CardActionArea onClick={() => onClick(itemId)}>
           <CardMedia
             component="img"
-            height="140"
+            height="180"
             src={image}
             sx={{ objectFit: "contain" }}
           />
