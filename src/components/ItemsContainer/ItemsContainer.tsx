@@ -13,7 +13,6 @@ type Props = {
 
 const ItemsContainer = ({ containerTitle, items }: Props) => {
   const navigate = useNavigate();
-
   return (
     <Container>
       <Box>
