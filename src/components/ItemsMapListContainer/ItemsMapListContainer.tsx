@@ -64,6 +64,7 @@ const ItemsMapListContainer = () => {
       myLocation.longitude !== 0 &&
       dispatch(setCurrentLocation(myLocation));
   }, [myLocation]);
+
   useEffect(() => {
     const fetchAndSetMarkers = async () => {
       if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
@@ -72,7 +73,10 @@ const ItemsMapListContainer = () => {
           radiusInMeters,
         };
         let markers = await getItemsByRadius(coordinateToSearch);
-        if (Array.isArray(markers)) setLocationsAroundMe(markers as any);
+        if (Array.isArray(markers)) {
+          setLocationsAroundMe(markers as any);
+          markers.length <= 3 ? setIsOpenState(true) : setIsOpenState(false);
+        }
       }
     };
 
@@ -110,13 +114,12 @@ const ItemsMapListContainer = () => {
                 >
                   Looks like there aren't many nearby items. Expand the search
                   area to find more items.
-                  <br />
                   <Button
                     variant="outlined"
                     sx={{ textTransform: "none" }}
                     onClick={() => {
-                      setRadiusInMeters(20000);
-                      setIsOpenState(false);
+                      setLocationsAroundMe([]);
+                      setRadiusInMeters(50000);
                     }}
                   >
                     Expand search radius
