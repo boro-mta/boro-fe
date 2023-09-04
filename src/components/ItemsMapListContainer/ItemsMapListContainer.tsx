@@ -120,7 +120,7 @@ const ItemsMapListContainer = () => {
                     sx={{ textTransform: "none" }}
                     onClick={() => {
                       setLocationsAroundMe([]);
-                      setRadiusInMeters(50000);
+                      setRadiusInMeters(radiusInMeters * 2);
                     }}
                   >
                     Expand search radius
