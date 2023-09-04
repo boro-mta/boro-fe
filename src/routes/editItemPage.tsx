@@ -36,7 +36,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import IUpdateItemInfoInput from "../api/Models/IUpdateItemInfoInput";
-import { getItem } from "../api/ItemService";
+import { deleteItem, getItem } from "../api/ItemService";
 import {
   updateItemInfo,
   addItemImage,
@@ -325,10 +325,16 @@ const EditItemPage = (props: Props) => {
     handleClickOpenDeleteItemDialog();
   };
 
-  const deleteItem = () => {
-    console.log("delete item");
+  const deleteItemRequest = async () => {
+    if (itemId) {
+      await deleteItem(itemId);
+    }
+    else {
+      console.log("error in deleting item");
+    }
 
     setOpenDeleteItemDialog(false);
+    navigate("/");
   };
 
   const formik = useFormik({
@@ -666,47 +672,49 @@ const EditItemPage = (props: Props) => {
           </Button>
         </div>
 
-        <div>
-          <Button
-            variant="contained"
-            type="button"
-            style={{
-              marginTop: "10px",
-              marginBottom: "10px",
-              padding: "8px 28px",
-              backgroundColor: "red",
-              color: "white",
-            }}
-            onClick={handleDeleteItemButton}
+        {itemId && (
+          <div>
+            <Button
+              variant="contained"
+              type="button"
+              style={{
+                marginTop: "10px",
+                marginBottom: "10px",
+                padding: "8px 28px",
+                backgroundColor: "red",
+                color: "white",
+              }}
+              onClick={handleDeleteItemButton}
 
-            startIcon={<DeleteIcon />}
-          >
-            Delete Item
-          </Button>
+              startIcon={<DeleteIcon />}
+            >
+              Delete Item
+            </Button>
 
-          <Dialog
-            open={openDeleteItemDialog}
-            onClose={handleCloseDeleteItemDialog}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {"Delete Item"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                Are you sure you want to delete this item?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions style={{ display: "flex", justifyContent: "space-between" }}>
-              <Button onClick={handleCloseDeleteItemDialog}>Cancel</Button>
-              <Button onClick={deleteItem} autoFocus>
-                Yes
-              </Button>
+            <Dialog
+              open={openDeleteItemDialog}
+              onClose={handleCloseDeleteItemDialog}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {"Delete Item"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to delete this item?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions style={{ display: "flex", justifyContent: "space-between" }}>
+                <Button onClick={handleCloseDeleteItemDialog}>Cancel</Button>
+                <Button onClick={deleteItemRequest} autoFocus>
+                  Yes
+                </Button>
 
-            </DialogActions>
-          </Dialog>
-        </div>
+              </DialogActions>
+            </Dialog>
+          </div>
+        )}
 
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>

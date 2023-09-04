@@ -13,6 +13,7 @@ export const getItem = async (itemId: string) => {
 };
 
 export const deleteItem = async (itemId: string) => {
+  console.log("delete item - entry with", itemId);
   const endpoint = `Items/${itemId}`;
   await requestAsync<void>(HttpOperation.DELETE, endpoint);
 };
