@@ -10,9 +10,12 @@ import {
   CardContent,
   CardActions,
   Divider,
+  Stack,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ImagesCarousel from "../components/ImagesCarousel/ImagesCarousel";
 import { IInputImage, IUserDetails, IUserItem } from "../types";
 import { allUserDetails } from "../mocks/userDetails";
@@ -30,6 +33,13 @@ import { BorderAll } from "@mui/icons-material";
 type Props = {};
 
 const userPage = (props: Props) => {
+  const location = useLocation();
+
+  const {
+    snackBarState,
+    snackBarMessage
+  } = location && location.state ? location.state : { snackBarState: false, snackBarMessage: "" };
+
   const [userDetails, setUserDetails] = useState<IUserDetails>(
     allUserDetails[3]
   );
@@ -172,6 +182,17 @@ const userPage = (props: Props) => {
     setItemsContainerKey(prevKey => prevKey + 1);
   };
 
+  //snackBar info
+  const [openSnackBar, setOpenSnackBar] = React.useState(snackBarState);
+
+  const handleCloseSnackBar = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
+  };
+
   return (
     <Container sx={{ paddingTop: '35px' }}>
       <Box sx={{ alignItems: isMobileView ? 'inherit' : 'center', display: 'flex', flexDirection: isMobileView ? 'column' : 'row' }} >
@@ -248,6 +269,17 @@ const userPage = (props: Props) => {
           items={userItems}
         />
       </Box>
+
+      {/* snack bar area */}
+      <Stack spacing={2} sx={{ width: '100%' }}>
+        {snackBarMessage && snackBarMessage.length > 0 && (
+          <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+            <Alert onClose={handleCloseSnackBar} severity="success" sx={{ width: '100%' }}>
+              {snackBarMessage}
+            </Alert>
+          </Snackbar>
+        )}
+      </Stack>
     </Container >
   );
 

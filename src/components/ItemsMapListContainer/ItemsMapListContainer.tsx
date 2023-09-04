@@ -20,6 +20,7 @@ import { items } from "../../mocks/items";
 import CloseIcon from "@mui/icons-material/Close";
 
 const ItemsMapListContainer = () => {
+
   const navigate = useNavigate();
 
   const [toggle, setToggle] = useState<string>("List");

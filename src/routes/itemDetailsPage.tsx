@@ -64,6 +64,7 @@ type Props = {};
 const itemDetailsPage = (props: Props) => {
   const navigate = useNavigate();
 
+
   const [itemDetails, setItemDetails] = useState<IItemResponse>({
     id: "",
     title: "",
@@ -103,8 +104,8 @@ const itemDetailsPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;

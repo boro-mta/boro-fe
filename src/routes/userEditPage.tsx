@@ -109,13 +109,18 @@ const UserEditPage = (props: Props) => {
     },
     enableReinitialize: true,
     validationSchema: validationSchema,
-    onSubmit: () => {},
+    onSubmit: () => { },
   });
 
   const navigate = useNavigate();
 
   const handleCancelClick = () => {
-    navigate(`/users/${userId}`);
+    navigate(`/users/${userId}`, {
+      state: {
+        snackBarState: false,
+        snackBarMessage: "",
+      },
+    });
     window.location.reload();
   };
 
@@ -151,7 +156,12 @@ const UserEditPage = (props: Props) => {
         );
       }
 
-      navigate(`/Users/${userId}`);
+      navigate(`/Users/${userId}`, {
+        state: {
+          snackBarState: false,
+          snackBarMessage: "",
+        },
+      });
     }
   };
 

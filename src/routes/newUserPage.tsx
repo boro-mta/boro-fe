@@ -72,7 +72,7 @@ const NewUserPage = (props: Props) => {
     },
     enableReinitialize: true,
     validationSchema: validationSchema,
-    onSubmit: () => {},
+    onSubmit: () => { },
   });
 
   //Navigation tool
@@ -137,7 +137,12 @@ const NewUserPage = (props: Props) => {
       );
 
       //Navigate to the created user's page
-      navigate(`/Users/${userId}`);
+      navigate(`/Users/${userId}`, {
+        state: {
+          snackBarState: false,
+          snackBarMessage: "",
+        },
+      });
       window.location.reload();
     } catch (error) {
       console.error("Failed to create user:", error);

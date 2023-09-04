@@ -88,7 +88,7 @@ function ResponsiveAppBar() {
                 href="/"
                 onClick={(e) => {
                   e.preventDefault();
-                  navigate("/");
+                  navigate(`/`);
                 }}
               >
                 <Box sx={Styles.logoBoxStyles}>
