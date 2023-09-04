@@ -177,7 +177,7 @@ const addItemPage = (props: Props) => {
         newImagesNamesInBase64Format
       );
 
-      newImagesNamesInStringFormat.map(function(fileName) {
+      newImagesNamesInStringFormat.map(function (fileName) {
         setImagesNames((oldArray) => [...oldArray, fileName]);
       });
     }
@@ -598,9 +598,8 @@ const addItemPage = (props: Props) => {
         </Stepper>
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
-            {/* todo: change message */}
             <Typography component={"span"}>
-              All steps completed - you&apos;re finished
+              All steps completed
             </Typography>
           </Paper>
         )}

@@ -128,6 +128,7 @@ const ItemsMapListContainer = () => {
                 </Alert>
               </Collapse>
             )}
+
             <ListContainer
               navigate={navigate}
               userGuid={userGuid}

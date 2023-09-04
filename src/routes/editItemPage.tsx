@@ -411,9 +411,9 @@ const EditItemPage = (props: Props) => {
           }
         }
       } catch (err) {
-        console.log("Error while loading item");
-        setServerRequestError(err);
-        //todo:show error
+        setServerRequestError("Error while loading item");
+        setSnackBarError("Error while loading item");
+        setOpenSnackBar(true);
       }
     };
 
@@ -742,9 +742,8 @@ const EditItemPage = (props: Props) => {
 
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
-            {/* todo: change message */}
             <Typography component={"span"}>
-              All steps completed - you&apos;re finished
+              All steps completed
             </Typography>
           </Paper>
         )}
