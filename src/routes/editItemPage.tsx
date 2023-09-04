@@ -411,9 +411,9 @@ const EditItemPage = (props: Props) => {
           }
         }
       } catch (err) {
-        console.log("Error while loading item");
-        setServerRequestError(err);
-        //todo:show error
+        setServerRequestError("Error while loading item");
+        setSnackBarError("Error while loading item");
+        setOpenSnackBar(true);
       }
     };
 

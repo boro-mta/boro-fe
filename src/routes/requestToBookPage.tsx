@@ -182,7 +182,6 @@ const RequestToBookPage = (props: Props) => {
         } else {
           setCalendarStartDate(selectedStartDate);
           setCalendarEndDate(selectedEndDate);
-          //todo: change error and show it:
           setSelectedDatesError("");
           setIsValidDates(true);
         }
@@ -217,7 +216,6 @@ const RequestToBookPage = (props: Props) => {
         variant="contained"
         sx={{ mt: 1, mr: 1, backgroundColor: "#007bff" }}
         onClick={handleClickOpen}
-        // endIcon={<EditCalendarSharpIcon />}
         endIcon={<EditCalendarSharpIcon />}
       >
         Edit Dates
