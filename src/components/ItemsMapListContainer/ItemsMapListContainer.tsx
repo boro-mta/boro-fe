@@ -6,7 +6,7 @@ import {
   selectUserName,
   setCurrentLocation,
 } from "../../features/UserSlice";
-import { Container } from "@mui/material";
+import { Alert, Button, Collapse, Container, IconButton } from "@mui/material";
 import Map from "../MapComponent/Map";
 import MapIcon from "@mui/icons-material/Map";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
@@ -16,8 +16,11 @@ import { ICoordinate, ICoordinateRadius, IMarkerDetails } from "../../types";
 import { ListContainer } from "./ListContainer";
 import { getItemsByRadius } from "../../api/ItemService";
 import { IItemResponse } from "../../api/Models/IItemResponse";
+import { items } from "../../mocks/items";
+import CloseIcon from "@mui/icons-material/Close";
 
 const ItemsMapListContainer = () => {
+
   const navigate = useNavigate();
 
   const [toggle, setToggle] = useState<string>("List");
@@ -32,6 +35,9 @@ const ItemsMapListContainer = () => {
   const userName = useAppSelector(selectUserName);
   const userGuid = useAppSelector(selectUserId);
   const picture = useAppSelector(selectPicture);
+
+  const [radiusInMeters, setRadiusInMeters] = useState(5000);
+
   useEffect(() => {
     let currLocation;
 
@@ -59,30 +65,70 @@ const ItemsMapListContainer = () => {
       myLocation.longitude !== 0 &&
       dispatch(setCurrentLocation(myLocation));
   }, [myLocation]);
+
   useEffect(() => {
     const fetchAndSetMarkers = async () => {
       if (myLocation.latitude !== 0 && myLocation.longitude !== 0) {
         let coordinateToSearch: ICoordinateRadius = {
           ...myLocation,
-          radiusInMeters: 20000,
+          radiusInMeters,
         };
         let markers = await getItemsByRadius(coordinateToSearch);
-        if (Array.isArray(markers)) setLocationsAroundMe(markers as any);
+        if (Array.isArray(markers)) {
+          setLocationsAroundMe(markers as any);
+          markers.length <= 3 ? setIsOpenState(true) : setIsOpenState(false);
+        }
       }
     };
 
     fetchAndSetMarkers();
-  }, [myLocation]);
+  }, [myLocation, radiusInMeters]);
 
   const handleSearchAreaClick = (items: IItemResponse[]) => {
     setLocationsAroundMe(items as any);
   };
+
+  const [isOpenState, setIsOpenState] = useState(true);
 
   return (
     <>
       {toggle === "List" ? (
         <div style={{ position: "relative", height: "100vh" }}>
           <Container>
+            {items.length <= 3 && isOpenState && (
+              <Collapse in={isOpenState}>
+                <Alert
+                  severity="info"
+                  action={
+                    <IconButton
+                      aria-label="close"
+                      color="inherit"
+                      size="small"
+                      onClick={() => {
+                        setIsOpenState(false);
+                      }}
+                    >
+                      <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                  }
+                  sx={{ marginBottom: "15px", marginTop: "15px" }}
+                >
+                  Looks like there aren't many nearby items. Expand the search
+                  area to find more items.
+                  <Button
+                    variant="outlined"
+                    sx={{ textTransform: "none" }}
+                    onClick={() => {
+                      setLocationsAroundMe([]);
+                      setRadiusInMeters(radiusInMeters * 2);
+                    }}
+                  >
+                    Expand search radius
+                  </Button>
+                </Alert>
+              </Collapse>
+            )}
+
             <ListContainer
               navigate={navigate}
               userGuid={userGuid}

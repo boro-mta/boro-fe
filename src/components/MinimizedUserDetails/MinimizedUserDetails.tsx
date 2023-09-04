@@ -63,7 +63,6 @@ const MinimizedUserDetails = ({
     >
       <Link to={`/users/${userId}`} style={{ textDecoration: "none" }}>
         <Paper
-          elevation={3}
           variant="outlined"
           sx={{
             borderRadius: "30px",

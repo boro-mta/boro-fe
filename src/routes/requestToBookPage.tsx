@@ -42,7 +42,7 @@ const RequestToBookPage = (props: Props) => {
   const {
     selectedStartDate,
     selectedEndDate,
-    onDateChange,
+    excludedDatesState,
   } = location.state;
 
   const [requestStartDate, setRequestStartDate] = useState<Date>(

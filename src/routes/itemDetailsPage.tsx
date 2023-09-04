@@ -64,6 +64,7 @@ type Props = {};
 const itemDetailsPage = (props: Props) => {
   const navigate = useNavigate();
 
+
   const [itemDetails, setItemDetails] = useState<IItemResponse>({
     id: "",
     title: "",

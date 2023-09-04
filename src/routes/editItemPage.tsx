@@ -19,6 +19,11 @@ import {
   TextField,
   Typography,
   Box,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
 } from "@mui/material";
 import { Container, Stack } from "@mui/system";
 import { ICoordinate, IFullImageDetails, IInputItem } from "../types";
@@ -31,7 +36,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { IInputImage } from "../types";
 import { formatImagesOnRecieve } from "../utils/imagesUtils";
 import IUpdateItemInfoInput from "../api/Models/IUpdateItemInfoInput";
-import { getItem } from "../api/ItemService";
+import { deleteItem, getItem } from "../api/ItemService";
 import {
   updateItemInfo,
   addItemImage,
@@ -42,6 +47,7 @@ import { IItemResponse } from "../api/Models/IItemResponse";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { libs } from "../utils/googleMapsUtils";
 import { getReadableAddressAsync } from "../utils/locationUtils";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -305,6 +311,44 @@ const EditItemPage = (props: Props) => {
     onEditItem();
   };
 
+  const [openDeleteItemDialog, setOpenDeleteItemDialog] = React.useState(false);
+
+  const handleClickOpenDeleteItemDialog = () => {
+    setOpenDeleteItemDialog(true);
+  };
+
+  const handleCloseDeleteItemDialog = () => {
+    setOpenDeleteItemDialog(false);
+  };
+
+  const handleDeleteItemButton = () => {
+    handleClickOpenDeleteItemDialog();
+  };
+
+  const deleteItemRequest = async () => {
+    try {
+      if (itemId) {
+        await deleteItem(itemId);
+        setOpenDeleteItemDialog(false);
+        navigate(`/Users/${itemDetails.ownerId}`, {
+          state: {
+            snackBarState: true,
+            snackBarMessage: "The item was deleted successfully!",
+          },
+        });
+      }
+      else {
+        throw new Error("error in deleting item");
+      }
+    }
+    catch (exception: any) {
+      setOpenSnackBar(true);
+      setSnackBarError("Error in deleting item");
+      setOpenDeleteItemDialog(false);
+    }
+
+  };
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -331,6 +375,18 @@ const EditItemPage = (props: Props) => {
     });
 
     return contiditionToReturn;
+  };
+
+  //snack bar area
+  const [openSnackBar, setOpenSnackBar] = React.useState<boolean>(false);
+  const [snackBarError, setSnackBarError] = React.useState<string>("");
+
+  const handleCloseSnackBar = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
   };
 
   useEffect(() => {
@@ -518,8 +574,8 @@ const EditItemPage = (props: Props) => {
                       severity={isAddSuccess ? "success" : "error"}
                     >
                       {isAddSuccess
-                        ? "The item was added successfully!"
-                        : "There was an issue adding the item. please try again."}
+                        ? "The item was edited successfully!"
+                        : "There was an issue editing the item. please try again."}
                     </Alert>
                   </Snackbar>
                 </Typography>
@@ -614,29 +670,75 @@ const EditItemPage = (props: Props) => {
           </Step>
         </Stepper>
 
-        <Button
-          variant="contained"
-          type="submit"
-          disabled={false}
-          style={{ marginRight: "8px", padding: "8px 16px" }}
-          onClick={handleSaveClick}
-        >
-          Save
-        </Button>
-        <Button
-          variant="contained"
-          type="button"
-          disabled={false}
-          style={{
-            marginLeft: "8px",
-            padding: "8px 16px",
-            backgroundColor: "white",
-            color: "red",
-          }}
-          onClick={handleCancelClick}
-        >
-          Cancel
-        </Button>
+        <div>
+          <Button
+            variant="contained"
+            type="submit"
+            disabled={false}
+            style={{ marginRight: "8px", padding: "8px 16px" }}
+            onClick={handleSaveClick}
+          >
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            type="button"
+            disabled={false}
+            style={{
+              marginLeft: "8px",
+              padding: "8px 16px",
+              backgroundColor: "white",
+              color: "red",
+            }}
+            onClick={handleCancelClick}
+          >
+            Cancel
+          </Button>
+        </div>
+
+        {itemId && (
+          <div>
+            <Button
+              variant="contained"
+              type="button"
+              style={{
+                marginTop: "10px",
+                marginBottom: "10px",
+                padding: "8px 28px",
+                backgroundColor: "red",
+                color: "white",
+              }}
+              onClick={handleDeleteItemButton}
+
+              startIcon={<DeleteIcon />}
+            >
+              Delete Item
+            </Button>
+
+            <Dialog
+              open={openDeleteItemDialog}
+              onClose={handleCloseDeleteItemDialog}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {"Delete Item"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to delete this item?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions style={{ display: "flex", justifyContent: "space-between" }}>
+                <Button onClick={handleCloseDeleteItemDialog}>Cancel</Button>
+                <Button onClick={deleteItemRequest} autoFocus>
+                  Yes
+                </Button>
+
+              </DialogActions>
+            </Dialog>
+          </div>
+        )}
 
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
@@ -645,6 +747,14 @@ const EditItemPage = (props: Props) => {
             </Typography>
           </Paper>
         )}
+
+        <Stack spacing={2} sx={{ width: '100%' }}>
+          <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+            <Alert onClose={handleCloseSnackBar} severity="error" sx={{ width: '100%' }}>
+              {snackBarError}
+            </Alert>
+          </Snackbar>
+        </Stack>
       </Box>
     </Container>
   );

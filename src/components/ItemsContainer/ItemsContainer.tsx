@@ -3,6 +3,8 @@ import React from "react";
 import { IUserItem } from "../../types";
 import Item from "../Item/Item";
 import { useNavigate } from "react-router-dom";
+import AddNewItemBox from "./AddNewItemBox";
+import { isLoggedIn } from "../../utils/authUtils";
 
 type Props = {
   containerTitle: string;
@@ -11,7 +13,6 @@ type Props = {
 
 const ItemsContainer = ({ containerTitle, items }: Props) => {
   const navigate = useNavigate();
-
   return (
     <Container>
       <Box>
@@ -35,6 +36,13 @@ const ItemsContainer = ({ containerTitle, items }: Props) => {
             />
           </Grid>
         ))}
+        <Grid item xs={12} sm={4} md={4}>
+          {isLoggedIn() && (
+            <Box sx={{ marginBottom: 15 }}>
+              <AddNewItemBox />
+            </Box>
+          )}
+        </Grid>
       </Grid>
     </Container>
   );

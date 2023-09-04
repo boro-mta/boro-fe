@@ -73,7 +73,12 @@ const AppBarMenu = ({ afterClick }: Props) => {
     {
       title: "Profile",
       icon: <PersonOutlineIcon />,
-      onItemSelect: () => navigate(`/Users/${userId}`),
+      onItemSelect: () => navigate(`/Users/${userId}`, {
+        state: {
+          snackBarState: false,
+          snackBarMessage: "",
+        },
+      }),
     },
     {
       title: "Log Out",
@@ -82,7 +87,7 @@ const AppBarMenu = ({ afterClick }: Props) => {
         dispatch(updateUser(initialState));
         dispatch(logoutUser());
         localStorage.clear();
-        navigate("/");
+        navigate(`/`);
       },
     },
   ];
