@@ -19,6 +19,11 @@ import {
   TextField,
   Typography,
   Box,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
 } from "@mui/material";
 import { Container, Stack } from "@mui/system";
 import { ICoordinate, IFullImageDetails, IInputItem } from "../types";
@@ -42,6 +47,7 @@ import { IItemResponse } from "../api/Models/IItemResponse";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { libs } from "../utils/googleMapsUtils";
 import { getReadableAddressAsync } from "../utils/locationUtils";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -157,14 +163,14 @@ const EditItemPage = (props: Props) => {
         newImagesNamesInBase64Format
       );
 
-      newImagesNamesInStringFormat.map(function(fileName) {
+      newImagesNamesInStringFormat.map(function (fileName) {
         setImagesNames((oldArray) => [...oldArray, fileName]);
       });
 
       //images for server update:
       let newImagesInStringormat: string[] = [];
 
-      filesInBase64.map(function(file) {
+      filesInBase64.map(function (file) {
         newImagesInStringormat.push(file);
       });
 
@@ -305,6 +311,26 @@ const EditItemPage = (props: Props) => {
     onEditItem();
   };
 
+  const [openDeleteItemDialog, setOpenDeleteItemDialog] = React.useState(false);
+
+  const handleClickOpenDeleteItemDialog = () => {
+    setOpenDeleteItemDialog(true);
+  };
+
+  const handleCloseDeleteItemDialog = () => {
+    setOpenDeleteItemDialog(false);
+  };
+
+  const handleDeleteItemButton = () => {
+    handleClickOpenDeleteItemDialog();
+  };
+
+  const deleteItem = () => {
+    console.log("delete item");
+
+    setOpenDeleteItemDialog(false);
+  };
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -324,7 +350,7 @@ const EditItemPage = (props: Props) => {
 
   const getConditionFronItemDetails = (conditionFromServer: any): any => {
     let contiditionToReturn: any = "";
-    conditionArr.forEach(function(value) {
+    conditionArr.forEach(function (value) {
       if (value.text === conditionFromServer) {
         contiditionToReturn = value;
       }
@@ -614,29 +640,73 @@ const EditItemPage = (props: Props) => {
           </Step>
         </Stepper>
 
-        <Button
-          variant="contained"
-          type="submit"
-          disabled={false}
-          style={{ marginRight: "8px", padding: "8px 16px" }}
-          onClick={handleSaveClick}
-        >
-          Save
-        </Button>
-        <Button
-          variant="contained"
-          type="button"
-          disabled={false}
-          style={{
-            marginLeft: "8px",
-            padding: "8px 16px",
-            backgroundColor: "white",
-            color: "red",
-          }}
-          onClick={handleCancelClick}
-        >
-          Cancel
-        </Button>
+        <div>
+          <Button
+            variant="contained"
+            type="submit"
+            disabled={false}
+            style={{ marginRight: "8px", padding: "8px 16px" }}
+            onClick={handleSaveClick}
+          >
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            type="button"
+            disabled={false}
+            style={{
+              marginLeft: "8px",
+              padding: "8px 16px",
+              backgroundColor: "white",
+              color: "red",
+            }}
+            onClick={handleCancelClick}
+          >
+            Cancel
+          </Button>
+        </div>
+
+        <div>
+          <Button
+            variant="contained"
+            type="button"
+            style={{
+              marginTop: "10px",
+              marginBottom: "10px",
+              padding: "8px 28px",
+              backgroundColor: "red",
+              color: "white",
+            }}
+            onClick={handleDeleteItemButton}
+
+            startIcon={<DeleteIcon />}
+          >
+            Delete Item
+          </Button>
+
+          <Dialog
+            open={openDeleteItemDialog}
+            onClose={handleCloseDeleteItemDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Delete Item"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to delete this item?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions style={{ display: "flex", justifyContent: "space-between" }}>
+              <Button onClick={handleCloseDeleteItemDialog}>Cancel</Button>
+              <Button onClick={deleteItem} autoFocus>
+                Yes
+              </Button>
+
+            </DialogActions>
+          </Dialog>
+        </div>
 
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
