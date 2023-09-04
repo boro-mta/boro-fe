@@ -243,7 +243,7 @@ const RequestToBookPage = (props: Props) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleChange}>change</Button>
+          <Button disabled={!isValidDates} onClick={handleChange}>change</Button>
         </DialogActions>
       </Dialog>
 
