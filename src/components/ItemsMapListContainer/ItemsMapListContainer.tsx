@@ -11,15 +11,24 @@ import Map from "../MapComponent/Map";
 import MapIcon from "@mui/icons-material/Map";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import ToggleButton from "./ToggleButton";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { ICoordinate, ICoordinateRadius, IMarkerDetails } from "../../types";
 import { ListContainer } from "./ListContainer";
 import { getItemsByRadius } from "../../api/ItemService";
 import { IItemResponse } from "../../api/Models/IItemResponse";
 import { items } from "../../mocks/items";
 import CloseIcon from "@mui/icons-material/Close";
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
 
 const ItemsMapListContainer = () => {
+  const location = useLocation();
+
+  const {
+    snackBarState,
+    snackBarMessage
+  } = location && location.state ? location.state : { snackBarState: false, snackBarMessage: "" };
+
   const navigate = useNavigate();
 
   const [toggle, setToggle] = useState<string>("List");
@@ -89,6 +98,17 @@ const ItemsMapListContainer = () => {
 
   const [isOpenState, setIsOpenState] = useState(true);
 
+  //snackBar info
+  const [openSnackBar, setOpenSnackBar] = React.useState(snackBarState);
+
+  const handleCloseSnackBar = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
+  };
+
   return (
     <>
       {toggle === "List" ? (
@@ -137,6 +157,23 @@ const ItemsMapListContainer = () => {
           <ToggleButton endIcon={<MapIcon />} onClick={() => setToggle("Map")}>
             Show map
           </ToggleButton>
+
+          {/* snack bar area */}
+          <Stack spacing={2} sx={{ width: '100%' }}>
+            {snackBarMessage && snackBarMessage.length > 0 && (
+              <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+                <Alert onClose={handleCloseSnackBar} severity="success" sx={{ width: '100%' }}>
+                  {snackBarMessage}
+                </Alert>
+              </Snackbar>
+            )}
+            {/* <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+              <Alert severity="error">This is an error message!</Alert>
+            </Snackbar> */}
+            {/* <Alert severity="warning">This is a warning message!</Alert>
+            <Alert severity="info">This is an information message!</Alert>
+            <Alert severity="success">This is a success message!</Alert> */}
+          </Stack>
         </div>
       ) : (
         <>

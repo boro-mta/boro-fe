@@ -88,7 +88,12 @@ function ResponsiveAppBar() {
                 href="/"
                 onClick={(e) => {
                   e.preventDefault();
-                  navigate("/");
+                  navigate(`/`, {
+                    state: {
+                      snackBarState: false,
+                      snackBarMessage: "",
+                    },
+                  });
                 }}
               >
                 <Box sx={Styles.logoBoxStyles}>

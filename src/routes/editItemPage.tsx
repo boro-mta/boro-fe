@@ -326,15 +326,27 @@ const EditItemPage = (props: Props) => {
   };
 
   const deleteItemRequest = async () => {
-    if (itemId) {
-      await deleteItem(itemId);
+    try {
+      if (itemId) {
+        await deleteItem(itemId);
+        setOpenDeleteItemDialog(false);
+        navigate(`/`, {
+          state: {
+            snackBarState: true,
+            snackBarMessage: "The item was deleted successfully!",
+          },
+        });
+      }
+      else {
+        throw new Error("error in deleting item");
+      }
     }
-    else {
-      console.log("error in deleting item");
+    catch (exception: any) {
+      setOpenSnackBar(true);
+      setSnackBarError("Error in deleting item");
+      setOpenDeleteItemDialog(false);
     }
 
-    setOpenDeleteItemDialog(false);
-    navigate("/");
   };
 
   const formik = useFormik({
@@ -363,6 +375,18 @@ const EditItemPage = (props: Props) => {
     });
 
     return contiditionToReturn;
+  };
+
+  //snack bar area
+  const [openSnackBar, setOpenSnackBar] = React.useState<boolean>(false);
+  const [snackBarError, setSnackBarError] = React.useState<string>("");
+
+  const handleCloseSnackBar = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
   };
 
   useEffect(() => {
@@ -550,8 +574,8 @@ const EditItemPage = (props: Props) => {
                       severity={isAddSuccess ? "success" : "error"}
                     >
                       {isAddSuccess
-                        ? "The item was added successfully!"
-                        : "There was an issue adding the item. please try again."}
+                        ? "The item was edited successfully!"
+                        : "There was an issue editing the item. please try again."}
                     </Alert>
                   </Snackbar>
                 </Typography>
@@ -724,6 +748,14 @@ const EditItemPage = (props: Props) => {
             </Typography>
           </Paper>
         )}
+
+        <Stack spacing={2} sx={{ width: '100%' }}>
+          <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
+            <Alert onClose={handleCloseSnackBar} severity="error" sx={{ width: '100%' }}>
+              {snackBarError}
+            </Alert>
+          </Snackbar>
+        </Stack>
       </Box>
     </Container>
   );

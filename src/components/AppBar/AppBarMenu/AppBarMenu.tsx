@@ -82,7 +82,12 @@ const AppBarMenu = ({ afterClick }: Props) => {
         dispatch(updateUser(initialState));
         dispatch(logoutUser());
         localStorage.clear();
-        navigate("/");
+        navigate(`/`, {
+          state: {
+            snackBarState: false,
+            snackBarMessage: "",
+          },
+        });
       },
     },
   ];

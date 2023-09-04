@@ -40,7 +40,6 @@ const RequestToBookPage = (props: Props) => {
     selectedStartDate,
     selectedEndDate,
     excludedDates,
-    onDateChange,
   } = location.state;
 
   const [requestStartDate, setRequestStartDate] = useState<Date>(
@@ -156,8 +155,8 @@ const RequestToBookPage = (props: Props) => {
         ) {
           setSelectedDatesError(
             "The date " +
-              getFormattedDate(loop) +
-              " is not available, please choose different dates."
+            getFormattedDate(loop) +
+            " is not available, please choose different dates."
           );
           setIsValidDates(false);
           break;

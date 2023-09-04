@@ -111,7 +111,12 @@ const FacebookLoginPage = () => {
         latitude: userHomeLocation.latitude,
         longitude: userHomeLocation.longitude,
       });
-      navigate("/");
+      navigate(`/`, {
+        state: {
+          snackBarState: false,
+          snackBarMessage: "",
+        },
+      });
     }
   };
   const userid = getCurrentUserId();
@@ -119,7 +124,12 @@ const FacebookLoginPage = () => {
     if (userid != null) {
       console.log(userid);
       console.log("Redirecting...");
-      navigate("/");
+      navigate(`/`, {
+        state: {
+          snackBarState: false,
+          snackBarMessage: "",
+        },
+      });
     }
   });
 
