@@ -330,7 +330,7 @@ const EditItemPage = (props: Props) => {
       if (itemId) {
         await deleteItem(itemId);
         setOpenDeleteItemDialog(false);
-        navigate(`/`, {
+        navigate(`/Users/${itemDetails.ownerId}`, {
           state: {
             snackBarState: true,
             snackBarMessage: "The item was deleted successfully!",
