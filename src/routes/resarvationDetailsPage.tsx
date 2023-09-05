@@ -315,6 +315,7 @@ const ReservationDetailsPage = ({ }: Props) => {
         }
         itemTitle={itemDetails.title}
         itemDescription={itemDetails.description}
+        isLender={isCurrentUserLender}
       />
       {reservationStatusInfo.title && (
         <StatusMessage />

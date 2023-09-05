@@ -1,10 +1,12 @@
-import { Paper, ButtonBase, Box, Typography, styled } from "@mui/material";
+import { Paper, ButtonBase, Box, Typography, styled, Grid } from "@mui/material";
+import PointsContainer from "../PointsContainer/PointsContainer";
 
 type props = {
   onClick: () => void;
   imageData: string | undefined;
   itemTitle: string;
   itemDescription: string;
+  isLender: boolean;
 };
 
 const MinimalItemInfoContainer = ({
@@ -12,6 +14,7 @@ const MinimalItemInfoContainer = ({
   imageData,
   itemTitle,
   itemDescription,
+  isLender,
 }: props) => {
   const Img = styled("img")({
     margin: "auto",
@@ -51,6 +54,11 @@ const MinimalItemInfoContainer = ({
         <Typography variant="body2" gutterBottom>
           {itemDescription}
         </Typography>
+        {isLender && (
+          <Grid item>
+            <PointsContainer title={"Earn 500 points by lending this item "} points={500} />
+          </Grid>
+        )}
       </Box>
     </Paper>
   );
