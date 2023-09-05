@@ -1,6 +1,8 @@
 import ApproveButton from "../components/ReservationButtons/ApproveButton";
 import CancelButton from "../components/ReservationButtons/CancelButton";
 import RejectButton from "../components/ReservationButtons/DeclineButton";
+import ReturnItemButton from "../components/ReservationButtons/ReturnItemButton";
+import HandOverButton from "../components/ReservationButtons/HandOverButton";
 
 export enum ReservationStatus {
   Canceled = 0,
@@ -78,12 +80,22 @@ export const actionsByStatusAndOwnership = {
   ApprovedOwner: {
     title: "Reservation is approved",
     description: "You have approved this reservation.",
-    components: [CancelButton],
+    components: [CancelButton, HandOverButton],
   },
   ApprovedNotOwner: {
     title: "Reservation is approved",
     description: "The lender approved your reservation!",
     components: [CancelButton],
+  },
+  BorrowedOwner: {
+    title: "The borrow is in process",
+    description: "The borrower will return your item until the end date.",
+    components: [],
+  },
+  BorrowedNotOwner: {
+    title: "The borrow is in process",
+    description: "You need to return the item to the lender until the end date.",
+    components: [ReturnItemButton],
   },
 };
 
@@ -119,6 +131,13 @@ export const generateReservationStatusInfo = (
         return actionsByStatusAndOwnership.CanceledOwner;
       } else {
         return actionsByStatusAndOwnership.CanceledNotOwner;
+      }
+    }
+    case ReservationStatus.Borrowed: {
+      if (isOwner) {
+        return actionsByStatusAndOwnership.BorrowedOwner;
+      } else {
+        return actionsByStatusAndOwnership.BorrowedNotOwner;
       }
     }
   }

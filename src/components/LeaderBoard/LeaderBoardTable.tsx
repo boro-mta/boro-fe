@@ -118,10 +118,10 @@ const LeaderBoardTable = ({ rows }: Props) => {
                     <DetailsContainer details={row.amountOfItems} />
                   </TableCell>
                   <TableCell align="center">
-                    <DetailsContainer details={row.amountOfBorrowings} />
+                    <DetailsContainer details={row.amountOfLendings} />
                   </TableCell>
                   <TableCell align="center">
-                    <DetailsContainer details={row.amountOfLendings} />
+                    <DetailsContainer details={row.amountOfBorrowings} />
                   </TableCell>
                   <TableCell align="center">
                     <ScoreContainer score={row.score} />

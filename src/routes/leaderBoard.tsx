@@ -17,28 +17,28 @@ const LeaderBoard = () => {
     let allUserDetailsPromises =
       serverTopTenLeaders && serverTopTenLeaders.length > 0
         ? serverTopTenLeaders.map(async (user: IUserStatistics) => {
-            const serverUserDetails = await getUserProfile(user.userId);
-            let serverFullUserName: string = serverUserDetails.firstName.concat(
-              " " + serverUserDetails.lastName
-            );
+          const serverUserDetails = await getUserProfile(user.userId);
+          let serverFullUserName: string = serverUserDetails.firstName.concat(
+            " " + serverUserDetails.lastName
+          );
 
-            let row: ILeaderBoardRow = {
-              userFullName: serverFullUserName,
-              userId: serverUserDetails.userId,
-              userImg: formatImagesOnRecieve([
-                serverUserDetails.image as IInputImage,
-              ])[0],
-              score: user.totalScore,
-              amountOfItems: user.amountOfItems,
-              amountOfLendings: user.amountOfLendings,
-              amountOfBorrowings: user.amountOfLendings,
-            };
+          let row: ILeaderBoardRow = {
+            userFullName: serverFullUserName,
+            userId: serverUserDetails.userId,
+            userImg: formatImagesOnRecieve([
+              serverUserDetails.image as IInputImage,
+            ])[0],
+            score: user.totalScore,
+            amountOfItems: user.amountOfItems,
+            amountOfLendings: user.amountOfLendings,
+            amountOfBorrowings: user.amountOfBorrowings,
+          };
 
-            leaderBoardRowsToReturn.push(row);
-            index++;
+          leaderBoardRowsToReturn.push(row);
+          index++;
 
-            return row;
-          })
+          return row;
+        })
         : [];
 
     leaderBoardRowsToReturn = await Promise.all(allUserDetailsPromises);
@@ -68,7 +68,11 @@ const LeaderBoard = () => {
   }, []);
 
   return (
-    <div>{rowsToShow.length > 0 && <LeaderBoardTable rows={rowsToShow} />}</div>
+    <div>
+      {rowsToShow.length > 0 &&
+        <LeaderBoardTable rows={rowsToShow} />
+      }
+    </div>
   );
 };
 

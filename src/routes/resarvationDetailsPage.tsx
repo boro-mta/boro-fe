@@ -2,12 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Container } from "@mui/system";
 import {
   Box,
-  Button,
   Typography,
   Paper,
-  Grid,
-  styled,
-  ButtonBase,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import {
@@ -25,7 +21,6 @@ import IUserProfile from "../api/Models/IUserProfile";
 import {
   IReservationStatusInfo,
   generateReservationStatusInfo,
-  statusFromNumToString,
 } from "../utils/reservationsUtils";
 import MinimizedUserDetails from "../components/MinimizedUserDetails/MinimizedUserDetails";
 "@sendbird/uikit-react/react/";
@@ -33,7 +28,6 @@ type IReservationDetailsParams = {
   reservationId: string;
 };
 
-import PointsContainer from "../components/PointsContainer/PointsContainer";
 import DateRangeSummary from "../components/DateRangeSummary/DateRangeSummary";
 import ContactUserButton from "../components/Chat/ContactUserButton";
 import ReservationStatusChip from "../components/ReservationStatusChip/ReservationStatusChip";
@@ -41,7 +35,7 @@ import MinimalItemInfoContainer from "../components/MinimalItemInfoContainer/Min
 
 type Props = {};
 
-const ReservationDetailsPage = ({}: Props) => {
+const ReservationDetailsPage = ({ }: Props) => {
   const [reservationDetails, setReservationDetails] = useState<
     IReservationDetails
   >({
@@ -253,7 +247,9 @@ const ReservationDetailsPage = ({}: Props) => {
           gap: 1,
         }}
       >
-        <Typography variant="h6">Actions: </Typography>
+        {reservationStatusInfo.components.length > 0 &&
+          <Typography variant="h6">Actions: </Typography>
+        }
         {reservationStatusInfo.components.length > 0 &&
           reservationStatusInfo.components.map((ActionComponent, i) => (
             <ActionComponent
@@ -319,8 +315,11 @@ const ReservationDetailsPage = ({}: Props) => {
         }
         itemTitle={itemDetails.title}
         itemDescription={itemDetails.description}
+        isLender={isCurrentUserLender}
       />
-      <StatusMessage />
+      {reservationStatusInfo.title && (
+        <StatusMessage />
+      )}
       <ReservationInfo />
       <UserInfo />
     </Container>
