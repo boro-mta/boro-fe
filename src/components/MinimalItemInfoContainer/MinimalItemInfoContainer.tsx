@@ -56,7 +56,7 @@ const MinimalItemInfoContainer = ({
         </Typography>
         {isLender && (
           <Grid item>
-            <PointsContainer title={"Earn 500 points by lending this item "} points={500} />
+            <PointsContainer title={"Earn 500 points by lending this item "} />
           </Grid>
         )}
       </Box>
