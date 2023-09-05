@@ -88,32 +88,32 @@ export const getAllReservationsData = async (
   let allReservationDetailsPromises =
     reservations && reservations.length > 0
       ? reservations.map(async (reservation: IReservation) => {
-          let itemData = (await getItem(reservation.itemId)) as IItemResponse;
-          let itemImg = formatImagesOnRecieve(itemData.images)[0];
-          let partyId =
-            party === "Borrower"
-              ? reservation.lenderId
-              : reservation.borrowerId;
-          let userData = (await getUserProfile(partyId)) as IUserProfile;
-          let partyImg = userData.image
-            ? formatImagesOnRecieve([userData.image])[0]
-            : "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png";
+        let itemData = (await getItem(reservation.itemId)) as IItemResponse;
+        let itemImg = formatImagesOnRecieve(itemData.images)[0];
+        let partyId =
+          party === "Borrower"
+            ? reservation.lenderId
+            : reservation.borrowerId;
+        let userData = (await getUserProfile(partyId)) as IUserProfile;
+        let partyImg = userData.image
+          ? formatImagesOnRecieve([userData.image])[0]
+          : "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png";
 
-          let fullSingleReservation = {
-            reservationId: reservation.reservationId,
-            itemTitle: itemData.title,
-            itemId: reservation.itemId,
-            itemImg: itemImg,
-            itemDescription: itemData.description || "",
-            startDate: new Date(reservation.startDate),
-            endDate: new Date(reservation.endDate),
-            partyId,
-            partyImg: partyImg,
-            partyName: `${userData.firstName} ${userData.lastName}`,
-            status: reservation.status,
-          };
-          return fullSingleReservation;
-        })
+        let fullSingleReservation = {
+          reservationId: reservation.reservationId,
+          itemTitle: itemData.title,
+          itemId: reservation.itemId,
+          itemImg: itemImg,
+          itemDescription: itemData.description || "",
+          startDate: new Date(reservation.startDate),
+          endDate: new Date(reservation.endDate),
+          partyId,
+          partyImg: partyImg,
+          partyName: `${userData.firstName} ${userData.lastName}`,
+          status: reservation.status,
+        };
+        return fullSingleReservation;
+      })
       : [];
 
   allReservationsDetails = await Promise.all(allReservationDetailsPromises);
@@ -165,4 +165,22 @@ export const getItemBlockedDates = async (
   }
 
   return blockedDates;
+};
+
+export const handOverToBorrower = async (reservationId: string) => {
+  console.log("handOverToBorrower - entry with ", reservationId);
+  const endpoint = `Reservations/${reservationId}/HandOverToBorrower`;
+  await requestAsync<IItemResponse>(
+    HttpOperation.POST,
+    endpoint
+  );
+};
+
+export const returnToLender = async (reservationId: string) => {
+  console.log("returnToLender - entry with ", reservationId);
+  const endpoint = `Reservations/${reservationId}/ReturnToLender`;
+  await requestAsync<IItemResponse>(
+    HttpOperation.POST,
+    endpoint
+  );
 };

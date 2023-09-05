@@ -28,22 +28,29 @@ const borrowerDashboard = (props: Props) => {
 
   const completedRows = rows.filter(
     (row) =>
-      row.endDate < new Date() && row.status !== ReservationStatus.Canceled
+      // row.endDate < new Date() &&
+      row.status !== ReservationStatus.Canceled &&
+      row.status !== ReservationStatus.Declined &&
+      row.status !== ReservationStatus.Pending &&
+      row.status !== ReservationStatus.Borrowed
   );
   const pendingRows = rows.filter(
     (row) => row.status === ReservationStatus.Pending
   );
   const ongoingRows = rows.filter(
     (row) =>
-      row.startDate <= new Date() &&
-      row.endDate >= new Date() &&
-      row.status === ReservationStatus.Approved
+      // row.startDate <= new Date() &&
+      // row.endDate >= new Date() &&
+      row.status === ReservationStatus.Borrowed
   );
   const upcomingRows = rows.filter(
     (row) =>
       row.startDate > new Date() &&
       row.status !== ReservationStatus.Canceled &&
-      row.status !== ReservationStatus.Declined
+      row.status !== ReservationStatus.Declined &&
+      row.status !== ReservationStatus.Pending &&
+      row.status !== ReservationStatus.Returned &&
+      row.status !== ReservationStatus.Borrowed
   );
 
   if (completedRows.length === 0 &&
