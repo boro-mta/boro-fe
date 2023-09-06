@@ -94,8 +94,8 @@ const validationSchema = yup.object({
 
 const addItemPage = (props: Props) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
-    libraries: libs,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    libraries: ["places", "geometry"],
   });
 
   const [address, setAddress] = useState<ICoordinate>(
@@ -113,12 +113,10 @@ const addItemPage = (props: Props) => {
 
   const userId = useAppSelector(selectUserId);
 
-  const [categoryArr, setCategoryArr] = React.useState<any[]>(
-    categoriesOptions
-  );
-  const [conditionArr, setConditionArr] = React.useState<any[]>(
-    conditionOptions
-  );
+  const [categoryArr, setCategoryArr] =
+    React.useState<any[]>(categoriesOptions);
+  const [conditionArr, setConditionArr] =
+    React.useState<any[]>(conditionOptions);
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
@@ -170,9 +168,8 @@ const addItemPage = (props: Props) => {
       setImages(filesInBase64);
 
       //imagesNames for showing img preview:
-      const newImagesNamesInBase64Format = convertImagesTypeFromString(
-        filesInBase64
-      );
+      const newImagesNamesInBase64Format =
+        convertImagesTypeFromString(filesInBase64);
       const newImagesNamesInStringFormat = formatImagesOnRecieve(
         newImagesNamesInBase64Format
       );
@@ -598,9 +595,7 @@ const addItemPage = (props: Props) => {
         </Stepper>
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
-            <Typography component={"span"}>
-              All steps completed
-            </Typography>
+            <Typography component={"span"}>All steps completed</Typography>
           </Paper>
         )}
       </Box>

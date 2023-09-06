@@ -1,4 +1,12 @@
-import { Paper, ButtonBase, Box, Typography, styled, Grid } from "@mui/material";
+import React from "react";
+import {
+  Paper,
+  ButtonBase,
+  Box,
+  Typography,
+  styled,
+  Grid,
+} from "@mui/material";
 import PointsContainer from "../PointsContainer/PointsContainer";
 
 type props = {
@@ -6,7 +14,7 @@ type props = {
   imageData: string | undefined;
   itemTitle: string;
   itemDescription: string;
-  isLender: boolean;
+  isLender?: boolean;
 };
 
 const MinimalItemInfoContainer = ({

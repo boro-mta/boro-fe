@@ -43,8 +43,8 @@ const Map = memo(
     const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
 
     const { isLoaded } = useJsApiLoader({
-      googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
-      libraries: libs,
+      googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+      libraries: ["places", "geometry"],
     });
 
     const returnToCenter = () => {

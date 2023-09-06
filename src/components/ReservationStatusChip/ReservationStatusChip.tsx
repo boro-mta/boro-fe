@@ -1,3 +1,4 @@
+import React from "react";
 import { Chip, SxProps, Theme } from "@mui/material";
 import { ReservationStatus } from "../../utils/reservationsUtils";
 

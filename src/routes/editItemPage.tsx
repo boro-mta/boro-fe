@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, SetStateAction } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormikHelpers, useFormik } from "formik";
 import * as yup from "yup";
@@ -47,7 +47,7 @@ import { IItemResponse } from "../api/Models/IItemResponse";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { libs } from "../utils/googleMapsUtils";
 import { getReadableAddressAsync } from "../utils/locationUtils";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 
 type IFullItemDetailsParams = {
   itemId: string;
@@ -84,12 +84,10 @@ const EditItemPage = (props: Props) => {
   const [isAddSuccess, setIsAddSuccess] = useState<boolean>(false);
   const [condition, setCondition] = useState<string>("");
 
-  const [categoryArr, setCategoryArr] = React.useState<any[]>(
-    categoriesOptions
-  );
-  const [conditionArr, setConditionArr] = React.useState<any[]>(
-    conditionOptions
-  );
+  const [categoryArr, setCategoryArr] =
+    React.useState<any[]>(categoriesOptions);
+  const [conditionArr, setConditionArr] =
+    React.useState<any[]>(conditionOptions);
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
@@ -156,9 +154,8 @@ const EditItemPage = (props: Props) => {
       const filesInBase64: string[] = await Promise.all(filesPromises);
 
       //imagesNames for showing img preview:
-      const newImagesNamesInBase64Format = convertImagesTypeFromString(
-        filesInBase64
-      );
+      const newImagesNamesInBase64Format =
+        convertImagesTypeFromString(filesInBase64);
       const newImagesNamesInStringFormat = formatImagesOnRecieve(
         newImagesNamesInBase64Format
       );
@@ -336,17 +333,14 @@ const EditItemPage = (props: Props) => {
             snackBarMessage: "The item was deleted successfully!",
           },
         });
-      }
-      else {
+      } else {
         throw new Error("error in deleting item");
       }
-    }
-    catch (exception: any) {
+    } catch (exception) {
       setOpenSnackBar(true);
       setSnackBarError("Error in deleting item");
       setOpenDeleteItemDialog(false);
     }
-
   };
 
   const formik = useFormik({
@@ -381,8 +375,11 @@ const EditItemPage = (props: Props) => {
   const [openSnackBar, setOpenSnackBar] = React.useState<boolean>(false);
   const [snackBarError, setSnackBarError] = React.useState<string>("");
 
-  const handleCloseSnackBar = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
+  const handleCloseSnackBar = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
       return;
     }
 
@@ -421,8 +418,8 @@ const EditItemPage = (props: Props) => {
   }, []);
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
-    libraries: libs,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    libraries: ["places", "geometry"],
   });
 
   useEffect(() => {
@@ -538,7 +535,9 @@ const EditItemPage = (props: Props) => {
                             getOptionLabel={(option: any) => option}
                             filterSelectedOptions
                             onChange={(event, value) => {
-                              setSelectedCategories(value);
+                              setSelectedCategories(
+                                value as SetStateAction<string[]>
+                              );
                             }}
                             renderInput={(params) => (
                               <TextField
@@ -709,7 +708,6 @@ const EditItemPage = (props: Props) => {
                 color: "white",
               }}
               onClick={handleDeleteItemButton}
-
               startIcon={<DeleteIcon />}
             >
               Delete Item
@@ -721,20 +719,19 @@ const EditItemPage = (props: Props) => {
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
             >
-              <DialogTitle id="alert-dialog-title">
-                {"Delete Item"}
-              </DialogTitle>
+              <DialogTitle id="alert-dialog-title">{"Delete Item"}</DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                   Are you sure you want to delete this item?
                 </DialogContentText>
               </DialogContent>
-              <DialogActions style={{ display: "flex", justifyContent: "space-between" }}>
+              <DialogActions
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
                 <Button onClick={handleCloseDeleteItemDialog}>Cancel</Button>
                 <Button onClick={deleteItemRequest} autoFocus>
                   Yes
                 </Button>
-
               </DialogActions>
             </Dialog>
           </div>
@@ -742,15 +739,21 @@ const EditItemPage = (props: Props) => {
 
         {activeStep === 2 && (
           <Paper square elevation={0} sx={{ p: 3 }}>
-            <Typography component={"span"}>
-              All steps completed
-            </Typography>
+            <Typography component={"span"}>All steps completed</Typography>
           </Paper>
         )}
 
-        <Stack spacing={2} sx={{ width: '100%' }}>
-          <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
-            <Alert onClose={handleCloseSnackBar} severity="error" sx={{ width: '100%' }}>
+        <Stack spacing={2} sx={{ width: "100%" }}>
+          <Snackbar
+            open={openSnackBar}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackBar}
+          >
+            <Alert
+              onClose={handleCloseSnackBar}
+              severity="error"
+              sx={{ width: "100%" }}
+            >
               {snackBarError}
             </Alert>
           </Snackbar>

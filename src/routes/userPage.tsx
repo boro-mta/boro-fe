@@ -35,10 +35,10 @@ type Props = {};
 const userPage = (props: Props) => {
   const location = useLocation();
 
-  const {
-    snackBarState,
-    snackBarMessage
-  } = location && location.state ? location.state : { snackBarState: false, snackBarMessage: "" };
+  const { snackBarState, snackBarMessage } =
+    location && location.state
+      ? location.state
+      : { snackBarState: false, snackBarMessage: "" };
 
   const [userDetails, setUserDetails] = useState<IUserDetails>(
     allUserDetails[3]
@@ -82,9 +82,18 @@ const userPage = (props: Props) => {
 
   useEffect(() => {
     const fetchUserItems = async () => {
-      const items = await getUserItems(userId);
-      items && items?.length > 0 && setUserItems(items);
+      try {
+        const items = await getUserItems(userId);
+        if (items && items.length > 0) {
+          setUserItems(items);
+        } else {
+          console.log("No items found for this user.");
+        }
+      } catch (error) {
+        console.log("An error occurred while fetching user items.");
+      }
     };
+
     fetchUserItems();
   }, [userId]);
 
@@ -126,7 +135,6 @@ const userPage = (props: Props) => {
       const serverUserStats: IUserStatistics = await getUserStatistics(userId);
       setUserStats(serverUserStats);
       handleSomeEventThatTriggersRerender();
-
     } catch (error) {
       console.error(error);
     }
@@ -179,14 +187,17 @@ const userPage = (props: Props) => {
 
   const [itemsContainerKey, setItemsContainerKey] = useState(0);
   const handleSomeEventThatTriggersRerender = () => {
-    setItemsContainerKey(prevKey => prevKey + 1);
+    setItemsContainerKey((prevKey) => prevKey + 1);
   };
 
   //snackBar info
   const [openSnackBar, setOpenSnackBar] = React.useState(snackBarState);
 
-  const handleCloseSnackBar = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
+  const handleCloseSnackBar = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
       return;
     }
 
@@ -194,18 +205,45 @@ const userPage = (props: Props) => {
   };
 
   return (
-    <Container sx={{ paddingTop: '35px' }}>
-      <Box sx={{ alignItems: isMobileView ? 'inherit' : 'center', display: 'flex', flexDirection: isMobileView ? 'column' : 'row' }} >
-        <Card sx={{ maxWidth: 345, maxHeight: 280, boxShadow: '-5px 4px 10px rgba(0, 10, 0, 0.2)', border: '1px solid lightgray', borderRadius: '20px', flexShrink: 0 }}>
-          <CardContent style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
-            <Avatar style={{ height: "150px", width: "150px", marginRight: '20px' }}
-              src={userProfilePicture ||
-                "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png"}>
-            </Avatar>
+    <Container sx={{ paddingTop: "35px" }}>
+      <Box
+        sx={{
+          alignItems: isMobileView ? "inherit" : "center",
+          display: "flex",
+          flexDirection: isMobileView ? "column" : "row",
+        }}
+      >
+        <Card
+          sx={{
+            maxWidth: 345,
+            maxHeight: 280,
+            boxShadow: "-5px 4px 10px rgba(0, 10, 0, 0.2)",
+            border: "1px solid lightgray",
+            borderRadius: "20px",
+            flexShrink: 0,
+          }}
+        >
+          <CardContent
+            style={{ marginTop: "20px", display: "flex", alignItems: "center" }}
+          >
+            <Avatar
+              style={{ height: "150px", width: "150px", marginRight: "20px" }}
+              src={
+                userProfilePicture ||
+                "https://material-kit-pro-react.devias.io/assets/avatars/avatar-fran-perez.png"
+              }
+            ></Avatar>
 
             <div>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-                <Typography variant="h5" >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography variant="h5">
                   {userDetails.firstName + " " + userDetails.lastName}{" "}
                 </Typography>
                 <Typography
@@ -223,7 +261,13 @@ const userPage = (props: Props) => {
               </Box>
             </div>
           </CardContent>
-          <Box sx={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
+          <Box
+            sx={{
+              alignItems: "center",
+              justifyContent: "center",
+              display: "flex",
+            }}
+          >
             <CardActions>
               <ContactUserButton
                 templateMessage={"Hi! I have a general question."}
@@ -247,19 +291,27 @@ const userPage = (props: Props) => {
         <br />
         <br />
 
-        <Box sx={{ padding: isMobileView ? '0px' : '50px' }}>
-          {!isMobileView && <Typography variant="h3">About {userDetails.firstName} {userDetails.lastName} </Typography>}
-          <Box sx={{ fontSize: isMobileView ? '16px' : '24px', lineHeight: isMobileView ? '24px' : 'inherit', marginTop: isMobileView ? '0' : '40px' }}>
+        <Box sx={{ padding: isMobileView ? "0px" : "50px" }}>
+          {!isMobileView && (
+            <Typography variant="h3">
+              About {userDetails.firstName} {userDetails.lastName}{" "}
+            </Typography>
+          )}
+          <Box
+            sx={{
+              fontSize: isMobileView ? "16px" : "24px",
+              lineHeight: isMobileView ? "24px" : "inherit",
+              marginTop: isMobileView ? "0" : "40px",
+            }}
+          >
             {userDetails.about}
           </Box>
         </Box>
-
       </Box>
       <br />
       <Divider />
       <Grid container spacing={2} alignItems="center">
-        <Grid item>
-        </Grid>
+        <Grid item></Grid>
       </Grid>
       <br />
       <Box>
@@ -271,17 +323,24 @@ const userPage = (props: Props) => {
       </Box>
 
       {/* snack bar area */}
-      <Stack spacing={2} sx={{ width: '100%' }}>
+      <Stack spacing={2} sx={{ width: "100%" }}>
         {snackBarMessage && snackBarMessage.length > 0 && (
-          <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}>
-            <Alert onClose={handleCloseSnackBar} severity="success" sx={{ width: '100%' }}>
+          <Snackbar
+            open={openSnackBar}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackBar}
+          >
+            <Alert
+              onClose={handleCloseSnackBar}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
               {snackBarMessage}
             </Alert>
           </Snackbar>
         )}
       </Stack>
-    </Container >
+    </Container>
   );
-
-}
+};
 export default userPage;

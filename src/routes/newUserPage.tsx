@@ -41,8 +41,8 @@ const validationSchema = yup.object({
 
 const NewUserPage = (props: Props) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
-    libraries: libs,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
+    libraries: ["places", "geometry"],
   });
 
   //Dispatcher for redux
@@ -54,9 +54,8 @@ const NewUserPage = (props: Props) => {
   const userProfilePicture = useAppSelector(selectPicture);
   const [firstName, lastName] = userFullName.split(" ");
   const userId = useAppSelector(selectUserId);
-  const [currentLocationString, setCurrentLocationString] = useState<string>(
-    ""
-  );
+  const [currentLocationString, setCurrentLocationString] =
+    useState<string>("");
   const [myLocation, setMyLocation] = useState<ILocationDetails>();
 
   const formik = useFormik({
@@ -72,7 +71,7 @@ const NewUserPage = (props: Props) => {
     },
     enableReinitialize: true,
     validationSchema: validationSchema,
-    onSubmit: () => { },
+    onSubmit: () => {},
   });
 
   //Navigation tool

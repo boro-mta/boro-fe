@@ -1,3 +1,4 @@
+import React from "react";
 import SendIcon from "@mui/icons-material/Send";
 import { startChat } from "../../api/ChatService";
 import { Button, SxProps, Theme } from "@mui/material";
