@@ -93,6 +93,9 @@ export const userSlice = createSlice({
         latitude: payload.latitude,
       };
     },
+    updateUserId: (state, action: PayloadAction<string>) => {
+      state.userId = action.payload;
+    },
     logoutUser: (state) => {
       state.picture = "";
     },
@@ -105,6 +108,7 @@ const userSliceReducer = userSlice.reducer as Reducer<UserState>;
 // Action creators are generated for each case reducer function
 export const {
   updateUser,
+  updateUserId,
   logoutUser,
   updatePartialUser,
   updateServerAddress,

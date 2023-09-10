@@ -33,6 +33,7 @@ import BorrowerDashboard from "./routes/borrowerDashboard";
 import ReservationDetailsPage from "./routes/resarvationDetailsPage";
 import ChatPage from "./routes/chatPage";
 import LeaderBoard from "./routes/leaderBoard";
+import HelpPage from "./routes/helpPage";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -97,6 +98,10 @@ const router = [
   {
     path: "address",
     element: <MyAddressesPage />,
+  },
+  {
+    path: "help",
+    element: <HelpPage />,
   },
   { path: "/chat", element: <ChatPage /> },
   { path: "/chat/:channelId", element: <ChatPage /> },
