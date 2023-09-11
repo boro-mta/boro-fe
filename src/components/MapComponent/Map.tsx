@@ -171,7 +171,11 @@ const Map = memo(
             `;
           });
           const markerListHTMLArr = await Promise.all(markerListHTML);
-          return `<ul style="list-style-type:none; padding:0;">${markerListHTMLArr.join('')}</ul>`;
+          return `<div style="max-height: 300px; overflow-y: auto;">
+          <ul style="list-style-type: none; padding: 0; margin: 0;">
+            ${markerListHTMLArr.join('')}
+          </ul>
+        </div>`;
         }
 
         const groupedMarkers = groupMarkersByLocation(locations);
