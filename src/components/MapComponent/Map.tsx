@@ -28,6 +28,43 @@ type Props = {
   onSearchAreaClick: (items: IItemResponse[]) => void;
 };
 
+
+type MarkerGroup = {
+  location: ICoordinate;
+  markers: IMarkerDetails[];
+};
+
+
+function groupMarkersByLocation(markers: IMarkerDetails[]): MarkerGroup[] {
+  const markerGroups: MarkerGroup[] = [];
+
+  // Create an object to store markers grouped by location
+  const locationMap: { [locationKey: string]: MarkerGroup } = {};
+
+  markers.forEach((marker) => {
+    const locationKey = `${marker.latitude},${marker.longitude}`;
+    if (locationKey in locationMap) {
+      // Add the marker to an existing group
+      locationMap[locationKey].markers.push(marker);
+    } else {
+      // Create a new group for this location
+      const newGroup: MarkerGroup = {
+        location: {
+          latitude: marker.latitude,
+          longitude: marker.longitude,
+        },
+        markers: [marker],
+      };
+      locationMap[locationKey] = newGroup;
+    }
+  });
+
+  // Convert the object values to an array of MarkerGroup
+  markerGroups.push(...Object.values(locationMap));
+
+  return markerGroups;
+}
+
 const Map = memo(
   ({ myLocation, locationsAroundMe, onSearchAreaClick }: Props) => {
     const navigate = useNavigate();
@@ -64,6 +101,42 @@ const Map = memo(
       navigate(`/item/${itemId}`);
     }, []);
 
+    function addMarkersWithSamePosition(map: any, items: any) {
+      const markers: any = [];
+
+      items.forEach((item: any) => {
+        const position = { lat: item.latitude, lng: item.longitude };
+
+        // Check if a marker already exists at this position
+        const existingMarker = markers.find(
+          (marker: any) =>
+            marker.getPosition().lat() === position.lat &&
+            marker.getPosition().lng() === position.lng
+        );
+
+        if (existingMarker) {
+          // If a marker already exists, you can display additional information in an InfoWindow
+          const contentString = `<div><h2>${item.title}</h2></div>`;
+          const infowindow = new google.maps.InfoWindow({
+            content: contentString,
+          });
+          existingMarker.addListener('click', () => {
+            infowindow.open(map, existingMarker);
+          });
+        } else {
+          // If no marker exists at this position, create a new one
+          const marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: item.title,
+          });
+          markers.push(marker);
+        }
+      });
+    }
+
+
+
     const renderMarkersByLocations = useCallback(
       (
         map: google.maps.Map,
@@ -73,28 +146,55 @@ const Map = memo(
         const infoWindow = new google.maps.InfoWindow();
         (window as any).onMarkerClick = onMarkerClick;
 
-        return locations && locations.length > 0
-          ? locations.map(({ id, imageIds, title, latitude, longitude }) => {
-              const marker = CustomMarker({ latitude, longitude });
+        const markers: any = [];
 
-              map.addListener("click", () => infoWindow.close());
-              marker.addListener("click", async () => {
-                let imgData = await getImage(imageIds[0]);
+        async function createMarkerListHTML(markers: IMarkerDetails[]): Promise<string> {
+          if (!markers || markers.length === 0) {
+            return '';
+          }
 
-                infoWindow.setPosition({ lat: latitude, lng: longitude });
-                infoWindow.setContent(`
+          const markerListHTML = markers.map(async (marker, i) => {
+            const { id, title, imageIds } = marker;
+            const imgData = await getImage(imageIds[0]); // Assuming you want to use the first image if available.
+
+            const marginBottomStyle = i !== markers.length - 1 ? 'margin-bottom: 20px;' : '';
+            return `
+              <li>
                 <div class="info-window">
                   <h2 class="info-title">${title}</h2>
                   <img class="info-img" src="${imgData}" />
                   <hr class="divider"/>
                   <button class="info-button" onclick="onMarkerClick('${id}')">Go to item</button>
+                  <div style="${marginBottomStyle}"></div>
                 </div>
-              `);
-                infoWindow.open(map);
-              });
+              </li>
+            `;
+          });
+          const markerListHTMLArr = await Promise.all(markerListHTML);
+          return `<div style="max-height: 300px; overflow-y: auto;">
+          <ul style="list-style-type: none; padding: 0; margin: 0;">
+            ${markerListHTMLArr.join('')}
+          </ul>
+        </div>`;
+        }
 
-              return marker;
-            })
+        const groupedMarkers = groupMarkersByLocation(locations);
+
+        return groupedMarkers && groupedMarkers.length > 0 ?
+          groupedMarkers.map(({ location, markers }) => {
+            const marker = CustomMarker(location);
+
+            map.addListener("click", () => infoWindow.close());
+            marker.addListener("click", async () => {
+
+              infoWindow.setPosition({ lat: location.latitude, lng: location.longitude });
+              let x = await createMarkerListHTML(markers);
+              infoWindow.setContent(x);
+              infoWindow.open(map);
+            });
+
+            return marker;
+          })
           : [];
       },
       [locationsAroundMeUpdated]
